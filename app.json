@@ -1,14 +1,17 @@
 {
   "expo": {
-    "name": "habits-app",
-    "slug": "habits-app",
+    "name": "Habitudes",
+    "slug": "habits",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "habitsapp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "habitudes",
+    "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.arnaudetienne.habitudes",
+      "supportsTablet": false,
+      "appleTeamId": "Y7N85AJQFD"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +31,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#12141C",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }

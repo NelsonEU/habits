@@ -41,3 +41,9 @@ example
 # generated native folders
 /ios
 /android
+
+# personal data (Daygraph backups, exports)
+/private/
+
+# env
+.env
