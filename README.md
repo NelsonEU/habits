@@ -1,4 +1,4 @@
-# Habitudes
+# Habits
 
 A personal iOS app to track a few daily habits: open it in the evening, tick what you kept, close it. It replaces Daygraph and can import its backups.
 
