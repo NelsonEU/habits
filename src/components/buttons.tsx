@@ -68,13 +68,18 @@ export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; o
   );
 }
 
-/** Outlined pill, e.g. "Aujourd’hui". */
-export function PillButton({ label, onPress }: { label: string; onPress: () => void }) {
+/** Outlined pill, e.g. "Aujourd’hui". Disabled when `onPress` is missing. */
+export function PillButton({ label, onPress }: { label: string; onPress?: () => void }) {
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{ disabled: !onPress }}
+      disabled={!onPress}
       onPress={onPress}
-      className="min-h-10 items-center justify-center rounded-full border border-line-strong px-3.5 active:opacity-60"
+      className={cn(
+        'min-h-10 items-center justify-center rounded-full border border-line-strong px-3.5 active:opacity-60',
+        !onPress && 'opacity-60',
+      )}
     >
       <Text className="text-sm">{label}</Text>
     </Pressable>

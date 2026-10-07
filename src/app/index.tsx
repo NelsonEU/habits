@@ -17,7 +17,7 @@ import { dayTitle, longDay, streakLabel } from '@/domain/format';
 import { habitsOn, historyOf } from '@/domain/model';
 import { currentStreak } from '@/domain/stats';
 import { useToday } from '@/hooks/use-today';
-import { pickAndImportDaygraph } from '@/import/pick';
+import { pickAndImport } from '@/import/pick';
 
 // Becomes a setting in step 6.
 const WEEK_STARTS_ON = 'monday';
@@ -50,8 +50,6 @@ export default function DayScreen() {
     setPickedDay(null);
     setPickedWeek(null);
   };
-
-  if (snapshot.habits.length === 0) return <Welcome today={today} />;
 
   return (
     <Screen scroll overlay={<Fab icon="pencil" label="Modifier mes habitudes" onPress={() => router.push('/habits')} />}>
@@ -102,20 +100,24 @@ export default function DayScreen() {
             />
           );
         })}
-        {habits.length === 0 && (
-          <Text className="text-muted">Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.</Text>
+        {snapshot.habits.length === 0 ? (
+          <EmptyState today={today} />
+        ) : (
+          habits.length === 0 && (
+            <Text className="text-muted">Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.</Text>
+          )
         )}
       </View>
 
-      <View className="mt-auto min-h-[60px] justify-center gap-1.5 pr-[84px]">
-        {anyDone || filled ? (
-          <Text className="text-sm text-muted">
-            {selected === today ? 'C’est enregistré. Tu peux fermer l’app.' : 'C’est enregistré.'}
-          </Text>
-        ) : (
-          <>
-            <Text className="text-sm text-muted">Touche ce que tu as tenu.</Text>
-            {habits.length > 0 && (
+      {habits.length > 0 && (
+        <View className="mt-auto min-h-[60px] justify-center gap-1.5 pr-[84px]">
+          {anyDone || filled ? (
+            <Text className="text-sm text-muted">
+              {selected === today ? 'C’est enregistré. Tu peux fermer l’app.' : 'C’est enregistré.'}
+            </Text>
+          ) : (
+            <>
+              <Text className="text-sm text-muted">Touche ce que tu as tenu.</Text>
               <Pressable
                 accessibilityRole="button"
                 hitSlop={8}
@@ -126,25 +128,24 @@ export default function DayScreen() {
               >
                 <Text className="text-sm font-semibold underline">Rien de tenu ce jour-là</Text>
               </Pressable>
-            )}
-          </>
-        )}
-      </View>
+            </>
+          )}
+        </View>
+      )}
     </Screen>
   );
 }
 
 
-// THIS IS REALLY BAD, WAY TOO DAYGRAPH ORIENTED. I'm not sure I like that welcome screen at all.
-/** First launch: nothing in the database yet. */
-function Welcome({ today }: { today: Day }) {
+/** A brand-new app: in place of the habit cards, create a first habit or import existing data. */
+function EmptyState({ today }: { today: Day }) {
   const db = useSQLiteContext();
   const [importing, setImporting] = useState(false);
 
-  const importBackup = async () => {
+  const importData = async () => {
     setImporting(true);
     try {
-      const result = await pickAndImportDaygraph(db, today);
+      const result = await pickAndImport(db, today);
       if (result) {
         Alert.alert('Import terminé', `${result.habits} habitudes et ${result.checks.toLocaleString('fr-FR')} jours cochés.`);
       }
@@ -156,21 +157,18 @@ function Welcome({ today }: { today: Day }) {
   };
 
   return (
-    <Screen>
-      <View className="mt-10 gap-3">
-        <Title>Bienvenue</Title>
-        <Text className="text-muted">
-          Chaque soir, coche les habitudes que tu as tenues. Commence par récupérer ton historique Daygraph, ou crée ta
-          première habitude.
-        </Text>
+    <View className="gap-5 rounded-3xl border border-line bg-surface p-5">
+      <View className="gap-1.5">
+        <Text className="text-xl font-semibold leading-6">Aucune habitude pour l’instant</Text>
+        <Text className="text-muted">Crée ta première habitude, puis coche-la chaque soir quand tu l’as tenue.</Text>
       </View>
-      <View className="mt-auto gap-3">
-        <PrimaryButton
-          label={importing ? 'Import en cours…' : 'Importer une sauvegarde Daygraph'}
-          onPress={importing ? undefined : importBackup}
+      <View className="gap-3">
+        <PrimaryButton label="Créer une habitude" onPress={() => router.push('/habits/new')} />
+        <PillButton
+          label={importing ? 'Import en cours…' : 'Importer des données'}
+          onPress={importing ? undefined : importData}
         />
-        <PillButton label="Créer une habitude" onPress={() => router.push('/habits/new')} />
       </View>
-    </Screen>
+    </View>
   );
 }
