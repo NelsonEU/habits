@@ -9,7 +9,7 @@ import { Title } from '@/components/text';
 export default function ArchivedHabitsScreen() {
   return (
     <Screen scroll>
-      <View style={{ gap: 12 }}>
+      <View className="gap-3">
         <BackLink label="Mes habitudes" fallback="/habits" chevron />
         <Title>Archivées</Title>
       </View>

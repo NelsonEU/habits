@@ -9,7 +9,7 @@ import { Title } from '@/components/text';
 export default function EditHabitScreen() {
   return (
     <Screen>
-      <View style={{ gap: 12 }}>
+      <View className="gap-3">
         <BackLink label="Annuler" fallback="/habits" />
         <Title>Modifier</Title>
       </View>

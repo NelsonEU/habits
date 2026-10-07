@@ -1,20 +1,12 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { useTheme } from '@/theme';
-import { Body } from './text';
+import { Text } from './text';
 
 /** Temporary box standing in for a screen's content until its step is built. */
 export function Placeholder({ children }: { children: string }) {
-  const theme = useTheme();
   return (
-    <View style={[styles.box, { borderColor: theme.colors.lineStrong }]}>
-      <Body tone="faint" size={14}>
-        {children}
-      </Body>
+    <View className="rounded-[20px] border-[1.5px] border-dashed border-line-strong p-4">
+      <Text className="text-sm text-faint">{children}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  box: { padding: 16, borderRadius: 20, borderWidth: 1.5, borderStyle: 'dashed' },
-});

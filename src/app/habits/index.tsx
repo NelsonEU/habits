@@ -4,26 +4,26 @@ import { View } from 'react-native';
 import { BackLink } from '@/components/buttons';
 import { Placeholder } from '@/components/placeholder';
 import { Screen } from '@/components/screen';
-import { Body, Title } from '@/components/text';
+import { Text, Title } from '@/components/text';
 
 /** 1b · Mes habitudes — reorder, edit, add. */
 export default function HabitsScreen() {
   return (
     <Screen scroll>
-      <View style={{ gap: 12 }}>
+      <View className="gap-3">
         <BackLink label="Terminé" fallback="/" align="right" strong />
         <Title>Mes habitudes</Title>
       </View>
       <Placeholder>Liste avec flèches haut/bas et crayon (étape 3)</Placeholder>
-      <View style={{ gap: 16 }}>
+      <View className="gap-4">
         <Link href="/habits/1">
-          <Body weight="semibold">Modifier une habitude ›</Body>
+          <Text className="font-semibold">Modifier une habitude ›</Text>
         </Link>
         <Link href="/habits/new">
-          <Body weight="semibold">+ Nouvelle habitude</Body>
+          <Text className="font-semibold">+ Nouvelle habitude</Text>
         </Link>
         <Link href="/habits/archived">
-          <Body tone="muted">Archivées ›</Body>
+          <Text className="text-muted">Archivées ›</Text>
         </Link>
       </View>
     </Screen>

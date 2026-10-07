@@ -1,35 +1,18 @@
-import { Text, type TextProps } from 'react-native';
+import { Text as RNText, type TextProps } from 'react-native';
 
-import { useTheme } from '@/theme';
+import { cn } from '@/lib/cn';
 
-/** Screen title, in the display font ("Mes habitudes", "Aujourd’hui"…). */
-export function Title({ style, ...props }: TextProps) {
-  const theme = useTheme();
-  return (
-    <Text
-      accessibilityRole="header"
-      style={[{ fontFamily: theme.fonts.display, fontSize: 38, letterSpacing: -0.76, color: theme.colors.text }, style]}
-      {...props}
-    />
-  );
+/** Text in the app font and color. React Native text doesn't inherit fonts, so use this instead of <Text>. */
+export function Text({ className, ...props }: TextProps) {
+  return <RNText className={cn('font-sans text-[15px] leading-[21px] text-ink', className)} {...props} />;
 }
 
-/** Body text. `tone` picks the color, `size` defaults to 15. */
-export function Body({
-  style,
-  tone = 'text',
-  size = 15,
-  weight = 'regular',
-  ...props
-}: TextProps & {
-  tone?: 'text' | 'muted' | 'faint';
-  size?: number;
-  weight?: 'regular' | 'medium' | 'semibold';
-}) {
-  const theme = useTheme();
+/** Screen title in the display font. */
+export function Title({ className, ...props }: TextProps) {
   return (
-    <Text
-      style={[{ fontFamily: theme.fonts[weight], fontSize: size, lineHeight: size * 1.4, color: theme.colors[tone] }, style]}
+    <RNText
+      accessibilityRole="header"
+      className={cn('font-display text-[38px] font-bold leading-[42px] tracking-[-0.76px] text-ink', className)}
       {...props}
     />
   );

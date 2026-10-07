@@ -1,25 +1,22 @@
 import { type Href, router } from 'expo-router';
 import { type SFSymbol, SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useTheme } from '@/theme';
-import { Body } from './text';
+import { cn } from '@/lib/cn';
+import { colors } from '@/theme';
+import { Text } from './text';
 
 /** Round 44pt button with an SF Symbol, like the stats/settings buttons of the day screen. */
 export function IconButton({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
-  const theme = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.icon,
-        { backgroundColor: theme.colors.surface, borderColor: theme.colors.line, opacity: pressed ? 0.6 : 1 },
-      ]}
+      className="size-11 items-center justify-center rounded-full border border-line bg-surface active:opacity-60"
     >
-      <SymbolView name={icon} size={19} weight="semibold" tintColor={theme.colors.text} />
+      <SymbolView name={icon} size={19} weight="semibold" tintColor={colors.ink} />
     </Pressable>
   );
 }
@@ -42,63 +39,62 @@ export function BackLink({
   align?: 'left' | 'right';
   strong?: boolean;
 }) {
-  const theme = useTheme();
-  const color = strong ? theme.colors.text : theme.colors.muted;
   return (
     <Pressable
       accessibilityRole="button"
       onPress={() => (router.canGoBack() ? router.back() : router.replace(fallback))}
       hitSlop={8}
-      style={({ pressed }) => [styles.back, { alignSelf: align === 'left' ? 'flex-start' : 'flex-end', opacity: pressed ? 0.6 : 1 }]}
+      className={cn('min-h-11 flex-row items-center gap-1.5 active:opacity-60', align === 'left' ? 'self-start' : 'self-end')}
     >
-      {chevron && <SymbolView name="chevron.left" size={17} weight="semibold" tintColor={color} />}
-      <Body size={16} weight={strong ? 'semibold' : 'regular'} style={{ color }}>
-        {label}
-      </Body>
+      {chevron && <SymbolView name="chevron.left" size={17} weight="semibold" tintColor={strong ? colors.ink : colors.muted} />}
+      <Text className={cn('text-base', strong ? 'font-semibold' : 'text-muted')}>{label}</Text>
     </Pressable>
   );
 }
 
 /** The round floating button at the bottom right of the day screen. */
 export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
-  const theme = useTheme();
   const insets = useSafeAreaInsets();
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.fab,
-        { bottom: insets.bottom + 16, backgroundColor: theme.colors.text, transform: [{ scale: pressed ? 0.95 : 1 }] },
-      ]}
+      className="absolute right-5 size-[60px] items-center justify-center rounded-full bg-ink shadow-lg shadow-black/50 active:scale-95"
+      style={{ bottom: insets.bottom + 16 }}
     >
-      <SymbolView name={icon} size={24} weight="semibold" tintColor={theme.colors.onAccent} />
+      <SymbolView name={icon} size={24} weight="semibold" tintColor={colors.onAccent} />
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  icon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  back: { flexDirection: 'row', alignItems: 'center', gap: 6, minHeight: 44 },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.45,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 10 },
-  },
-});
+/** Outlined pill, e.g. "Aujourd’hui". */
+export function PillButton({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      className="min-h-10 items-center justify-center rounded-full border border-line-strong px-3.5 active:opacity-60"
+    >
+      <Text className="text-sm">{label}</Text>
+    </Pressable>
+  );
+}
+
+/** Full-width main action, light on dark. Disabled when `onPress` is missing. */
+export function PrimaryButton({ label, onPress }: { label: string; onPress?: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !onPress }}
+      disabled={!onPress}
+      onPress={onPress}
+      className={cn(
+        'min-h-14 items-center justify-center rounded-full bg-ink px-5 active:opacity-70',
+        !onPress && 'opacity-70',
+      )}
+    >
+      <Text className="text-[17px] font-semibold text-on-accent">{label}</Text>
+    </Pressable>
+  );
+}

@@ -11,9 +11,9 @@ export default function HabitDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   return (
     <Screen scroll>
-      <View style={{ gap: 12 }}>
+      <View className="gap-3">
         <BackLink label="Statistiques" fallback="/stats" chevron />
-        <Title style={{ fontSize: 36 }}>Habitude {id}</Title>
+        <Title className="text-4xl">Habitude {id}</Title>
       </View>
       <Placeholder>Où j’en suis · Est-ce que je progresse ? · Quels jours coincent ? · Jour par jour (étape 5)</Placeholder>
     </Screen>

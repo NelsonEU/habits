@@ -9,7 +9,7 @@ import { Title } from '@/components/text';
 export default function SettingsScreen() {
   return (
     <Screen scroll>
-      <View style={{ gap: 12 }}>
+      <View className="gap-3">
         <BackLink label="Retour" fallback="/" chevron />
         <Title>Réglages</Title>
       </View>

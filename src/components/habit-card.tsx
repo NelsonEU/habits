@@ -1,7 +1,8 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
-import { useTheme } from '@/theme';
+import { cn } from '@/lib/cn';
+import { Text } from './text';
 
 type Props = {
   name: string;
@@ -13,9 +14,6 @@ type Props = {
 
 /** A habit to tick: the whole card fills with the habit's color once ticked. */
 export function HabitCard({ name, color, checked, subtitle, onToggle }: Props) {
-  const theme = useTheme();
-  const ink = theme.colors.onAccent;
-
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -23,55 +21,26 @@ export function HabitCard({ name, color, checked, subtitle, onToggle }: Props) {
       accessibilityLabel={name}
       accessibilityHint={subtitle}
       onPress={onToggle}
-      style={({ pressed }) => [
-        styles.card,
-        {
-          backgroundColor: checked ? color : theme.colors.surface,
-          borderColor: checked ? color : theme.colors.line,
-          transform: [{ scale: pressed ? 0.98 : 1 }],
-        },
-      ]}
+      className={cn(
+        'min-h-[92px] flex-row items-center gap-[18px] rounded-3xl border px-5 py-[18px] active:scale-[0.98]',
+        !checked && 'border-line bg-surface',
+      )}
+      // The habit's own color can't be a class: it's data.
+      style={checked ? { backgroundColor: color, borderColor: color } : undefined}
     >
-      <View style={[styles.ring, { backgroundColor: checked ? ink : 'transparent', borderColor: checked ? ink : color }]}>
+      <View
+        className={cn(
+          'size-[46px] items-center justify-center rounded-full border-[2.5px]',
+          checked && 'border-on-accent bg-on-accent',
+        )}
+        style={checked ? undefined : { borderColor: color }}
+      >
         {checked && <SymbolView name="checkmark" size={20} weight="bold" tintColor={color} />}
       </View>
-      <View style={styles.text}>
-        <Text style={[styles.name, { color: checked ? ink : theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-          {name}
-        </Text>
-        <Text
-          style={[
-            styles.subtitle,
-            { color: checked ? 'rgba(18,20,28,0.72)' : theme.colors.muted, fontFamily: theme.fonts.regular },
-          ]}
-        >
-          {subtitle}
-        </Text>
+      <View className="min-w-0 flex-1 gap-1.5">
+        <Text className={cn('text-xl font-semibold leading-6', checked && 'text-on-accent')}>{name}</Text>
+        <Text className={cn('text-[13px] leading-[18px]', checked ? 'text-on-accent/70' : 'text-muted')}>{subtitle}</Text>
       </View>
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 18,
-    minHeight: 92,
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    borderRadius: 24,
-    borderWidth: 1,
-  },
-  ring: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 2.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: { flex: 1, minWidth: 0, gap: 6 },
-  name: { fontSize: 20, lineHeight: 24 },
-  subtitle: { fontSize: 13 },
-});

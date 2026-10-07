@@ -2,12 +2,12 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
-import { Fab, IconButton } from '@/components/buttons';
+import { Fab, IconButton, PillButton, PrimaryButton } from '@/components/buttons';
 import { HabitCard } from '@/components/habit-card';
 import { Screen } from '@/components/screen';
-import { Body, Title } from '@/components/text';
+import { Text, Title } from '@/components/text';
 import { WeekDays, WeekNav } from '@/components/week-strip';
 import { markFilled, setChecked } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
@@ -18,7 +18,6 @@ import { habitsOn, historyOf } from '@/domain/model';
 import { currentStreak } from '@/domain/stats';
 import { useToday } from '@/hooks/use-today';
 import { pickAndImportDaygraph } from '@/import/pick';
-import { useTheme } from '@/theme';
 
 // Becomes a setting in step 6.
 const WEEK_STARTS_ON = 'monday';
@@ -52,48 +51,44 @@ export default function DayScreen() {
     setPickedWeek(null);
   };
 
-  const header = (
-    <View style={styles.header}>
-      <View style={styles.topBar}>
-        <WeekNav
-          weekStart={weekStart}
-          onPrev={weekStart > bounds.first ? () => setPickedWeek(addDays(weekStart, -7)) : null}
-          onNext={weekStart < bounds.last ? () => setPickedWeek(addDays(weekStart, 7)) : null}
-        />
-        <IconButton icon="chart.bar" label="Statistiques" onPress={() => router.push('/stats')} />
-        <IconButton icon="slider.horizontal.3" label="Réglages" onPress={() => router.push('/settings')} />
-      </View>
-      <WeekDays
-        weekStart={weekStart}
-        today={today}
-        selected={selected}
-        dotsFor={(day) => dayDots(snapshot, day, today)}
-        onSelect={(day) => setPickedDay(day === today ? null : day)}
-      />
-    </View>
-  );
-
   if (snapshot.habits.length === 0) return <Welcome today={today} />;
 
   return (
     <Screen scroll overlay={<Fab icon="pencil" label="Modifier mes habitudes" onPress={() => router.push('/habits')} />}>
-      {header}
+      <View className="gap-3.5">
+        <View className="flex-row items-center gap-2">
+          <WeekNav
+            weekStart={weekStart}
+            onPrev={weekStart > bounds.first ? () => setPickedWeek(addDays(weekStart, -7)) : null}
+            onNext={weekStart < bounds.last ? () => setPickedWeek(addDays(weekStart, 7)) : null}
+          />
+          <IconButton icon="chart.bar" label="Statistiques" onPress={() => router.push('/stats')} />
+          <IconButton icon="slider.horizontal.3" label="Réglages" onPress={() => router.push('/settings')} />
+        </View>
+        <WeekDays
+          weekStart={weekStart}
+          today={today}
+          selected={selected}
+          dotsFor={(day) => dayDots(snapshot, day, today)}
+          onSelect={(day) => setPickedDay(day === today ? null : day)}
+        />
+      </View>
 
-      <View style={styles.titleRow}>
-        <View style={styles.titleText}>
-          <Title style={styles.dayTitle}>{dayTitle(selected, today)}</Title>
-          <Body tone="muted" size={14}>
+      <View className="flex-row items-end justify-between gap-3">
+        <View className="flex-1 gap-1.5">
+          <Title className="text-4xl leading-[38px]">{dayTitle(selected, today)}</Title>
+          <Text className="text-sm text-muted">
             {selected >= addDays(today, -1)
               ? longDay(selected)
               : filled
                 ? 'Jour passé · tu peux encore le modifier'
                 : 'Jour non rempli · tu peux le compléter'}
-          </Body>
+          </Text>
         </View>
         {selected !== today && <PillButton label="Aujourd’hui" onPress={goToday} />}
       </View>
 
-      <View style={styles.list}>
+      <View className="gap-3">
         {habits.map((h) => {
           const checked = snapshot.checks.get(h.id)?.has(selected) ?? false;
           return (
@@ -108,20 +103,18 @@ export default function DayScreen() {
           );
         })}
         {habits.length === 0 && (
-          <Body tone="muted">Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.</Body>
+          <Text className="text-muted">Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.</Text>
         )}
       </View>
 
-      <View style={styles.footer}>
+      <View className="mt-auto min-h-[60px] justify-center gap-1.5 pr-[84px]">
         {anyDone || filled ? (
-          <Body tone="muted" size={14}>
+          <Text className="text-sm text-muted">
             {selected === today ? 'C’est enregistré. Tu peux fermer l’app.' : 'C’est enregistré.'}
-          </Body>
+          </Text>
         ) : (
           <>
-            <Body tone="muted" size={14}>
-              Touche ce que tu as tenu.
-            </Body>
+            <Text className="text-sm text-muted">Touche ce que tu as tenu.</Text>
             {habits.length > 0 && (
               <Pressable
                 accessibilityRole="button"
@@ -131,9 +124,7 @@ export default function DayScreen() {
                   notifyChange();
                 }}
               >
-                <Body size={14} weight="semibold" style={styles.link}>
-                  Rien de tenu ce jour-là
-                </Body>
+                <Text className="text-sm font-semibold underline">Rien de tenu ce jour-là</Text>
               </Pressable>
             )}
           </>
@@ -143,6 +134,8 @@ export default function DayScreen() {
   );
 }
 
+
+// THIS IS REALLY BAD, WAY TOO DAYGRAPH ORIENTED. I'm not sure I like that welcome screen at all.
 /** First launch: nothing in the database yet. */
 function Welcome({ today }: { today: Day }) {
   const db = useSQLiteContext();
@@ -164,14 +157,14 @@ function Welcome({ today }: { today: Day }) {
 
   return (
     <Screen>
-      <View style={styles.welcome}>
+      <View className="mt-10 gap-3">
         <Title>Bienvenue</Title>
-        <Body tone="muted">
+        <Text className="text-muted">
           Chaque soir, coche les habitudes que tu as tenues. Commence par récupérer ton historique Daygraph, ou crée ta
           première habitude.
-        </Body>
+        </Text>
       </View>
-      <View style={styles.welcomeActions}>
+      <View className="mt-auto gap-3">
         <PrimaryButton
           label={importing ? 'Import en cours…' : 'Importer une sauvegarde Daygraph'}
           onPress={importing ? undefined : importBackup}
@@ -181,48 +174,3 @@ function Welcome({ today }: { today: Day }) {
     </Screen>
   );
 }
-
-function PillButton({ label, onPress }: { label: string; onPress: () => void }) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => [styles.pill, { borderColor: theme.colors.lineStrong, opacity: pressed ? 0.6 : 1 }]}
-    >
-      <Body size={14}>{label}</Body>
-    </Pressable>
-  );
-}
-
-function PrimaryButton({ label, onPress }: { label: string; onPress?: () => void }) {
-  const theme = useTheme();
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !onPress }}
-      disabled={!onPress}
-      onPress={onPress}
-      style={({ pressed }) => [styles.primary, { backgroundColor: theme.colors.text, opacity: !onPress || pressed ? 0.7 : 1 }]}
-    >
-      <Body size={17} weight="semibold" style={{ color: theme.colors.onAccent }}>
-        {label}
-      </Body>
-    </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  header: { gap: 14 },
-  topBar: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  titleRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 },
-  titleText: { flex: 1, gap: 6 },
-  dayTitle: { fontSize: 36, lineHeight: 38 },
-  list: { gap: 12 },
-  footer: { marginTop: 'auto', minHeight: 60, paddingRight: 84, justifyContent: 'center', gap: 6 },
-  link: { textDecorationLine: 'underline' },
-  pill: { minHeight: 40, paddingHorizontal: 14, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  welcome: { gap: 12, marginTop: 40 },
-  welcomeActions: { gap: 12, marginTop: 'auto' },
-  primary: { minHeight: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
-});
