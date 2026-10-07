@@ -1,4 +1,5 @@
-import { argbToHex, daygraphDateToDay, ImportError, parseDaygraph } from './daygraph';
+import { argbToHex, daygraphDateToDay, parseDaygraph } from './daygraph';
+import { ImportError } from './errors';
 
 describe('daygraphDateToDay', () => {
   test.each([
@@ -55,11 +56,16 @@ describe('parseDaygraph', () => {
 
   test('refuses negative habits', () => {
     const tasks = [{ id: 1, title: 'Fumer', color: '4294941273', order: 1, positive: false }];
-    expect(() => parseDaygraph(backup({ tasks, histories: [] }))).toThrow(ImportError);
+    expect(() => parseDaygraph(backup({ tasks, histories: [] }))).toThrow(
+      expect.objectContaining({ code: 'negative-habit', params: { name: 'Fumer' } }),
+    );
   });
 
   test('refuses files that are not Daygraph backups', () => {
-    expect(() => parseDaygraph({ habits: [] })).toThrow(ImportError);
+    expect(() => parseDaygraph({ habits: [] })).toThrow(expect.objectContaining({ code: 'unknown-format' }));
     expect(() => parseDaygraph(backup({ histories: [{ task: 99, date: 0 }] }))).toThrow(ImportError);
+    expect(() => parseDaygraph(backup({ histories: [{ task: 99, date: 0 }] }))).toThrow(
+      expect.objectContaining({ code: 'invalid-daygraph' }),
+    );
   });
 });

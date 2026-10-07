@@ -1,0 +1,72 @@
+{
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "done": "Done",
+    "today": "Today"
+  },
+  "day": {
+    "yesterday": "Yesterday",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "editHabits": "Edit my habits",
+    "pastDay": "Past day · you can still change it",
+    "unfilledDay": "Not filled in · you can still complete it",
+    "noActiveHabits": "No active habits on this day. Use the pencil below to add one.",
+    "saved": "Saved.",
+    "savedToday": "Saved. You can close the app.",
+    "tapPrompt": "Tap the habits you kept.",
+    "nothingKept": "Nothing kept that day",
+    "streak_zero": "No streak yet",
+    "streak_one": "{{count}} day in a row",
+    "streak_other": "{{count}} days in a row"
+  },
+  "empty": {
+    "title": "No habits yet",
+    "body": "Create your first habit, then tick it every evening once you’ve kept it.",
+    "create": "Create a habit",
+    "import": "Import data",
+    "importing": "Importing…"
+  },
+  "import": {
+    "doneTitle": "Import complete",
+    "doneBody_one": "{{count}} habit and {{checks}} ticked days imported.",
+    "doneBody_other": "{{count}} habits and {{checks}} ticked days imported.",
+    "failedTitle": "Import failed",
+    "errors": {
+      "unreadable": "This file can’t be read.",
+      "unknown-format": "This file isn’t a backup the app recognizes.",
+      "invalid-daygraph": "This Daygraph backup is damaged.",
+      "negative-habit": "“{{name}}” is a negative habit in Daygraph (ticked means failed), which isn’t supported.",
+      "not-empty": "For now, data can only be imported into an empty app."
+    }
+  },
+  "stats": {
+    "title": "Statistics",
+    "detailLink": "See a habit’s details ›",
+    "detailTitle": "Habit {{id}}"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "habits": {
+    "title": "My habits",
+    "editLink": "Edit a habit ›",
+    "new": "+ New habit",
+    "archivedLink": "Archived ›",
+    "newTitle": "New habit",
+    "editTitle": "Edit",
+    "archivedTitle": "Archived"
+  },
+  "placeholder": {
+    "stats": "One card per habit (step 5)",
+    "detail": "Where I stand · Am I improving? · Which days are hard? · Day by day (step 5)",
+    "settings": "Display · Reminders · Backup · Feedback (steps 4 and 6)",
+    "habits": "List with up/down arrows and pencil (step 3)",
+    "newHabit": "Name · Color · Preview (step 3)",
+    "editHabit": "Name · Color · Archive (step 3)",
+    "archived": "Archived habits: restore, swipe to delete (step 3)"
+  }
+}

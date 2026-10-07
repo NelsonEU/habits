@@ -1,5 +1,6 @@
 import { type Day, minDay } from '@/domain/day';
 import { nearestHabitColor } from '@/domain/palette';
+import { ImportError } from './errors';
 
 /**
  * Daygraph backup format (a Flutter app):
@@ -21,8 +22,6 @@ export type DaygraphImport = {
   duplicates: number;
 };
 
-export class ImportError extends Error {}
-
 /**
  * Midnight in any timezone from UTC−12 to UTC+11 falls within 12 hours of
  * that day's UTC midnight, so shifting by 12 hours and reading the UTC date
@@ -35,7 +34,7 @@ export function daygraphDateToDay(timestamp: number): Day {
 /** ARGB integer (as number or string) to "#RRGGBB". */
 export function argbToHex(argb: string | number): string {
   const value = Number(argb);
-  if (!Number.isInteger(value)) throw new ImportError(`Couleur illisible : ${argb}`);
+  if (!Number.isInteger(value)) throw new ImportError('invalid-daygraph');
   return '#' + (value & 0xffffff).toString(16).padStart(6, '0').toUpperCase();
 }
 
@@ -49,18 +48,18 @@ function readTask(raw: unknown): DaygraphTask {
     typeof raw.order !== 'number' ||
     (typeof raw.color !== 'string' && typeof raw.color !== 'number')
   ) {
-    throw new ImportError('Habitude Daygraph illisible.');
+    throw new ImportError('invalid-daygraph');
   }
   if (raw.positive === false) {
     // A negative habit means "ticked = failed": importing it as-is would invert its stats.
-    throw new ImportError(`« ${raw.title} » est une habitude négative dans Daygraph, ce qui n’est pas géré.`);
+    throw new ImportError('negative-habit', { name: raw.title });
   }
   return raw as DaygraphTask;
 }
 
 function readHistory(raw: unknown): DaygraphHistory {
   if (!isObject(raw) || typeof raw.task !== 'number' || typeof raw.date !== 'number') {
-    throw new ImportError('Historique Daygraph illisible.');
+    throw new ImportError('invalid-daygraph');
   }
   return raw as DaygraphHistory;
 }
@@ -71,7 +70,7 @@ export function isDaygraphBackup(json: unknown): boolean {
 
 export function parseDaygraph(json: unknown): DaygraphImport {
   if (!isObject(json) || !Array.isArray(json.tasks) || !Array.isArray(json.histories)) {
-    throw new ImportError('Ce fichier n’est pas une sauvegarde Daygraph.');
+    throw new ImportError('unknown-format');
   }
   const tasks = json.tasks.map(readTask);
   const taskIds = new Set(tasks.map((t) => t.id));
@@ -81,7 +80,7 @@ export function parseDaygraph(json: unknown): DaygraphImport {
   let duplicates = 0;
   let firstDay: Day | null = null;
   for (const history of json.histories.map(readHistory)) {
-    if (!taskIds.has(history.task)) throw new ImportError('Historique lié à une habitude inconnue.');
+    if (!taskIds.has(history.task)) throw new ImportError('invalid-daygraph');
     const day = daygraphDateToDay(history.date);
     const key = `${history.task}|${day}`;
     if (seen.has(key)) {

@@ -1,0 +1,72 @@
+{
+  "common": {
+    "back": "Retour",
+    "cancel": "Annuler",
+    "done": "Terminé",
+    "today": "Aujourd’hui"
+  },
+  "day": {
+    "yesterday": "Hier",
+    "previousWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "statistics": "Statistiques",
+    "settings": "Réglages",
+    "editHabits": "Modifier mes habitudes",
+    "pastDay": "Jour passé · tu peux encore le modifier",
+    "unfilledDay": "Jour non rempli · tu peux le compléter",
+    "noActiveHabits": "Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.",
+    "saved": "C’est enregistré.",
+    "savedToday": "C’est enregistré. Tu peux fermer l’app.",
+    "tapPrompt": "Touche ce que tu as tenu.",
+    "nothingKept": "Rien de tenu ce jour-là",
+    "streak_zero": "Pas de série en cours",
+    "streak_one": "{{count}} jour d’affilée",
+    "streak_other": "{{count}} jours d’affilée"
+  },
+  "empty": {
+    "title": "Aucune habitude pour l’instant",
+    "body": "Crée ta première habitude, puis coche-la chaque soir quand tu l’as tenue.",
+    "create": "Créer une habitude",
+    "import": "Importer des données",
+    "importing": "Import en cours…"
+  },
+  "import": {
+    "doneTitle": "Import terminé",
+    "doneBody_one": "{{count}} habitude et {{checks}} jours cochés importés.",
+    "doneBody_other": "{{count}} habitudes et {{checks}} jours cochés importés.",
+    "failedTitle": "Import impossible",
+    "errors": {
+      "unreadable": "Ce fichier n’est pas lisible.",
+      "unknown-format": "Ce fichier n’est pas une sauvegarde reconnue.",
+      "invalid-daygraph": "Cette sauvegarde Daygraph est abîmée.",
+      "negative-habit": "« {{name}} » est une habitude négative dans Daygraph (cochée = ratée), ce qui n’est pas géré.",
+      "not-empty": "Pour l’instant, l’import n’est possible que dans une app vide."
+    }
+  },
+  "stats": {
+    "title": "Statistiques",
+    "detailLink": "Voir le détail d’une habitude ›",
+    "detailTitle": "Habitude {{id}}"
+  },
+  "settings": {
+    "title": "Réglages"
+  },
+  "habits": {
+    "title": "Mes habitudes",
+    "editLink": "Modifier une habitude ›",
+    "new": "+ Nouvelle habitude",
+    "archivedLink": "Archivées ›",
+    "newTitle": "Nouvelle habitude",
+    "editTitle": "Modifier",
+    "archivedTitle": "Archivées"
+  },
+  "placeholder": {
+    "stats": "Une carte par habitude (étape 5)",
+    "detail": "Où j’en suis · Est-ce que je progresse ? · Quels jours coincent ? · Jour par jour (étape 5)",
+    "settings": "Affichage · Rappels · Sauvegarde · Commentaire (étapes 4 et 6)",
+    "habits": "Liste avec flèches haut/bas et crayon (étape 3)",
+    "newHabit": "Nom · Couleur · Aperçu (étape 3)",
+    "editHabit": "Nom · Couleur · Archiver (étape 3)",
+    "archived": "Habitudes archivées : restaurer, glisser pour supprimer (étape 3)"
+  }
+}

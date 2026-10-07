@@ -1,5 +1,6 @@
 import { useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { BackLink } from '@/components/buttons';
 import { Placeholder } from '@/components/placeholder';
@@ -8,14 +9,15 @@ import { Title } from '@/components/text';
 
 /** 3 · Détail d’une habitude. */
 export default function HabitDetailScreen() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   return (
     <Screen scroll>
       <View className="gap-3">
-        <BackLink label="Statistiques" fallback="/stats" chevron />
-        <Title className="text-4xl">Habitude {id}</Title>
+        <BackLink label={t('stats.title')} fallback="/stats" chevron />
+        <Title className="text-4xl">{t('stats.detailTitle', { id })}</Title>
       </View>
-      <Placeholder>Où j’en suis · Est-ce que je progresse ? · Quels jours coincent ? · Jour par jour (étape 5)</Placeholder>
+      <Placeholder>{t('placeholder.detail')}</Placeholder>
     </Screen>
   );
 }

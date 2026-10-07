@@ -1,4 +1,5 @@
 import '@/global.css';
+import '@/i18n';
 
 import { Stack } from 'expo-router';
 import { SQLiteProvider } from 'expo-sqlite';

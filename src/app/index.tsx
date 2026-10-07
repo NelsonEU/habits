@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Fab, IconButton, PillButton, PrimaryButton } from '@/components/buttons';
 import { HabitCard } from '@/components/habit-card';
@@ -13,10 +14,12 @@ import { markFilled, setChecked } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, type Day, startOfWeek } from '@/domain/day';
 import { dayDots, weekBounds } from '@/domain/day-view';
-import { dayTitle, longDay, streakLabel } from '@/domain/format';
 import { habitsOn, historyOf } from '@/domain/model';
 import { currentStreak } from '@/domain/stats';
 import { useToday } from '@/hooks/use-today';
+import { locale } from '@/i18n';
+import { longDay } from '@/i18n/format';
+import { ImportError } from '@/import/errors';
 import { pickAndImport } from '@/import/pick';
 
 // Becomes a setting in step 6.
@@ -24,6 +27,7 @@ const WEEK_STARTS_ON = 'monday';
 
 /** 1 · Le jour — opens on today. */
 export default function DayScreen() {
+  const { t } = useTranslation();
   const db = useSQLiteContext();
   const snapshot = useSnapshot();
   const today = useToday();
@@ -52,7 +56,7 @@ export default function DayScreen() {
   };
 
   return (
-    <Screen scroll overlay={<Fab icon="pencil" label="Modifier mes habitudes" onPress={() => router.push('/habits')} />}>
+    <Screen scroll overlay={<Fab icon="pencil" label={t('day.editHabits')} onPress={() => router.push('/habits')} />}>
       <View className="gap-3.5">
         <View className="flex-row items-center gap-2">
           <WeekNav
@@ -60,8 +64,8 @@ export default function DayScreen() {
             onPrev={weekStart > bounds.first ? () => setPickedWeek(addDays(weekStart, -7)) : null}
             onNext={weekStart < bounds.last ? () => setPickedWeek(addDays(weekStart, 7)) : null}
           />
-          <IconButton icon="chart.bar" label="Statistiques" onPress={() => router.push('/stats')} />
-          <IconButton icon="slider.horizontal.3" label="Réglages" onPress={() => router.push('/settings')} />
+          <IconButton icon="chart.bar" label={t('day.statistics')} onPress={() => router.push('/stats')} />
+          <IconButton icon="slider.horizontal.3" label={t('day.settings')} onPress={() => router.push('/settings')} />
         </View>
         <WeekDays
           weekStart={weekStart}
@@ -74,16 +78,20 @@ export default function DayScreen() {
 
       <View className="flex-row items-end justify-between gap-3">
         <View className="flex-1 gap-1.5">
-          <Title className="text-4xl leading-[38px]">{dayTitle(selected, today)}</Title>
+          <Title className="text-4xl leading-[38px]">{selected === today
+              ? t('common.today')
+              : selected === addDays(today, -1)
+                ? t('day.yesterday')
+                : longDay(selected, locale)}</Title>
           <Text className="text-sm text-muted">
             {selected >= addDays(today, -1)
-              ? longDay(selected)
+              ? longDay(selected, locale)
               : filled
-                ? 'Jour passé · tu peux encore le modifier'
-                : 'Jour non rempli · tu peux le compléter'}
+                ? t('day.pastDay')
+                : t('day.unfilledDay')}
           </Text>
         </View>
-        {selected !== today && <PillButton label="Aujourd’hui" onPress={goToday} />}
+        {selected !== today && <PillButton label={t('common.today')} onPress={goToday} />}
       </View>
 
       <View className="gap-3">
@@ -95,7 +103,7 @@ export default function DayScreen() {
               name={h.name}
               color={h.color}
               checked={checked}
-              subtitle={streakLabel(currentStreak(historyOf(snapshot, h), selected))}
+              subtitle={t('day.streak', { count: currentStreak(historyOf(snapshot, h), selected) })}
               onToggle={() => toggle(h.id, checked)}
             />
           );
@@ -104,7 +112,7 @@ export default function DayScreen() {
           <EmptyState today={today} />
         ) : (
           habits.length === 0 && (
-            <Text className="text-muted">Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.</Text>
+            <Text className="text-muted">{t('day.noActiveHabits')}</Text>
           )
         )}
       </View>
@@ -113,11 +121,11 @@ export default function DayScreen() {
         <View className="mt-auto min-h-[60px] justify-center gap-1.5 pr-[84px]">
           {anyDone || filled ? (
             <Text className="text-sm text-muted">
-              {selected === today ? 'C’est enregistré. Tu peux fermer l’app.' : 'C’est enregistré.'}
+              {selected === today ? t('day.savedToday') : t('day.saved')}
             </Text>
           ) : (
             <>
-              <Text className="text-sm text-muted">Touche ce que tu as tenu.</Text>
+              <Text className="text-sm text-muted">{t('day.tapPrompt')}</Text>
               <Pressable
                 accessibilityRole="button"
                 hitSlop={8}
@@ -126,7 +134,7 @@ export default function DayScreen() {
                   notifyChange();
                 }}
               >
-                <Text className="text-sm font-semibold underline">Rien de tenu ce jour-là</Text>
+                <Text className="text-sm font-semibold underline">{t('day.nothingKept')}</Text>
               </Pressable>
             </>
           )}
@@ -139,6 +147,7 @@ export default function DayScreen() {
 
 /** A brand-new app: in place of the habit cards, create a first habit or import existing data. */
 function EmptyState({ today }: { today: Day }) {
+  const { t } = useTranslation();
   const db = useSQLiteContext();
   const [importing, setImporting] = useState(false);
 
@@ -147,10 +156,14 @@ function EmptyState({ today }: { today: Day }) {
     try {
       const result = await pickAndImport(db, today);
       if (result) {
-        Alert.alert('Import terminé', `${result.habits} habitudes et ${result.checks.toLocaleString('fr-FR')} jours cochés.`);
+        Alert.alert(
+          t('import.doneTitle'),
+          t('import.doneBody', { count: result.habits, checks: result.checks.toLocaleString(locale) }),
+        );
       }
     } catch (e) {
-      Alert.alert('Import impossible', e instanceof Error ? e.message : String(e));
+      if (!(e instanceof ImportError)) throw e;
+      Alert.alert(t('import.failedTitle'), t(`import.errors.${e.code}`, e.params));
     } finally {
       setImporting(false);
     }
@@ -159,13 +172,13 @@ function EmptyState({ today }: { today: Day }) {
   return (
     <View className="gap-5 rounded-3xl border border-line bg-surface p-5">
       <View className="gap-1.5">
-        <Text className="text-xl font-semibold leading-6">Aucune habitude pour l’instant</Text>
-        <Text className="text-muted">Crée ta première habitude, puis coche-la chaque soir quand tu l’as tenue.</Text>
+        <Text className="text-xl font-semibold leading-6">{t('empty.title')}</Text>
+        <Text className="text-muted">{t('empty.body')}</Text>
       </View>
       <View className="gap-3">
-        <PrimaryButton label="Créer une habitude" onPress={() => router.push('/habits/new')} />
+        <PrimaryButton label={t('empty.create')} onPress={() => router.push('/habits/new')} />
         <PillButton
-          label={importing ? 'Import en cours…' : 'Importer des données'}
+          label={importing ? t('empty.importing') : t('empty.import')}
           onPress={importing ? undefined : importData}
         />
       </View>

@@ -1,4 +1,5 @@
 import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { BackLink } from '@/components/buttons';
 import { Placeholder } from '@/components/placeholder';
@@ -7,13 +8,14 @@ import { Title } from '@/components/text';
 
 /** 1c · Nouvelle habitude (modal). */
 export default function NewHabitScreen() {
+  const { t } = useTranslation();
   return (
     <Screen>
       <View className="gap-3">
-        <BackLink label="Annuler" fallback="/habits" />
-        <Title>Nouvelle habitude</Title>
+        <BackLink label={t('common.cancel')} fallback="/habits" />
+        <Title>{t('habits.newTitle')}</Title>
       </View>
-      <Placeholder>Nom · Couleur · Aperçu (étape 3)</Placeholder>
+      <Placeholder>{t('placeholder.newHabit')}</Placeholder>
     </Screen>
   );
 }

@@ -1,9 +1,11 @@
 import { SymbolView } from 'expo-symbols';
 import { Pressable, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { addDays, type Day } from '@/domain/day';
 import type { Dot } from '@/domain/day-view';
-import { longDay, weekdayLetter, weekLabel } from '@/domain/format';
+import { locale } from '@/i18n';
+import { longDay, weekdayLetter, weekLabel } from '@/i18n/format';
 import { cn } from '@/lib/cn';
 import { colors } from '@/theme';
 import { Text } from './text';
@@ -18,13 +20,14 @@ export function WeekNav({
   onPrev: (() => void) | null;
   onNext: (() => void) | null;
 }) {
+  const { t } = useTranslation();
   return (
     <View className="min-w-0 flex-1 flex-row items-center">
-      <Arrow icon="chevron.left" label="Semaine précédente" onPress={onPrev} />
+      <Arrow icon="chevron.left" label={t('day.previousWeek')} onPress={onPrev} />
       <Text numberOfLines={1} className="shrink text-center font-semibold">
-        {weekLabel(weekStart, addDays(weekStart, 6))}
+        {weekLabel(weekStart, addDays(weekStart, 6), locale)}
       </Text>
-      <Arrow icon="chevron.right" label="Semaine suivante" onPress={onNext} />
+      <Arrow icon="chevron.right" label={t('day.nextWeek')} onPress={onNext} />
     </View>
   );
 }
@@ -69,7 +72,7 @@ export function WeekDays({
           <Pressable
             key={day}
             accessibilityRole="button"
-            accessibilityLabel={longDay(day)}
+            accessibilityLabel={longDay(day, locale)}
             accessibilityState={{ selected: isSelected, disabled: future }}
             disabled={future}
             onPress={() => onSelect(day)}
@@ -79,7 +82,7 @@ export function WeekDays({
               future && 'opacity-35',
             )}
           >
-            <Text className="text-xs text-muted">{weekdayLetter(day)}</Text>
+            <Text className="text-xs text-muted">{weekdayLetter(day, locale)}</Text>
             <Text className={cn('text-lg tabular-nums', day === today ? 'font-semibold' : 'font-medium')}>
               {Number(day.slice(8))}
             </Text>

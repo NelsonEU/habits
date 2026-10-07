@@ -3,6 +3,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { Day } from '@/domain/day';
 import type { Habit, Snapshot } from '@/domain/model';
 import type { DaygraphImport } from '@/import/daygraph';
+import { ImportError } from '@/import/errors';
 
 type HabitRow = {
   id: number;
@@ -59,7 +60,7 @@ export function markFilled(db: SQLiteDatabase, day: Day) {
 export function importDaygraph(db: SQLiteDatabase, data: DaygraphImport, today: Day) {
   db.withTransactionSync(() => {
     const existing = db.getFirstSync<{ n: number }>('SELECT COUNT(*) AS n FROM habits');
-    if (existing && existing.n > 0) throw new Error('L’import n’est possible que dans une app vide pour l’instant.');
+    if (existing && existing.n > 0) throw new ImportError('not-empty');
 
     const ids = new Map<number, number>();
     for (const h of data.habits) {
