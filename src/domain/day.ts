@@ -56,7 +56,13 @@ export function eachDay(from: Day, to: Day): Day[] {
   return out;
 }
 
-export const minDay = (a: Day, b: Day): Day => (a < b ? a : b);
+/** First day of the week containing `day`. */
+export function startOfWeek(day: Day, weekStartsOn: 'monday' | 'sunday'): Day {
+  const offset = weekStartsOn === 'monday' ? weekdayOf(day) : (weekdayOf(day) + 1) % 7;
+  return addDays(day, -offset);
+}
+
+export const minDay =(a: Day, b: Day): Day => (a < b ? a : b);
 export const maxDay = (a: Day, b: Day): Day => (a > b ? a : b);
 
 /** "2026-10" for a day in October 2026. */

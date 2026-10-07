@@ -1,0 +1,40 @@
+import type { SQLiteDatabase } from 'expo-sqlite';
+
+/**
+ * Each entry upgrades the database by one version. Never edit a migration
+ * once it has run on the phone: add a new one at the end instead.
+ */
+const MIGRATIONS: string[] = [
+  // 1 — habits, ticks, and days the user went through (filled in)
+  `
+  CREATE TABLE habits (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    color TEXT NOT NULL,
+    sort_order INTEGER NOT NULL,
+    start_day TEXT NOT NULL,
+    archived_at TEXT
+  );
+  CREATE TABLE checks (
+    habit_id INTEGER NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+    day TEXT NOT NULL,
+    PRIMARY KEY (habit_id, day)
+  ) WITHOUT ROWID;
+  CREATE TABLE filled_days (
+    day TEXT PRIMARY KEY NOT NULL
+  ) WITHOUT ROWID;
+  `,
+];
+
+/** Runs at app start, before any screen renders. */
+export async function initDatabase(db: SQLiteDatabase) {
+  await db.execAsync(`PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;`);
+  const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
+  const current = row?.user_version ?? 0;
+  for (let version = current; version < MIGRATIONS.length; version++) {
+    await db.withExclusiveTransactionAsync(async (tx) => {
+      await tx.execAsync(MIGRATIONS[version]);
+      await tx.execAsync(`PRAGMA user_version = ${version + 1}`);
+    });
+  }
+}

@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { daysBetween } from '@/domain/day';
 import { bestStreak, yearlyRates } from '@/domain/stats';
-import { parseDaygraph } from './daygraph';
+import { type DaygraphImport, parseDaygraph } from './daygraph';
 
 /**
  * Checks the importer and stats against the real Daygraph backup and the
@@ -14,7 +14,11 @@ const BACKUP = path.join(__dirname, '../../private/daygraph-backup.json');
 const TODAY = '2026-10-07';
 
 (fs.existsSync(BACKUP) ? describe : describe.skip)('real Daygraph backup', () => {
-  const result = parseDaygraph(JSON.parse(fs.readFileSync(BACKUP, 'utf8')));
+  // Read in beforeAll: a skipped describe still runs its body to collect tests.
+  let result: DaygraphImport;
+  beforeAll(() => {
+    result = parseDaygraph(JSON.parse(fs.readFileSync(BACKUP, 'utf8')));
+  });
   const historyOf = (index: number) => {
     const { sourceId } = result.habits[index];
     return {

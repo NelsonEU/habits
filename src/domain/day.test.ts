@@ -1,4 +1,14 @@
-import { addDays, addMonths, daysBetween, eachDay, isDay, lastDayOfMonth, toDay, weekdayOf } from './day';
+import {
+  addDays,
+  addMonths,
+  daysBetween,
+  eachDay,
+  isDay,
+  lastDayOfMonth,
+  startOfWeek,
+  toDay,
+  weekdayOf,
+} from './day';
 
 describe('day', () => {
   test('addDays crosses month, year and DST boundaries', () => {
@@ -19,6 +29,14 @@ describe('day', () => {
     expect(weekdayOf('2026-10-05')).toBe(0); // Monday
     expect(weekdayOf('2026-10-07')).toBe(2); // Wednesday
     expect(weekdayOf('2026-10-11')).toBe(6); // Sunday
+  });
+
+  test('startOfWeek', () => {
+    expect(startOfWeek('2026-10-07', 'monday')).toBe('2026-10-05');
+    expect(startOfWeek('2026-10-05', 'monday')).toBe('2026-10-05');
+    expect(startOfWeek('2026-10-11', 'monday')).toBe('2026-10-05');
+    expect(startOfWeek('2026-10-07', 'sunday')).toBe('2026-10-04');
+    expect(startOfWeek('2026-10-11', 'sunday')).toBe('2026-10-11');
   });
 
   test('eachDay includes both ends', () => {

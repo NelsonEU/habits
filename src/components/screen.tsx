@@ -26,7 +26,7 @@ export function Screen({ children, scroll = false, overlay }: Props) {
   return (
     <View style={[styles.fill, { backgroundColor: theme.colors.background }]}>
       {scroll ? (
-        <ScrollView contentContainerStyle={padding}>{children}</ScrollView>
+        <ScrollView contentContainerStyle={[styles.grow, padding]}>{children}</ScrollView>
       ) : (
         <View style={[styles.fill, padding]}>{children}</View>
       )}
@@ -37,4 +37,6 @@ export function Screen({ children, scroll = false, overlay }: Props) {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
+  // Lets content push a footer to the bottom with marginTop: 'auto' when it's short.
+  grow: { flexGrow: 1 },
 });
