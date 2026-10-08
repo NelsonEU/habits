@@ -65,8 +65,37 @@
   },
   "stats": {
     "title": "Statistics",
-    "detailLink": "See a habit’s details ›",
-    "detailTitle": "Habit {{id}}"
+    "empty": "No active habits yet.",
+    "streak": "Current streak",
+    "record": "Record",
+    "recordOn": "Record · {{date}}",
+    "last30": "Last 30 days",
+    "last30Short": "30 days",
+    "daysShort": "{{count}}d",
+    "noValue": "—",
+    "archived": "Archived",
+    "whereTitle": "Where I stand",
+    "progressTitle": "Am I improving?",
+    "progressSentence": "{{pct}} of days kept in {{year}}.",
+    "progressSentenceVs": "{{pct}} of days kept in {{year}}, compared with {{others}}.",
+    "yearItem": "{{pct}} in {{year}}",
+    "and": " and ",
+    "monthsCaption": "% of days kept per month · {{from}} – {{to}}",
+    "byYear": "By year",
+    "tapHint": "Tap a bar to see its value.",
+    "weekdaysTitle": "Which days are hard?",
+    "weekdaysSentence": "{{hardest}} is your hardest day, {{easiest}} the easiest (last 12 months).",
+    "weekdaysEven": "No day stands out (last 12 months).",
+    "calendarTitle": "Day by day",
+    "legendDone": "Kept",
+    "legendMissed": "Not kept",
+    "legendForgotten": "Not filled in",
+    "mondayOnTop": "Monday at the top",
+    "calendarA11y": "Last 26 weeks: {{done}} days kept out of {{total}}.",
+    "valueA11y": "{{label}}: {{value}}",
+    "noData": "no data",
+    "before": "{{pct}} before",
+    "trendA11y": "Compared with the 30 days before: {{pct}}"
   },
   "settings": {
     "title": "Settings",
@@ -122,8 +151,6 @@
     "editHint": "Opens the habit to edit it"
   },
   "placeholder": {
-    "stats": "One card per habit (step 5)",
-    "detail": "Where I stand · Am I improving? · Which days are hard? · Day by day (step 5)",
     "settings": "Display · Reminders · Feedback (step 6)"
   },
   "colors": {

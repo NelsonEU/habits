@@ -74,12 +74,6 @@ export function last30Days(h: HabitHistory, today: Day): { current: Rate; previo
   };
 }
 
-/** Change in percentage points between two rates, or null if either is empty. */
-export function deltaPoints(current: Rate, previous: Rate): number | null {
-  if (current.ratio === null || previous.ratio === null) return null;
-  return Math.round(current.ratio * 100) - Math.round(previous.ratio * 100);
-}
-
 /** The 12 complete months before the current one (Oct 2025 – Sep 2026 on 7 Oct 2026). */
 export function lastTwelveMonths(today: Day): { months: Month[]; from: Day; to: Day } {
   const current = monthOf(today);
@@ -113,4 +107,16 @@ export function weekdayRates(h: HabitHistory, from: Day, to: Day): Rate[] {
     if (h.checked.has(day)) c.done++;
   }
   return counts.map(({ done, total }) => ({ done, total, ratio: total === 0 ? null : done / total }));
+}
+
+/**
+ * Indexes of the hardest and easiest entries of a list of rates (e.g. weekdays).
+ * Null when there's nothing to tell apart: fewer than two rates, or all equal.
+ */
+export function extremes(rates: Rate[]): { hardest: number; easiest: number } | null {
+  const known = rates.map((r, i) => ({ ratio: r.ratio, i })).filter((r): r is { ratio: number; i: number } => r.ratio !== null);
+  if (known.length < 2) return null;
+  const hardest = known.reduce((a, b) => (b.ratio < a.ratio ? b : a));
+  const easiest = known.reduce((a, b) => (b.ratio > a.ratio ? b : a));
+  return hardest.ratio === easiest.ratio ? null : { hardest: hardest.i, easiest: easiest.i };
 }

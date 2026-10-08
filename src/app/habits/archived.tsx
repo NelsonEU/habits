@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useTranslation } from 'react-i18next';
 import { Alert, Pressable, View } from 'react-native';
@@ -67,10 +68,18 @@ function ArchivedRow({ habit }: { habit: Habit }) {
       )}
     >
       <View className="min-h-[72px] flex-row items-center gap-3 rounded-[20px] border border-line bg-surface-muted py-2.5 pl-4 pr-2.5">
-        <View className="size-3 rounded-full opacity-45" style={{ backgroundColor: habit.color }} />
-        <Text numberOfLines={2} className="min-w-0 flex-1 text-[17px] font-semibold text-faint">
-          {habit.name}
-        </Text>
+        {/* Tapping the name opens the habit's statistics: archiving keeps its history viewable. */}
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel={habit.name}
+          onPress={() => router.push(`/stats/${habit.id}`)}
+          className="min-w-0 flex-1 flex-row items-center gap-3 self-stretch active:opacity-60"
+        >
+          <View className="size-3 rounded-full opacity-45" style={{ backgroundColor: habit.color }} />
+          <Text numberOfLines={2} className="min-w-0 flex-1 text-[17px] font-semibold text-faint">
+            {habit.name}
+          </Text>
+        </Pressable>
         <PillButton
           label={t('habits.archived.restore')}
           onPress={() => {

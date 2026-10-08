@@ -2,7 +2,7 @@ import { eachDay } from './day';
 import {
   bestStreak,
   currentStreak,
-  deltaPoints,
+  extremes,
   type HabitHistory,
   last30Days,
   lastTwelveMonths,
@@ -72,7 +72,7 @@ describe('last30Days', () => {
     const h = habit('2026-01-01', eachDay('2026-08-08', '2026-08-22')); // 15 of the previous 30
     const { current, previous } = last30Days(h, TODAY);
     expect(previous.ratio).toBe(0.5);
-    expect(deltaPoints(current, previous)).toBe(-50);
+    expect(current.ratio).toBe(0);
   });
 });
 
@@ -103,5 +103,19 @@ describe('weekdayRates', () => {
     // 5 – 11 Oct 2026 is Monday – Sunday; tick Monday and Friday only
     const rates = weekdayRates(habit('2026-01-01', ['2026-10-05', '2026-10-09']), '2026-10-05', '2026-10-11');
     expect(rates.map((r) => r.ratio)).toEqual([1, 0, 0, 0, 1, 0, 0]);
+  });
+});
+
+describe('extremes', () => {
+  const r = (ratio: number | null) => ({ done: 0, total: ratio === null ? 0 : 1, ratio });
+
+  test('finds the hardest and easiest, first one on a tie', () => {
+    expect(extremes([r(0.9), r(0.5), r(0.5), r(1)])).toEqual({ hardest: 1, easiest: 3 });
+  });
+
+  test('ignores empty rates, and has nothing to say when all are equal', () => {
+    expect(extremes([r(null), r(0.4), r(0.8)])).toEqual({ hardest: 1, easiest: 2 });
+    expect(extremes([r(0.5), r(0.5)])).toBeNull();
+    expect(extremes([r(0.5), r(null)])).toBeNull();
   });
 });

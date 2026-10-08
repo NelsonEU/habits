@@ -65,8 +65,37 @@
   },
   "stats": {
     "title": "Statistiques",
-    "detailLink": "Voir le détail d’une habitude ›",
-    "detailTitle": "Habitude {{id}}"
+    "empty": "Aucune habitude active pour l’instant.",
+    "streak": "Série en cours",
+    "record": "Record",
+    "recordOn": "Record · {{date}}",
+    "last30": "30 derniers jours",
+    "last30Short": "30 j",
+    "daysShort": "{{count}} j",
+    "noValue": "—",
+    "archived": "Archivée",
+    "whereTitle": "Où j’en suis",
+    "progressTitle": "Est-ce que je progresse ?",
+    "progressSentence": "{{pct}} des jours tenus en {{year}}.",
+    "progressSentenceVs": "{{pct}} des jours tenus en {{year}}, contre {{others}}.",
+    "yearItem": "{{pct}} en {{year}}",
+    "and": " et ",
+    "monthsCaption": "% de jours tenus par mois · {{from}} – {{to}}",
+    "byYear": "Par année",
+    "tapHint": "Touche une barre pour voir sa valeur.",
+    "weekdaysTitle": "Quels jours coincent ?",
+    "weekdaysSentence": "Le {{hardest}} est ton jour le plus difficile, le {{easiest}} le plus facile (12 derniers mois).",
+    "weekdaysEven": "Aucun jour ne se démarque (12 derniers mois).",
+    "calendarTitle": "Jour par jour",
+    "legendDone": "Tenu",
+    "legendMissed": "Pas tenu",
+    "legendForgotten": "Non rempli",
+    "mondayOnTop": "Lundi en haut",
+    "calendarA11y": "26 dernières semaines : {{done}} jours tenus sur {{total}}.",
+    "valueA11y": "{{label}} : {{value}}",
+    "noData": "pas de donnée",
+    "before": "{{pct}} avant",
+    "trendA11y": "Par rapport aux 30 jours d’avant : {{pct}}"
   },
   "settings": {
     "title": "Réglages",
@@ -122,8 +151,6 @@
     "editHint": "Ouvre l’habitude pour la modifier"
   },
   "placeholder": {
-    "stats": "Une carte par habitude (étape 5)",
-    "detail": "Où j’en suis · Est-ce que je progresse ? · Quels jours coincent ? · Jour par jour (étape 5)",
     "settings": "Affichage · Rappels · Commentaire (étape 6)"
   },
   "colors": {
