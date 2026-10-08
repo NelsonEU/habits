@@ -7,6 +7,7 @@ import type { Snapshot } from '@/domain/model';
 import { type Backup, daygraphToBackup, isBackupFile, parseBackupFile, toBackupFile } from './backup';
 import { isDaygraphBackup, parseDaygraph } from './daygraph';
 import { ImportError } from './errors';
+import { fileNameOf } from './incoming';
 
 /** Reads a backup in any supported format: this app's export, or Daygraph's. */
 function readBackup(text: string, today: Day): Backup {
@@ -30,13 +31,31 @@ export async function pickBackup(today: Day): Promise<{ backup: Backup; fileName
   const picked = await DocumentPicker.getDocumentAsync({ type: '*/*', copyToCacheDirectory: true });
   if (picked.canceled) return null;
   const asset = picked.assets[0];
-  let text: string;
+  return { backup: readBackup(await readText(asset.uri), today), fileName: asset.name };
+}
+
+async function readText(uri: string): Promise<string> {
   try {
-    text = await new File(asset.uri).text();
+    return await new File(uri).text();
   } catch {
     throw new ImportError('unreadable');
   }
-  return { backup: readBackup(text, today), fileName: asset.name };
+}
+
+/**
+ * Reads a file shared to the app (see incoming.ts), then deletes iOS's copy of it in the app's
+ * Inbox: the data now waits on the import screen. Throws ImportError.
+ */
+export async function readSharedBackup(uri: string, today: Day): Promise<{ backup: Backup; fileName: string }> {
+  try {
+    return { backup: readBackup(await readText(uri), today), fileName: fileNameOf(uri) };
+  } finally {
+    try {
+      new File(uri).delete();
+    } catch {
+      // Already gone, or outside the app's folders: nothing to clean up.
+    }
+  }
 }
 
 /** Writes an export file and opens the share sheet (Files, iCloud Drive, AirDrop…). */

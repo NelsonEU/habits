@@ -11,7 +11,19 @@
       "icon": "./assets/habits.icon",
       "bundleIdentifier": "com.arnaudetienne.habitudes",
       "supportsTablet": false,
-      "appleTeamId": "Y7N85AJQFD"
+      "appleTeamId": "Y7N85AJQFD",
+      "infoPlist": {
+        "CFBundleDocumentTypes": [
+          {
+            "CFBundleTypeName": "Backup (JSON)",
+            "LSHandlerRank": "Alternate",
+            "LSItemContentTypes": [
+              "public.json"
+            ]
+          }
+        ],
+        "LSSupportsOpeningDocumentsInPlace": false
+      }
     },
     "android": {
       "adaptiveIcon": {
