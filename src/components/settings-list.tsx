@@ -3,7 +3,7 @@ import { Children, type ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 import { Text } from './text';
 
 /** A titled group of rows, as in the mockup's Réglages screen. */
@@ -45,6 +45,7 @@ export function SettingsRow({
   tone?: 'default' | 'warning';
   onPress?: () => void;
 }) {
+  const { colors } = useTheme();
   const content = (
     <>
       <SymbolView name={icon} size={19} weight="medium" tintColor={tone === 'warning' ? colors.danger : colors.ink} />

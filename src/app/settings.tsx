@@ -13,7 +13,7 @@ import { BackLink } from '@/components/buttons';
 import { Screen } from '@/components/screen';
 import { SettingsRow, SettingsSection } from '@/components/settings-list';
 import { Text, Title } from '@/components/text';
-import { addReminder, deleteReminder, replaceAll, setReminderTime, setWeekStart } from '@/db/repo';
+import { addReminder, deleteReminder, replaceAll, setReminderTime, setTheme, setWeekStart } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, toDay } from '@/domain/day';
 import { fromTime, reminderMoments, toTime } from '@/domain/reminders';
@@ -26,15 +26,17 @@ import {
   requestNotificationPermission,
   scheduledCount,
 } from '@/reminders/notifications';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
+import { cn } from '@/lib/cn';
 
 /** 4 · Réglages. */
 export default function SettingsScreen() {
   const { t } = useTranslation();
+  const { colors, scheme } = useTheme();
   const db = useSQLiteContext();
   const snapshot = useSnapshot();
   const today = useToday();
-  const { weekStartsOn } = snapshot.settings;
+  const { weekStartsOn, theme } = snapshot.settings;
 
   // Re-read whenever the screen shows again: coming back from a "replace" creates a new copy.
   const [copyDate, setCopyDate] = useState<Date | null>(null);
@@ -164,6 +166,38 @@ export default function SettingsScreen() {
       </View>
 
       <SettingsSection title={t('settings.displaySection')}>
+        <View className="gap-3 px-4 py-4">
+          <Text nativeID="theme-label" className="text-[17px] font-semibold">
+            {t('settings.theme')}
+          </Text>
+          <View accessibilityRole="radiogroup" accessibilityLabelledBy="theme-label" className="flex-row gap-1 rounded-[14px] bg-control p-1">
+            {(
+              [
+                ['light', t('settings.themeLight')],
+                ['dark', t('settings.themeDark')],
+                ['system', t('settings.themeSystem')],
+              ] as const
+            ).map(([value, label]) => {
+              const selected = theme === value;
+              return (
+                <Pressable
+                  key={value}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
+                  onPress={() => change(() => setTheme(db, value))}
+                  // No shadow on the selected segment: NativeWind can't add a shadow class to a component
+                  // after its first render (it switches its internal rendering and crashed this screen).
+                  className={cn(
+                    'min-h-11 flex-1 items-center justify-center rounded-[11px] active:opacity-70',
+                    selected && (scheme === 'light' ? 'bg-surface' : 'bg-line-strong'),
+                  )}
+                >
+                  <Text className={cn('font-semibold', !selected && 'text-muted')}>{label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
         <SettingsRow
           icon="calendar"
           label={t('settings.weekStartsOn')}
@@ -211,7 +245,7 @@ export default function SettingsScreen() {
                   value={fromTime(reminder.time)}
                   mode="time"
                   display="compact"
-                  themeVariant="dark"
+                  themeVariant={scheme}
                   locale={locale}
                   accentColor={colors.ink}
                   onValueChange={(_, date) => change(() => setReminderTime(db, reminder.id, toTime(date)))}
@@ -258,7 +292,7 @@ export default function SettingsScreen() {
             onPress={confirmClearAll}
             className="min-h-14 items-center justify-center rounded-full bg-danger px-5 active:opacity-70"
           >
-            <Text className="text-[17px] font-semibold text-on-accent">{t('settings.clearAll')}</Text>
+            <Text className="text-[17px] font-semibold text-on-danger">{t('settings.clearAll')}</Text>
           </Pressable>
           <Text className="mx-1 text-[13px] leading-[19px] text-muted">{t('settings.clearAllHint')}</Text>
         </View>

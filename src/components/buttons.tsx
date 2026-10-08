@@ -4,11 +4,12 @@ import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { cn } from '@/lib/cn';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 import { Text } from './text';
 
 /** Round 44pt button with an SF Symbol, like the stats/settings buttons of the day screen. */
 export function IconButton({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -39,6 +40,7 @@ export function BackLink({
   align?: 'left' | 'right';
   strong?: boolean;
 }) {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -55,6 +57,7 @@ export function BackLink({
 /** The round floating button at the bottom right of the day screen. */
 export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -63,7 +66,7 @@ export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; o
       className="absolute right-5 size-[60px] items-center justify-center rounded-full bg-ink shadow-lg shadow-black/50 active:scale-95"
       style={{ bottom: insets.bottom + 16 }}
     >
-      <SymbolView name={icon} size={24} weight="semibold" tintColor={colors.onAccent} />
+      <SymbolView name={icon} size={24} weight="semibold" tintColor={colors.onInk} />
     </Pressable>
   );
 }
@@ -129,7 +132,7 @@ export function PrimaryButton({ label, onPress }: { label: string; onPress?: () 
         !onPress && 'opacity-70',
       )}
     >
-      <Text className="text-[17px] font-semibold text-on-accent">{label}</Text>
+      <Text className="text-[17px] font-semibold text-on-ink">{label}</Text>
     </Pressable>
   );
 }

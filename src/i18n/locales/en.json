@@ -134,7 +134,11 @@
     "nextToday": "today at {{time}}",
     "nextTomorrow": "tomorrow at {{time}}",
     "nextOn": "{{day}} at {{time}}",
-    "scheduledDebug": "Development: {{count}} scheduled on the phone."
+    "scheduledDebug": "Development: {{count}} scheduled on the phone.",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
   },
   "habits": {
     "title": "My habits",

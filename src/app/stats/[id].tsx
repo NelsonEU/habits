@@ -11,11 +11,13 @@ import { habitStats } from '@/domain/habit-stats';
 import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
 import { monthYear, weekdayLong, weekdayShort } from '@/i18n/format';
+import { useTheme } from '@/theme';
 import { daysValue, progressSentence, rateValue, recordLabel, recordValue, trend } from '@/i18n/stats-text';
 
 /** 3 · Détail d’une habitude — the four questions of the brief, in order. */
 export default function HabitDetailScreen() {
   const { t } = useTranslation();
+  const { mark } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const snapshot = useSnapshot();
   const today = useToday();
@@ -39,7 +41,7 @@ export default function HabitDetailScreen() {
       <View className="gap-3">
         <BackLink label={t('stats.title')} fallback="/stats" chevron />
         <View className="flex-row items-center gap-3">
-          <View className="size-3.5 rounded-full" style={{ backgroundColor: habit.color }} />
+          <View className="size-3.5 rounded-full" style={{ backgroundColor: mark(habit.color) }} />
           <Title className="flex-1 text-4xl leading-[40px]">{habit.name}</Title>
         </View>
         {habit.archivedAt && <Text className="text-sm text-muted">{t('stats.archived')}</Text>}

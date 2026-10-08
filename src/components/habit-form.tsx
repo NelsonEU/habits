@@ -4,7 +4,7 @@ import { Pressable, TextInput, View } from 'react-native';
 
 import { HABIT_COLORS } from '@/domain/palette';
 import { cn } from '@/lib/cn';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 import { PrimaryButton } from './buttons';
 import { HabitCard } from './habit-card';
 import { Text } from './text';
@@ -24,6 +24,7 @@ type Props = {
 /** Name, color and preview of a habit: shared by "Nouvelle habitude" and "Modifier". */
 export function HabitForm({ initial, submitLabel, onSubmit, isNew = false, children }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const [name, setName] = useState(initial.name);
   const [color, setColor] = useState(initial.color);
   const [previewChecked, setPreviewChecked] = useState(false);
@@ -64,8 +65,9 @@ export function HabitForm({ initial, submitLabel, onSubmit, isNew = false, child
                 onPress={() => setColor(c.hex)}
                 className={cn('size-12 items-center justify-center rounded-full border-2', selected ? 'border-ink' : 'border-transparent')}
               >
-                {/* The swatch itself is data (the color), so it's a style. */}
-                <View className="size-10 rounded-full" style={{ backgroundColor: c.hex }} />
+                {/* The swatch itself is data (the color), so it's a style. The hairline keeps pale
+                    swatches visible on the light theme's white. */}
+                <View className="size-10 rounded-full border border-line" style={{ backgroundColor: c.hex }} />
               </Pressable>
             );
           })}

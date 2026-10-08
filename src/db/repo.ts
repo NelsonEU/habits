@@ -1,7 +1,15 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import type { Day } from '@/domain/day';
-import { DEFAULT_SETTINGS, filledDays, type Habit, type Reminder, type Snapshot, type WeekStart } from '@/domain/model';
+import {
+  DEFAULT_SETTINGS,
+  filledDays,
+  type Habit,
+  type Reminder,
+  type Snapshot,
+  type ThemePreference,
+  type WeekStart,
+} from '@/domain/model';
 import type { Backup, BackupHabit } from '@/backup/backup';
 import type { MergePlan } from '@/backup/merge';
 
@@ -41,15 +49,21 @@ export function loadSnapshot(db: SQLiteDatabase): Snapshot {
   const filled = filledDays(explicit, checks);
 
   const stored = new Map(db.getAllSync<{ key: string; value: string }>('SELECT key, value FROM settings').map((r) => [r.key, r.value]));
-  const settings = {
+  const theme = stored.get('theme');
+  const settings: Snapshot['settings'] = {
     weekStartsOn: stored.get('weekStartsOn') === 'sunday' ? 'sunday' : DEFAULT_SETTINGS.weekStartsOn,
-  } as const;
+    theme: theme === 'light' || theme === 'dark' || theme === 'system' ? theme : DEFAULT_SETTINGS.theme,
+  };
   const reminders = db.getAllSync<Reminder>('SELECT id, time FROM reminders ORDER BY time, id');
   return { habits, checks, filled, settings, reminders };
 }
 
 export function setWeekStart(db: SQLiteDatabase, weekStartsOn: WeekStart) {
   db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'weekStartsOn', weekStartsOn);
+}
+
+export function setTheme(db: SQLiteDatabase, theme: ThemePreference) {
+  db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'theme', theme);
 }
 
 export function addReminder(db: SQLiteDatabase, time: string) {

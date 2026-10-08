@@ -12,11 +12,12 @@ import { setOrder } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import type { Habit } from '@/domain/model';
 import { moveInOrder } from '@/domain/order';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 /** 1b · Mes habitudes — drag the handle to reorder, tap a habit to edit it. */
 export default function HabitsScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const db = useSQLiteContext();
   const snapshot = useSnapshot();
   const active = snapshot.habits.filter((h) => h.archivedAt === null);
@@ -81,6 +82,7 @@ export default function HabitsScreen() {
 
 function HabitRow({ habit, onMove }: { habit: Habit; onMove: (step: -1 | 1) => void }) {
   const { t } = useTranslation();
+  const { colors, mark } = useTheme();
 
   return (
     <View className="min-h-[72px] flex-row items-center rounded-[20px] border border-line bg-surface pr-1">
@@ -100,7 +102,7 @@ function HabitRow({ habit, onMove }: { habit: Habit; onMove: (step: -1 | 1) => v
         onPress={() => router.push(`/habits/${habit.id}`)}
         className="flex-1 flex-row items-center gap-3 self-stretch py-2.5 pl-4 active:opacity-60"
       >
-        <View className="size-3 rounded-full" style={{ backgroundColor: habit.color }} />
+        <View className="size-3 rounded-full" style={{ backgroundColor: mark(habit.color) }} />
         <Text numberOfLines={2} className="min-w-0 flex-1 text-[17px] font-semibold">
           {habit.name}
         </Text>

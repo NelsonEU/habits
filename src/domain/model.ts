@@ -17,9 +17,11 @@ export type Habit = {
 
 export type WeekStart = 'monday' | 'sunday';
 
-export type Settings = { weekStartsOn: WeekStart };
+export type ThemePreference = 'system' | 'light' | 'dark';
 
-export const DEFAULT_SETTINGS: Settings = { weekStartsOn: 'monday' };
+export type Settings = { weekStartsOn: WeekStart; theme: ThemePreference };
+
+export const DEFAULT_SETTINGS: Settings = { weekStartsOn: 'monday', theme: 'system' };
 
 /** A daily reminder at a local time, "HH:MM". */
 export type Reminder = { id: number; time: string };

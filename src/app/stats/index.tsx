@@ -11,11 +11,12 @@ import { useSnapshot } from '@/db/store';
 import { habitStats } from '@/domain/habit-stats';
 import { useToday } from '@/hooks/use-today';
 import { daysValue, rateValue, recordValue, trend } from '@/i18n/stats-text';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 
 /** 2 · Statistiques — one card per active habit. */
 export default function StatsScreen() {
   const { t } = useTranslation();
+  const { colors, mark } = useTheme();
   const snapshot = useSnapshot();
   const today = useToday();
   const active = snapshot.habits.filter((h) => h.archivedAt === null);
@@ -40,7 +41,7 @@ export default function StatsScreen() {
               className="gap-4 rounded-[22px] border border-line bg-surface p-[18px] active:opacity-70"
             >
               <View className="flex-row items-center gap-2.5">
-                <View className="size-2.5 rounded-full" style={{ backgroundColor: habit.color }} />
+                <View className="size-2.5 rounded-full" style={{ backgroundColor: mark(habit.color) }} />
                 <Text numberOfLines={1} className="flex-1 text-[17px] font-semibold">
                   {habit.name}
                 </Text>

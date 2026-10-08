@@ -15,6 +15,7 @@ import { applyMerge, replaceAll } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { locale } from '@/i18n';
 import { shortDate } from '@/i18n/format';
+import { useTheme } from '@/theme';
 
 /**
  * Shows what a backup contains before anything changes, then merges it or
@@ -22,6 +23,7 @@ import { shortDate } from '@/i18n/format';
  */
 export default function ImportScreen() {
   const { t } = useTranslation();
+  const { mark } = useTheme();
   const db = useSQLiteContext();
   const snapshot = useSnapshot();
   // Read once: the pending import is cleared when it's applied, but this screen stays briefly visible.
@@ -111,7 +113,7 @@ export default function ImportScreen() {
         <View className="gap-2.5">
           {backup.habits.map((h, i) => (
             <View key={i} className="flex-row items-center gap-3">
-              <View className="size-2.5 rounded-full" style={{ backgroundColor: h.color }} />
+              <View className="size-2.5 rounded-full" style={{ backgroundColor: mark(h.color) }} />
               <Text numberOfLines={1} className={h.archivedAt ? 'flex-1 text-faint' : 'flex-1'}>
                 {h.name}
               </Text>

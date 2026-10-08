@@ -7,8 +7,9 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initDatabase } from '@/db/schema';
+import { useSnapshot } from '@/db/store';
 import { useReminderSync } from '@/reminders/notifications';
-import { colors } from '@/theme';
+import { ThemeProvider, useTheme } from '@/theme';
 
 export default function RootLayout() {
   return (
@@ -16,20 +17,36 @@ export default function RootLayout() {
     // only converts className on React Native's own components.
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SQLiteProvider databaseName="habits.db" onInit={initDatabase}>
-        <StatusBar style="light" />
-        <ReminderSync />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
-          <Stack.Screen name="habits/new" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="habits/[id]" options={{ presentation: 'modal' }} />
-          <Stack.Screen name="import" options={{ presentation: 'modal' }} />
-        </Stack>
+        <ThemedApp />
       </SQLiteProvider>
     </GestureHandlerRootView>
   );
 }
 
-/** Renders nothing: keeps scheduled reminders in step with the data (needs the database, hence inside SQLiteProvider). */
-function ReminderSync() {
+/**
+ * Everything that needs the database, hence inside SQLiteProvider: the theme setting comes from
+ * it, and scheduled reminders follow its data.
+ */
+function ThemedApp() {
+  const { settings } = useSnapshot();
   useReminderSync();
-  return null;
+  return (
+    <ThemeProvider preference={settings.theme}>
+      <Screens />
+    </ThemeProvider>
+  );
+}
+
+function Screens() {
+  const { scheme, colors } = useTheme();
+  return (
+    <>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack.Screen name="habits/new" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="habits/[id]" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="import" options={{ presentation: 'modal' }} />
+      </Stack>
+    </>
+  );
 }

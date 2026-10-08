@@ -2,6 +2,7 @@ import { SymbolView } from 'expo-symbols';
 import { Pressable, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
+import { useTheme } from '@/theme';
 import { Text } from './text';
 
 type Props = {
@@ -14,6 +15,9 @@ type Props = {
 
 /** A habit to tick: the whole card fills with the habit's color once ticked. */
 export function HabitCard({ name, color, checked, subtitle, onToggle }: Props) {
+  // Ticked, the card is filled with the habit's color under dark text (same in both themes);
+  // unticked, only the ring shows it, in the theme's readable variant.
+  const { mark } = useTheme();
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -33,7 +37,7 @@ export function HabitCard({ name, color, checked, subtitle, onToggle }: Props) {
           'size-[46px] items-center justify-center rounded-full border-[2.5px]',
           checked && 'border-on-accent bg-on-accent',
         )}
-        style={checked ? undefined : { borderColor: color }}
+        style={checked ? undefined : { borderColor: mark(color) }}
       >
         {checked && <SymbolView name="checkmark" size={20} weight="bold" tintColor={color} />}
       </View>

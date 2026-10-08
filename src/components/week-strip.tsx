@@ -8,7 +8,7 @@ import type { Dot } from '@/domain/day-view';
 import { locale } from '@/i18n';
 import { longDay, weekdayLetter, weekLabel } from '@/i18n/format';
 import { cn } from '@/lib/cn';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 import { Text } from './text';
 
 /** Month label with week arrows. Kept separate so the header row can put buttons beside it. */
@@ -34,6 +34,7 @@ export function WeekNav({
 }
 
 function Arrow({ icon, label, onPress }: { icon: 'chevron.left' | 'chevron.right'; label: string; onPress: (() => void) | null }) {
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -62,6 +63,7 @@ export function WeekDays({
   dotsFor: (day: Day) => Dot[];
   onSelect: (day: Day) => void;
 }) {
+  const { mark } = useTheme();
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   return (
@@ -97,7 +99,7 @@ export function WeekDays({
                     dot.state === 'forgotten' && 'border border-faint',
                   )}
                   // The habit's own color can't be a class: it's data.
-                  style={dot.state === 'done' ? { backgroundColor: dot.color } : undefined}
+                  style={dot.state === 'done' ? { backgroundColor: mark(dot.color) } : undefined}
                 />
               ))}
             </View>

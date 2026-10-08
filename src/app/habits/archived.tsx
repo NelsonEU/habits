@@ -10,6 +10,7 @@ import { Text, Title } from '@/components/text';
 import { deleteHabit, restoreHabit } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import type { Habit } from '@/domain/model';
+import { useTheme } from '@/theme';
 
 /** Archived habits: restore them, or swipe left to delete them for good. */
 export default function ArchivedHabitsScreen() {
@@ -36,6 +37,7 @@ export default function ArchivedHabitsScreen() {
 
 function ArchivedRow({ habit }: { habit: Habit }) {
   const { t } = useTranslation();
+  const { mark } = useTheme();
   const db = useSQLiteContext();
 
   const confirmDelete = (close: () => void) =>
@@ -63,7 +65,7 @@ function ArchivedRow({ habit }: { habit: Habit }) {
           onPress={() => confirmDelete(swipeable.close)}
           className="ml-2.5 w-24 items-center justify-center rounded-[20px] bg-danger active:opacity-70"
         >
-          <Text className="font-semibold text-on-accent">{t('habits.archived.delete')}</Text>
+          <Text className="font-semibold text-on-danger">{t('habits.archived.delete')}</Text>
         </Pressable>
       )}
     >
@@ -75,7 +77,7 @@ function ArchivedRow({ habit }: { habit: Habit }) {
           onPress={() => router.push(`/stats/${habit.id}`)}
           className="min-w-0 flex-1 flex-row items-center gap-3 self-stretch active:opacity-60"
         >
-          <View className="size-3 rounded-full opacity-45" style={{ backgroundColor: habit.color }} />
+          <View className="size-3 rounded-full opacity-45" style={{ backgroundColor: mark(habit.color) }} />
           <Text numberOfLines={2} className="min-w-0 flex-1 text-[17px] font-semibold text-faint">
             {habit.name}
           </Text>

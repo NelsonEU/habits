@@ -10,12 +10,12 @@ import type { Rate } from '@/domain/stats';
 import { locale } from '@/i18n';
 import { longDay, monthLetter, monthShort, monthYear, percent } from '@/i18n/format';
 import { cn } from '@/lib/cn';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme';
 import { Text } from './text';
 
 /*
  * Charts for one habit at a time, drawn with plain Views. Marks wear the
- * habit's color; every number is in text colors. Bars are at most 24pt wide
+ * habit's color (its readable variant for the theme, via useTheme().mark); every number is in text colors. Bars are at most 24pt wide
  * with a 4pt rounded data-end. Values are shown sparingly (the headline is in
  * the section's sentence) and revealed by tapping a bar; VoiceOver reads every one.
  */
@@ -68,6 +68,7 @@ export function StatTile({
 /** "↓ 87 % avant": where the rate was in the previous 30 days. Neutral colors: a change isn't a verdict. */
 export function TrendLine({ trend }: { trend: { direction: 'up' | 'down' | 'same'; pct: string; text: string } }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const icon = trend.direction === 'up' ? 'arrow.up' : trend.direction === 'down' ? 'arrow.down' : 'equal';
   return (
     <View accessible accessibilityLabel={t('stats.trendA11y', { pct: trend.pct })} className="flex-row items-center gap-1">
@@ -78,7 +79,8 @@ export function TrendLine({ trend }: { trend: { direction: 'up' | 'down' | 'same
 }
 
 /** The 12-month trend of an overview card: bars only, the card itself carries the numbers. */
-export function MiniTrend({ months, color }: { months: (Rate & { month: Month })[]; color: string }) {
+export function MiniTrend({ months, color: habitColor }: { months: (Rate & { month: Month })[]; color: string }) {
+  const color = useTheme().mark(habitColor);
   const height = 34;
   return (
     <View className="gap-1.5" accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -103,8 +105,9 @@ export function MiniTrend({ months, color }: { months: (Rate & { month: Month })
 }
 
 /** % of days kept per month. The latest month's value shows; tap another bar to see its own. */
-export function MonthBars({ months, color }: { months: (Rate & { month: Month })[]; color: string }) {
+export function MonthBars({ months, color: habitColor }: { months: (Rate & { month: Month })[]; color: string }) {
   const { t } = useTranslation();
+  const color = useTheme().mark(habitColor);
   const height = 120;
   const lastKnown = months.map((m) => m.ratio !== null).lastIndexOf(true);
   const [selected, setSelected] = useState(lastKnown);
@@ -151,7 +154,7 @@ export function MonthBars({ months, color }: { months: (Rate & { month: Month })
  */
 export function HBars({
   rows,
-  color,
+  color: habitColor,
   emphasized = [],
 }: {
   rows: { label: string; a11yLabel?: string; rate: Rate }[];
@@ -159,6 +162,7 @@ export function HBars({
   emphasized?: number[];
 }) {
   const { t } = useTranslation();
+  const color = useTheme().mark(habitColor);
   const [revealed, setRevealed] = useState<number | null>(null);
 
   return (
@@ -194,7 +198,7 @@ export function HBars({
 /** The last 26 weeks, one column per week, with a legend for the cell states. */
 export function CalendarGrid({
   weeks,
-  color,
+  color: habitColor,
   weekStartsOn,
 }: {
   weeks: CalendarCell[][];
@@ -202,6 +206,7 @@ export function CalendarGrid({
   weekStartsOn: WeekStart;
 }) {
   const { t } = useTranslation();
+  const color = useTheme().mark(habitColor);
   const [width, setWidth] = useState(0);
   const gap = 3;
   const cell = width > 0 ? Math.floor((width - gap * (weeks.length - 1)) / weeks.length) : 0;
