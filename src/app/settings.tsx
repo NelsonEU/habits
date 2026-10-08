@@ -1,21 +1,32 @@
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { router, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useCallback, useState } from 'react';
+import { SymbolView } from 'expo-symbols';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Pressable, View } from 'react-native';
+import { Alert, AppState, Linking, Pressable, View } from 'react-native';
 
 import { ImportError } from '@/backup/errors';
 import { exportAndShare, pickBackup, readSafetyCopy, safetyCopyDate, saveSafetyCopy } from '@/backup/files';
 import { setPendingImport } from '@/backup/pending';
 import { BackLink } from '@/components/buttons';
-import { Placeholder } from '@/components/placeholder';
 import { Screen } from '@/components/screen';
 import { SettingsRow, SettingsSection } from '@/components/settings-list';
 import { Text, Title } from '@/components/text';
-import { replaceAll } from '@/db/repo';
+import { addReminder, deleteReminder, replaceAll, setReminderTime, setWeekStart } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
+import { addDays, toDay } from '@/domain/day';
+import { fromTime, reminderMoments, toTime } from '@/domain/reminders';
 import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
+import { longDay } from '@/i18n/format';
+import {
+  notificationPermission,
+  type Permission,
+  requestNotificationPermission,
+  scheduledCount,
+} from '@/reminders/notifications';
+import { colors } from '@/theme';
 
 /** 4 · Réglages. */
 export default function SettingsScreen() {
@@ -23,10 +34,79 @@ export default function SettingsScreen() {
   const db = useSQLiteContext();
   const snapshot = useSnapshot();
   const today = useToday();
+  const { weekStartsOn } = snapshot.settings;
 
   // Re-read whenever the screen shows again: coming back from a "replace" creates a new copy.
   const [copyDate, setCopyDate] = useState<Date | null>(null);
   useFocusEffect(useCallback(() => setCopyDate(safetyCopyDate()), []));
+
+  // Re-read when the screen shows and when the app comes back (e.g. from the iPhone's Settings).
+  const [permission, setPermission] = useState<Permission | null>(null);
+  const refreshPermission = useCallback(() => {
+    notificationPermission().then(setPermission);
+  }, []);
+  useFocusEffect(refreshPermission);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => state === 'active' && refreshPermission());
+    return () => subscription.remove();
+  }, [refreshPermission]);
+
+  // The next reminder, from the same plan that schedules them, and (in development) how many
+  // iOS really holds. Recomputed after every change, once the reschedule triggered by it is done.
+  const [next, setNext] = useState<{ moment: Date | null; scheduled: number } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const moment = reminderMoments(snapshot.reminders, snapshot.filled, new Date())[0] ?? null;
+    scheduledCount()
+      .catch(() => 0)
+      .then((scheduled) => !cancelled && setNext({ moment, scheduled }));
+    return () => {
+      cancelled = true;
+    };
+  }, [snapshot, permission]);
+
+  const nextText = (moment: Date) => {
+    const day = toDay(moment);
+    const time = moment.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+    const when =
+      day === today
+        ? t('settings.nextToday', { time })
+        : day === addDays(today, 1)
+          ? t('settings.nextTomorrow', { time })
+          : t('settings.nextOn', { day: longDay(day, locale), time });
+    return t('settings.nextReminder', { when });
+  };
+
+  const change = (write: () => void) => {
+    write();
+    notifyChange();
+  };
+
+  const askPermission = async () => {
+    const result = await requestNotificationPermission();
+    setPermission(result);
+    // Rescheduling follows the data, which didn't change: nudge it so the reminders get scheduled now.
+    if (result === 'granted') notifyChange();
+  };
+
+  const addNewReminder = () => {
+    const taken = new Set(snapshot.reminders.map((r) => r.time));
+    // 21:00, or the next free hour after the latest reminder.
+    let hour = 21;
+    while (taken.has(`${String(hour % 24).padStart(2, '0')}:00`) && hour < 45) hour++;
+    change(() => addReminder(db, `${String(hour % 24).padStart(2, '0')}:00`));
+    // In context: the first reminder is when the permission makes sense.
+    if (permission === 'undetermined') askPermission();
+  };
+
+  const sendFeedback = async () => {
+    const address = process.env.EXPO_PUBLIC_FEEDBACK_EMAIL ?? '';
+    try {
+      await Linking.openURL(`mailto:${address}?subject=${encodeURIComponent(t('settings.feedbackSubject'))}`);
+    } catch {
+      Alert.alert(t('settings.noMailApp'));
+    }
+  };
 
   const showImportError = (e: unknown) => {
     if (!(e instanceof ImportError)) throw e;
@@ -62,8 +142,7 @@ export default function SettingsScreen() {
         style: 'destructive',
         onPress: () => {
           saveSafetyCopy(snapshot);
-          replaceAll(db, { habits: [], filledDays: [] });
-          notifyChange();
+          change(() => replaceAll(db, { habits: [], filledDays: [] }));
           setCopyDate(safetyCopyDate());
         },
       },
@@ -84,7 +163,74 @@ export default function SettingsScreen() {
         <Title>{t('settings.title')}</Title>
       </View>
 
-      <Placeholder>{t('placeholder.settings')}</Placeholder>
+      <SettingsSection title={t('settings.displaySection')}>
+        <SettingsRow
+          icon="calendar"
+          label={t('settings.weekStartsOn')}
+          value={weekStartsOn === 'monday' ? t('settings.monday') : t('settings.sunday')}
+          // One tap switches between the two, as in the mockup.
+          onPress={() => change(() => setWeekStart(db, weekStartsOn === 'monday' ? 'sunday' : 'monday'))}
+        />
+      </SettingsSection>
+
+      <SettingsSection
+        title={t('settings.remindersSection')}
+        footer={[
+          next?.moment && permission === 'granted' ? nextText(next.moment) : null,
+          t('settings.remindersHint'),
+          __DEV__ && next ? t('settings.scheduledDebug', { count: next.scheduled }) : null,
+        ]
+          .filter(Boolean)
+          .join('\n')}
+      >
+        {permission === 'denied' && snapshot.reminders.length > 0 && (
+          <SettingsRow
+            icon="bell.slash"
+            tone="warning"
+            label={t('settings.notificationsDenied')}
+            detail={t('settings.notificationsDeniedHint')}
+            onPress={() => Linking.openSettings()}
+          />
+        )}
+        {permission === 'undetermined' && snapshot.reminders.length > 0 && (
+          <SettingsRow
+            icon="bell.badge"
+            label={t('settings.enableNotifications')}
+            detail={t('settings.enableNotificationsHint')}
+            onPress={askPermission}
+          />
+        )}
+        {snapshot.reminders.map((reminder) => (
+          <SettingsRow
+            key={reminder.id}
+            icon="bell"
+            label={t('settings.reminder')}
+            trailing={
+              <View className="flex-row items-center gap-1">
+                <DateTimePicker
+                  value={fromTime(reminder.time)}
+                  mode="time"
+                  display="compact"
+                  themeVariant="dark"
+                  locale={locale}
+                  accentColor={colors.ink}
+                  onValueChange={(_, date) => change(() => setReminderTime(db, reminder.id, toTime(date)))}
+                />
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('settings.removeReminder', { time: reminder.time })}
+                  hitSlop={8}
+                  onPress={() => change(() => deleteReminder(db, reminder.id))}
+                  className="size-11 items-center justify-center active:opacity-60"
+                >
+                  <SymbolView name="minus.circle" size={20} tintColor={colors.muted} />
+                </Pressable>
+              </View>
+            }
+          />
+        ))}
+        <SettingsRow icon="plus" label={t('settings.addReminder')} onPress={addNewReminder} />
+      </SettingsSection>
 
       <SettingsSection title={t('settings.backupSection')} footer={t('settings.backupHint')}>
         <SettingsRow icon="square.and.arrow.up" label={t('settings.export')} onPress={exportData} />
@@ -99,6 +245,10 @@ export default function SettingsScreen() {
             onPress={restoreCopy}
           />
         )}
+      </SettingsSection>
+
+      <SettingsSection>
+        <SettingsRow icon="envelope" label={t('settings.feedback')} detail={t('settings.feedbackHint')} onPress={sendFeedback} />
       </SettingsSection>
 
       {__DEV__ && (

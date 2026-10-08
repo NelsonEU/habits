@@ -1,4 +1,4 @@
-import type { Snapshot } from '@/domain/model';
+import { DEFAULT_SETTINGS, type Snapshot } from '@/domain/model';
 import { daygraphToBackup, parseBackupFile, summarize, toBackupFile } from './backup';
 
 const snapshot: Snapshot = {
@@ -11,6 +11,8 @@ const snapshot: Snapshot = {
     [2, new Set(['2026-08-15'])],
   ]),
   filled: new Set(['2026-10-02', '2026-10-01', '2026-10-03']),
+  settings: DEFAULT_SETTINGS,
+  reminders: [],
 };
 
 describe('backup file', () => {

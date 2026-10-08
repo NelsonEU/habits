@@ -13,9 +13,6 @@ import { locale } from '@/i18n';
 import { monthYear, weekdayLong, weekdayShort } from '@/i18n/format';
 import { daysValue, progressSentence, rateValue, recordLabel, recordValue, trend } from '@/i18n/stats-text';
 
-// Becomes a setting in step 6.
-const WEEK_STARTS_ON = 'monday';
-
 /** 3 · Détail d’une habitude — the four questions of the brief, in order. */
 export default function HabitDetailScreen() {
   const { t } = useTranslation();
@@ -33,7 +30,7 @@ export default function HabitDetailScreen() {
     );
   }
 
-  const s = habitStats(snapshot, habit, today, WEEK_STARTS_ON);
+  const s = habitStats(snapshot, habit, today, snapshot.settings.weekStartsOn);
   const change = trend(t, s.last30, s.last30Previous);
   const ext = s.weekdayExtremes;
 
@@ -119,7 +116,7 @@ export default function HabitDetailScreen() {
 
       <StatsSection title={t('stats.calendarTitle')}>
         <View className="rounded-[18px] bg-surface p-3.5">
-          <CalendarGrid weeks={s.calendar} color={habit.color} />
+          <CalendarGrid weeks={s.calendar} color={habit.color} weekStartsOn={snapshot.settings.weekStartsOn} />
         </View>
       </StatsSection>
     </Screen>

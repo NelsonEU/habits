@@ -5,6 +5,7 @@ import { Pressable, View } from 'react-native';
 
 import type { CalendarCell } from '@/domain/calendar';
 import type { Month } from '@/domain/day';
+import type { WeekStart } from '@/domain/model';
 import type { Rate } from '@/domain/stats';
 import { locale } from '@/i18n';
 import { longDay, monthLetter, monthShort, monthYear, percent } from '@/i18n/format';
@@ -191,7 +192,15 @@ export function HBars({
 }
 
 /** The last 26 weeks, one column per week, with a legend for the cell states. */
-export function CalendarGrid({ weeks, color }: { weeks: CalendarCell[][]; color: string }) {
+export function CalendarGrid({
+  weeks,
+  color,
+  weekStartsOn,
+}: {
+  weeks: CalendarCell[][];
+  color: string;
+  weekStartsOn: WeekStart;
+}) {
   const { t } = useTranslation();
   const [width, setWidth] = useState(0);
   const gap = 3;
@@ -264,7 +273,7 @@ export function CalendarGrid({ weeks, color }: { weeks: CalendarCell[][]; color:
         <LegendItem label={t('stats.legendForgotten')}>
           <View className="size-2.5 rounded-[3px] border border-faint" />
         </LegendItem>
-        <Text className="ml-auto text-xs text-muted">{t('stats.mondayOnTop')}</Text>
+        <Text className="ml-auto text-xs text-muted">{weekStartsOn === 'monday' ? t('stats.mondayOnTop') : t('stats.sundayOnTop')}</Text>
       </View>
     </View>
   );

@@ -23,9 +23,6 @@ import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
 import { longDay } from '@/i18n/format';
 
-// Becomes a setting in step 6.
-const WEEK_STARTS_ON = 'monday';
-
 /** 1 · Le jour — opens on today. */
 export default function DayScreen() {
   const { t } = useTranslation();
@@ -37,8 +34,9 @@ export default function DayScreen() {
   const [pickedDay, setPickedDay] = useState<Day | null>(null);
   const [pickedWeek, setPickedWeek] = useState<Day | null>(null);
   const selected = pickedDay ?? today;
-  const weekStart = pickedWeek ?? startOfWeek(selected, WEEK_STARTS_ON);
-  const bounds = weekBounds(snapshot, today, WEEK_STARTS_ON);
+  // Realigned on every render: the week start setting may have changed since the week was picked.
+  const weekStart = startOfWeek(pickedWeek ?? selected, snapshot.settings.weekStartsOn);
+  const bounds = weekBounds(snapshot, today, snapshot.settings.weekStartsOn);
 
   const habits = habitsOn(snapshot, selected);
   const anyDone = habits.some((h) => snapshot.checks.get(h.id)?.has(selected));

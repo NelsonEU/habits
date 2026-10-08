@@ -61,7 +61,10 @@
             ]
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "./plugins/without-push-entitlement",
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,5 +1,5 @@
 import { dayDots, weekBounds } from './day-view';
-import type { Habit, Snapshot } from './model';
+import { DEFAULT_SETTINGS, type Habit, type Snapshot } from './model';
 
 const habit = (id: number, startDay: string, archivedAt: string | null = null): Habit => ({
   id,
@@ -19,6 +19,8 @@ const snapshot: Snapshot = {
     [3, new Set()],
   ]),
   filled: new Set(['2026-10-05', '2026-10-06', '2026-10-07']),
+  settings: DEFAULT_SETTINGS,
+  reminders: [],
 };
 const TODAY = '2026-10-07';
 
@@ -41,7 +43,7 @@ describe('dayDots', () => {
 
 test('weekBounds spans from the earliest habit to the current week', () => {
   expect(weekBounds(snapshot, TODAY, 'monday')).toEqual({ first: '2026-08-31', last: '2026-10-05' });
-  expect(weekBounds({ habits: [], checks: new Map(), filled: new Set() }, TODAY, 'monday')).toEqual({
+  expect(weekBounds({ ...snapshot, habits: [] }, TODAY, 'monday')).toEqual({
     first: '2026-10-05',
     last: '2026-10-05',
   });

@@ -30,6 +30,18 @@ const MIGRATIONS: string[] = [
   UPDATE habits SET uid = lower(hex(randomblob(16)));
   CREATE UNIQUE INDEX habits_uid ON habits (uid);
   `,
+  // 3 — settings, and reminder times ("HH:MM"), starting with the brief's evening reminder
+  `
+  CREATE TABLE settings (
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL
+  ) WITHOUT ROWID;
+  CREATE TABLE reminders (
+    id INTEGER PRIMARY KEY NOT NULL,
+    time TEXT NOT NULL
+  );
+  INSERT INTO reminders (time) VALUES ('22:00');
+  `,
 ];
 
 /** Runs at app start, before any screen renders. */

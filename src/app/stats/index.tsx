@@ -13,9 +13,6 @@ import { useToday } from '@/hooks/use-today';
 import { daysValue, rateValue, recordValue, trend } from '@/i18n/stats-text';
 import { colors } from '@/theme';
 
-// Becomes a setting in step 6.
-const WEEK_STARTS_ON = 'monday';
-
 /** 2 · Statistiques — one card per active habit. */
 export default function StatsScreen() {
   const { t } = useTranslation();
@@ -32,7 +29,7 @@ export default function StatsScreen() {
 
       <View className="gap-3">
         {active.map((habit) => {
-          const s = habitStats(snapshot, habit, today, WEEK_STARTS_ON);
+          const s = habitStats(snapshot, habit, today, snapshot.settings.weekStartsOn);
           const change = trend(t, s.last30, s.last30Previous);
           return (
             <Pressable

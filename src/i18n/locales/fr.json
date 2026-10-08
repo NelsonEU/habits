@@ -95,7 +95,8 @@
     "valueA11y": "{{label}} : {{value}}",
     "noData": "pas de donnée",
     "before": "{{pct}} avant",
-    "trendA11y": "Par rapport aux 30 jours d’avant : {{pct}}"
+    "trendA11y": "Par rapport aux 30 jours d’avant : {{pct}}",
+    "sundayOnTop": "Dimanche en haut"
   },
   "settings": {
     "title": "Réglages",
@@ -110,7 +111,30 @@
     "clearAllHint": "Développement uniquement. Une copie est d’abord sauvegardée, et peut être restaurée ci-dessus.",
     "clearAllConfirmTitle": "Effacer toutes les données ?",
     "clearAllConfirmBody": "Toutes les habitudes, coches et jours remplis seront effacés. Une copie est d’abord sauvegardée.",
-    "clearAllConfirm": "Effacer"
+    "clearAllConfirm": "Effacer",
+    "displaySection": "Affichage",
+    "weekStartsOn": "La semaine commence le",
+    "monday": "Lundi",
+    "sunday": "Dimanche",
+    "remindersSection": "Rappels",
+    "reminder": "Rappel",
+    "addReminder": "Ajouter un rappel",
+    "removeReminder": "Supprimer le rappel de {{time}}",
+    "remindersHint": "Pas de rappel une fois la journée remplie.",
+    "noReminders": "Aucun rappel.",
+    "enableNotifications": "Autoriser les notifications",
+    "enableNotificationsHint": "Nécessaire pour les rappels",
+    "notificationsDenied": "Notifications désactivées",
+    "notificationsDeniedHint": "Active-les dans les Réglages de l’iPhone",
+    "feedback": "Envoyer un commentaire",
+    "feedbackHint": "Ouvre un nouvel e-mail",
+    "feedbackSubject": "Habits — commentaire",
+    "noMailApp": "Aucune app de mail n’est configurée sur cet iPhone.",
+    "nextReminder": "Prochain rappel : {{when}}.",
+    "nextToday": "aujourd’hui à {{time}}",
+    "nextTomorrow": "demain à {{time}}",
+    "nextOn": "{{day}} à {{time}}",
+    "scheduledDebug": "Développement : {{count}} programmés sur le téléphone."
   },
   "habits": {
     "title": "Mes habitudes",
@@ -150,9 +174,6 @@
     },
     "editHint": "Ouvre l’habitude pour la modifier"
   },
-  "placeholder": {
-    "settings": "Affichage · Rappels · Commentaire (étape 6)"
-  },
   "colors": {
     "rose": "Rose",
     "lilac": "Lilas",
@@ -160,5 +181,9 @@
     "amber": "Ambre",
     "blue": "Bleu",
     "mint": "Menthe"
+  },
+  "reminders": {
+    "notificationTitle": "Habits",
+    "notificationBody": "C’est l’heure de cocher ta journée."
   }
 }

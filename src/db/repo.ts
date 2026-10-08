@@ -1,7 +1,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
 import type { Day } from '@/domain/day';
-import type { Habit, Snapshot } from '@/domain/model';
+import { DEFAULT_SETTINGS, filledDays, type Habit, type Reminder, type Snapshot, type WeekStart } from '@/domain/model';
 import type { Backup, BackupHabit } from '@/backup/backup';
 import type { MergePlan } from '@/backup/merge';
 
@@ -37,20 +37,50 @@ export function loadSnapshot(db: SQLiteDatabase): Snapshot {
     checks.get(habit_id)?.add(day);
   }
 
-  const filled = new Set(db.getAllSync<{ day: string }>('SELECT day FROM filled_days').map((r) => r.day));
-  return { habits, checks, filled };
+  const explicit = db.getAllSync<{ day: string }>('SELECT day FROM filled_days').map((r) => r.day);
+  const filled = filledDays(explicit, checks);
+
+  const stored = new Map(db.getAllSync<{ key: string; value: string }>('SELECT key, value FROM settings').map((r) => [r.key, r.value]));
+  const settings = {
+    weekStartsOn: stored.get('weekStartsOn') === 'sunday' ? 'sunday' : DEFAULT_SETTINGS.weekStartsOn,
+  } as const;
+  const reminders = db.getAllSync<Reminder>('SELECT id, time FROM reminders ORDER BY time, id');
+  return { habits, checks, filled, settings, reminders };
 }
 
-/** Ticks or unticks a habit, and records that the day was filled in. */
+export function setWeekStart(db: SQLiteDatabase, weekStartsOn: WeekStart) {
+  db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'weekStartsOn', weekStartsOn);
+}
+
+export function addReminder(db: SQLiteDatabase, time: string) {
+  db.runSync('INSERT INTO reminders (time) VALUES (?)', time);
+}
+
+export function setReminderTime(db: SQLiteDatabase, id: number, time: string) {
+  db.runSync('UPDATE reminders SET time = ? WHERE id = ?', time, id);
+}
+
+export function deleteReminder(db: SQLiteDatabase, id: number) {
+  db.runSync('DELETE FROM reminders WHERE id = ?', id);
+}
+
+/**
+ * Ticks or unticks a habit. Whether the day counts as filled in follows from its ticks (see
+ * filledDays). A tick also cancels the day's "nothing kept": the two contradict each other, so
+ * unticking afterwards leaves the day unfilled rather than bringing "nothing kept" back.
+ */
 export function setChecked(db: SQLiteDatabase, habitId: number, day: Day, checked: boolean) {
   db.withTransactionSync(() => {
-    if (checked) db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', habitId, day);
-    else db.runSync('DELETE FROM checks WHERE habit_id = ? AND day = ?', habitId, day);
-    db.runSync('INSERT OR IGNORE INTO filled_days (day) VALUES (?)', day);
+    if (checked) {
+      db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', habitId, day);
+      db.runSync('DELETE FROM filled_days WHERE day = ?', day);
+    } else {
+      db.runSync('DELETE FROM checks WHERE habit_id = ? AND day = ?', habitId, day);
+    }
   });
 }
 
-/** For a day where nothing was kept: it was filled in, not forgotten. */
+/** "Rien de tenu ce jour-là": the day was gone through, nothing was kept. Stored explicitly. */
 export function markFilled(db: SQLiteDatabase, day: Day) {
   db.runSync('INSERT OR IGNORE INTO filled_days (day) VALUES (?)', day);
 }

@@ -1,4 +1,4 @@
-import type { Habit, Snapshot } from '@/domain/model';
+import { DEFAULT_SETTINGS, type Habit, type Snapshot } from '@/domain/model';
 import type { Backup, BackupHabit } from './backup';
 import { planMerge } from './merge';
 
@@ -28,6 +28,8 @@ const snapshot: Snapshot = {
     [2, new Set<string>()],
   ]),
   filled: new Set(['2026-10-01', '2026-10-02']),
+  settings: DEFAULT_SETTINGS,
+  reminders: [],
 };
 
 const backup = (habits: BackupHabit[], filledDays: string[] = []): Backup => ({ habits, filledDays });

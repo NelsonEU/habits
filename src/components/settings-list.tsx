@@ -24,32 +24,49 @@ export function SettingsSection({ title, footer, children }: { title?: string; f
   );
 }
 
-/** One tappable row: icon, label, optional second line. Disabled when `onPress` is missing. */
+/**
+ * One row: icon, label, optional second line, and on the right a value ("Lundi") or a
+ * control (a time picker). Tappable when `onPress` is given.
+ */
 export function SettingsRow({
   icon,
   label,
   detail,
+  value,
+  trailing,
+  tone = 'default',
   onPress,
 }: {
   icon: SFSymbol;
   label: string;
   detail?: string;
+  value?: string;
+  trailing?: ReactNode;
+  tone?: 'default' | 'warning';
   onPress?: () => void;
 }) {
+  const content = (
+    <>
+      <SymbolView name={icon} size={19} weight="medium" tintColor={tone === 'warning' ? colors.danger : colors.ink} />
+      <View className="flex-1 gap-0.5">
+        <Text className={cn('text-[17px] font-semibold', tone === 'warning' && 'text-danger')}>{label}</Text>
+        {detail && <Text className="text-[13px] text-muted">{detail}</Text>}
+      </View>
+      {value && <Text className="text-base text-muted">{value}</Text>}
+      {trailing}
+    </>
+  );
+  const className = 'min-h-[60px] flex-row items-center gap-3 px-4 py-3';
+
+  if (!onPress) return <View className={className}>{content}</View>;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityHint={detail}
-      accessibilityState={{ disabled: !onPress }}
-      disabled={!onPress}
       onPress={onPress}
-      className={cn('min-h-[60px] flex-row items-center gap-3 px-4 py-3 active:opacity-60', !onPress && 'opacity-50')}
+      className={cn(className, 'active:opacity-60')}
     >
-      <SymbolView name={icon} size={19} weight="medium" tintColor={colors.ink} />
-      <View className="flex-1 gap-0.5">
-        <Text className="text-[17px] font-semibold">{label}</Text>
-        {detail && <Text className="text-[13px] text-muted">{detail}</Text>}
-      </View>
+      {content}
     </Pressable>
   );
 }

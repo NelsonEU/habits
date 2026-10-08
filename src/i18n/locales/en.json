@@ -95,7 +95,8 @@
     "valueA11y": "{{label}}: {{value}}",
     "noData": "no data",
     "before": "{{pct}} before",
-    "trendA11y": "Compared with the 30 days before: {{pct}}"
+    "trendA11y": "Compared with the 30 days before: {{pct}}",
+    "sundayOnTop": "Sunday at the top"
   },
   "settings": {
     "title": "Settings",
@@ -110,7 +111,30 @@
     "clearAllHint": "Development only. A copy is saved first, and can be restored above.",
     "clearAllConfirmTitle": "Delete all data?",
     "clearAllConfirmBody": "All habits, ticks and filled-in days will be deleted. A copy is saved first.",
-    "clearAllConfirm": "Delete"
+    "clearAllConfirm": "Delete",
+    "displaySection": "Display",
+    "weekStartsOn": "Week starts on",
+    "monday": "Monday",
+    "sunday": "Sunday",
+    "remindersSection": "Reminders",
+    "reminder": "Reminder",
+    "addReminder": "Add a reminder",
+    "removeReminder": "Remove the {{time}} reminder",
+    "remindersHint": "No reminder once the day is filled in.",
+    "noReminders": "No reminders.",
+    "enableNotifications": "Allow notifications",
+    "enableNotificationsHint": "Needed for reminders",
+    "notificationsDenied": "Notifications are off",
+    "notificationsDeniedHint": "Turn them on in the iPhone’s Settings",
+    "feedback": "Send feedback",
+    "feedbackHint": "Opens a new email",
+    "feedbackSubject": "Habits — feedback",
+    "noMailApp": "No email app is set up on this iPhone.",
+    "nextReminder": "Next reminder: {{when}}.",
+    "nextToday": "today at {{time}}",
+    "nextTomorrow": "tomorrow at {{time}}",
+    "nextOn": "{{day}} at {{time}}",
+    "scheduledDebug": "Development: {{count}} scheduled on the phone."
   },
   "habits": {
     "title": "My habits",
@@ -150,9 +174,6 @@
     },
     "editHint": "Opens the habit to edit it"
   },
-  "placeholder": {
-    "settings": "Display · Reminders · Feedback (step 6)"
-  },
   "colors": {
     "rose": "Pink",
     "lilac": "Lilac",
@@ -160,5 +181,9 @@
     "amber": "Amber",
     "blue": "Blue",
     "mint": "Mint"
+  },
+  "reminders": {
+    "notificationTitle": "Habits",
+    "notificationBody": "Time to tick off your day."
   }
 }

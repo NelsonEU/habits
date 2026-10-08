@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initDatabase } from '@/db/schema';
+import { useReminderSync } from '@/reminders/notifications';
 import { colors } from '@/theme';
 
 export default function RootLayout() {
@@ -16,6 +17,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SQLiteProvider databaseName="habits.db" onInit={initDatabase}>
         <StatusBar style="light" />
+        <ReminderSync />
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
           <Stack.Screen name="habits/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="habits/[id]" options={{ presentation: 'modal' }} />
@@ -24,4 +26,10 @@ export default function RootLayout() {
       </SQLiteProvider>
     </GestureHandlerRootView>
   );
+}
+
+/** Renders nothing: keeps scheduled reminders in step with the data (needs the database, hence inside SQLiteProvider). */
+function ReminderSync() {
+  useReminderSync();
+  return null;
 }
