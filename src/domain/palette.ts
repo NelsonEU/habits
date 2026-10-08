@@ -1,11 +1,11 @@
-/** The 6 habit colors from the mockup. Habits store the hex value. */
+/** The 6 habit colors from the mockup. Habits store the hex value; `id` names the color in translations. */
 export const HABIT_COLORS = [
-  { hex: '#F08CA8', label: 'Rose' },
-  { hex: '#B79CF5', label: 'Lilas' },
-  { hex: '#C9D86A', label: 'Anis' },
-  { hex: '#F0B35A', label: 'Ambre' },
-  { hex: '#6E9BF2', label: 'Bleu' },
-  { hex: '#7FD9B4', label: 'Menthe' },
+  { hex: '#F08CA8', id: 'rose' },
+  { hex: '#B79CF5', id: 'lilac' },
+  { hex: '#C9D86A', id: 'anise' },
+  { hex: '#F0B35A', id: 'amber' },
+  { hex: '#6E9BF2', id: 'blue' },
+  { hex: '#7FD9B4', id: 'mint' },
 ] as const;
 
 const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));

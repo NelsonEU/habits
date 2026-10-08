@@ -53,20 +53,53 @@
   },
   "habits": {
     "title": "My habits",
-    "editLink": "Edit a habit ›",
-    "new": "+ New habit",
-    "archivedLink": "Archived ›",
+    "new": "New habit",
+    "archivedLink": "Archived ({{count}})",
     "newTitle": "New habit",
     "editTitle": "Edit",
-    "archivedTitle": "Archived"
+    "archivedTitle": "Archived",
+    "intro": "Drag a habit by its handle to change the order. Tap it to edit it.",
+    "moveUp": "Move “{{name}}” up",
+    "moveDown": "Move “{{name}}” down",
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Walk 30 minutes",
+      "nameHint": "Phrase it so that ticking it means success: “Don’t smoke” rather than “Smoke”.",
+      "color": "Color",
+      "preview": "Preview",
+      "previewName": "Your new habit",
+      "previewHint": "Tap to see it ticked",
+      "add": "Add",
+      "save": "Save"
+    },
+    "archive": {
+      "button": "Archive this habit",
+      "hint": "It leaves the day screen and the statistics. Its history is kept, and you can restore it from Archived.",
+      "confirmTitle": "Archive “{{name}}”?",
+      "confirmBody": "You can restore it at any time.",
+      "confirm": "Archive"
+    },
+    "archived": {
+      "intro": "Swipe a habit to the left to delete it for good.",
+      "empty": "No archived habits.",
+      "restore": "Restore",
+      "delete": "Delete",
+      "deleteTitle": "Delete “{{name}}” for good?",
+      "deleteBody": "All its history will be erased. This can’t be undone."
+    },
+    "editHint": "Opens the habit to edit it"
   },
   "placeholder": {
     "stats": "One card per habit (step 5)",
     "detail": "Where I stand · Am I improving? · Which days are hard? · Day by day (step 5)",
-    "settings": "Display · Reminders · Backup · Feedback (steps 4 and 6)",
-    "habits": "List with up/down arrows and pencil (step 3)",
-    "newHabit": "Name · Color · Preview (step 3)",
-    "editHabit": "Name · Color · Archive (step 3)",
-    "archived": "Archived habits: restore, swipe to delete (step 3)"
+    "settings": "Display · Reminders · Backup · Feedback (steps 4 and 6)"
+  },
+  "colors": {
+    "rose": "Pink",
+    "lilac": "Lilac",
+    "anise": "Lime",
+    "amber": "Amber",
+    "blue": "Blue",
+    "mint": "Mint"
   }
 }

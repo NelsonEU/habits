@@ -53,6 +53,47 @@ export function markFilled(db: SQLiteDatabase, day: Day) {
   db.runSync('INSERT OR IGNORE INTO filled_days (day) VALUES (?)', day);
 }
 
+const NEXT_SORT_ORDER = 'SELECT COALESCE(MAX(sort_order), -1) + 1 FROM habits';
+
+/** A new habit goes last, and counts from today. */
+export function createHabit(db: SQLiteDatabase, habit: { name: string; color: string }, today: Day) {
+  db.runSync(
+    `INSERT INTO habits (name, color, sort_order, start_day) VALUES (?, ?, (${NEXT_SORT_ORDER}), ?)`,
+    habit.name,
+    habit.color,
+    today,
+  );
+}
+
+export function updateHabit(db: SQLiteDatabase, id: number, habit: { name: string; color: string }) {
+  db.runSync('UPDATE habits SET name = ?, color = ? WHERE id = ?', habit.name, habit.color, id);
+}
+
+/** Saves a new display order: `ids` from first to last. */
+export function setOrder(db: SQLiteDatabase, ids: number[]) {
+  db.withTransactionSync(() => {
+    ids.forEach((id, index) => db.runSync('UPDATE habits SET sort_order = ? WHERE id = ?', index, id));
+  });
+}
+
+export function archiveHabit(db: SQLiteDatabase, id: number) {
+  db.runSync('UPDATE habits SET archived_at = ? WHERE id = ?', new Date().toISOString(), id);
+}
+
+/** Back among the active habits, at the end of the list. */
+export function restoreHabit(db: SQLiteDatabase, id: number) {
+  db.runSync(`UPDATE habits SET archived_at = NULL, sort_order = (${NEXT_SORT_ORDER}) WHERE id = ?`, id);
+}
+
+/** Deletes a habit and all its ticks, for good. Filled-in days stay: they're about the day, not the habit. */
+export function deleteHabit(db: SQLiteDatabase, id: number) {
+  db.withTransactionSync(() => {
+    // ON DELETE CASCADE would do it too; explicit, in case foreign keys were ever off on a connection.
+    db.runSync('DELETE FROM checks WHERE habit_id = ?', id);
+    db.runSync('DELETE FROM habits WHERE id = ?', id);
+  });
+}
+
 /**
  * Imports a Daygraph backup into an empty database. Daygraph doesn't record
  * filled-in days, so only days with at least one tick count as filled.

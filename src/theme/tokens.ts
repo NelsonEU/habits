@@ -19,6 +19,7 @@ export const colors = {
   placeholder: '#7C8091',
   onAccent: '#12141C', // text on a ticked (colored) card
   switchOn: '#3E8A66',
+  danger: '#F0776B', // destructive actions: archive, delete
 } as const;
 
 /** Font families embedded in the app (see app.json); weights come from font-medium, font-semibold… */

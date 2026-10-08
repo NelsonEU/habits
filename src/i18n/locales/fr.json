@@ -53,20 +53,53 @@
   },
   "habits": {
     "title": "Mes habitudes",
-    "editLink": "Modifier une habitude ›",
-    "new": "+ Nouvelle habitude",
-    "archivedLink": "Archivées ›",
+    "new": "Nouvelle habitude",
+    "archivedLink": "Archivées ({{count}})",
     "newTitle": "Nouvelle habitude",
     "editTitle": "Modifier",
-    "archivedTitle": "Archivées"
+    "archivedTitle": "Archivées",
+    "intro": "Fais glisser une habitude par sa poignée pour changer l’ordre. Touche-la pour la modifier.",
+    "moveUp": "Monter « {{name}} »",
+    "moveDown": "Descendre « {{name}} »",
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Ex. Marcher 30 minutes",
+      "nameHint": "Formule-la pour la cocher quand c’est réussi : « Ne pas fumer » plutôt que « Fumer ».",
+      "color": "Couleur",
+      "preview": "Aperçu",
+      "previewName": "Ta nouvelle habitude",
+      "previewHint": "Touche pour la voir cochée",
+      "add": "Ajouter",
+      "save": "Enregistrer"
+    },
+    "archive": {
+      "button": "Archiver cette habitude",
+      "hint": "Elle disparaît de la journée et des statistiques. Son historique est conservé, et tu peux la restaurer depuis Archivées.",
+      "confirmTitle": "Archiver « {{name}} » ?",
+      "confirmBody": "Tu pourras la restaurer à tout moment.",
+      "confirm": "Archiver"
+    },
+    "archived": {
+      "intro": "Glisse une habitude vers la gauche pour la supprimer définitivement.",
+      "empty": "Aucune habitude archivée.",
+      "restore": "Restaurer",
+      "delete": "Supprimer",
+      "deleteTitle": "Supprimer « {{name}} » définitivement ?",
+      "deleteBody": "Tout son historique sera effacé. C’est irréversible."
+    },
+    "editHint": "Ouvre l’habitude pour la modifier"
   },
   "placeholder": {
     "stats": "Une carte par habitude (étape 5)",
     "detail": "Où j’en suis · Est-ce que je progresse ? · Quels jours coincent ? · Jour par jour (étape 5)",
-    "settings": "Affichage · Rappels · Sauvegarde · Commentaire (étapes 4 et 6)",
-    "habits": "Liste avec flèches haut/bas et crayon (étape 3)",
-    "newHabit": "Nom · Couleur · Aperçu (étape 3)",
-    "editHabit": "Nom · Couleur · Archiver (étape 3)",
-    "archived": "Habitudes archivées : restaurer, glisser pour supprimer (étape 3)"
+    "settings": "Affichage · Rappels · Sauvegarde · Commentaire (étapes 4 et 6)"
+  },
+  "colors": {
+    "rose": "Rose",
+    "lilac": "Lilas",
+    "anise": "Anis",
+    "amber": "Ambre",
+    "blue": "Bleu",
+    "mint": "Menthe"
   }
 }

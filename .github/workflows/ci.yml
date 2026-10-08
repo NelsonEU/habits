@@ -17,5 +17,4 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npx expo lint
-      # The real Daygraph backup lives in private/ (git-ignored), so its test skips here.
       - run: npm test -- --ci

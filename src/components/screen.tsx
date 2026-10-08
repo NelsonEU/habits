@@ -20,7 +20,13 @@ export function Screen({ children, scroll = false, overlay }: Props) {
     <View className="flex-1 bg-background">
       {scroll ? (
         // grow lets content push a footer to the bottom with mt-auto when it's short.
-        <ScrollView contentContainerClassName="grow gap-7 px-5" contentContainerStyle={safeArea}>
+        // automaticallyAdjustKeyboardInsets keeps fields and buttons reachable above the keyboard.
+        <ScrollView
+          contentContainerClassName="grow gap-7 px-5"
+          contentContainerStyle={safeArea}
+          automaticallyAdjustKeyboardInsets
+          keyboardShouldPersistTaps="handled"
+        >
           {children}
         </ScrollView>
       ) : (
