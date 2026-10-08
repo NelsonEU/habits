@@ -1,6 +1,6 @@
 import { type Day, isDay } from '@/domain/day';
 import type { Snapshot } from '@/domain/model';
-import { HABIT_COLORS, nearestHabitColor } from '@/domain/palette';
+import { HABIT_COLORS, LEGACY_COLORS, nearestHabitColor } from '@/domain/palette';
 import type { DaygraphImport } from './daygraph';
 import { ImportError } from './errors';
 
@@ -60,6 +60,16 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 const isDayList = (v: unknown): v is Day[] => Array.isArray(v) && v.every((d) => typeof d === 'string' && isDay(d));
 const PALETTE = new Set<string>(HABIT_COLORS.map((c) => c.hex));
 
+/**
+ * A color from a file, as one of the app's: files from before the palette change carry the old
+ * colors, and a hand-edited file could hold any color.
+ */
+function paletteColor(color: string): string {
+  const upper = color.toUpperCase();
+  if (PALETTE.has(upper)) return upper;
+  return LEGACY_COLORS[upper] ?? nearestHabitColor(upper);
+}
+
 export function isBackupFile(json: unknown): boolean {
   return isObject(json) && json.app === APP;
 }
@@ -87,8 +97,7 @@ export function parseBackupFile(json: unknown): Backup {
     return {
       uid: raw.uid,
       name: raw.name.trim(),
-      // A hand-edited file could hold any color: keep the app's palette.
-      color: PALETTE.has(raw.color.toUpperCase()) ? raw.color.toUpperCase() : nearestHabitColor(raw.color),
+      color: paletteColor(raw.color),
       startDay: raw.startDay,
       archivedAt: raw.archivedAt,
       checks: [...new Set(raw.checks)].sort(),

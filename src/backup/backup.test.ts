@@ -40,6 +40,12 @@ describe('backup file', () => {
     expect(() => parseBackupFile({ ...valid(), habits: 'nope' })).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
   });
 
+  test('converts the original palette from older exports, rather than guessing the nearest', () => {
+    const file = valid();
+    file.habits[0].color = '#C9D86A'; // the mockup's "Anis", now Olive (nearest would be another color)
+    expect(parseBackupFile(file).habits[0].color).toBe('#96A331');
+  });
+
   test('brings hand-edited colors back into the palette', () => {
     const file = valid();
     file.habits[0].color = '#ff9a59';

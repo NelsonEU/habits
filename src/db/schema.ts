@@ -42,6 +42,16 @@ const MIGRATIONS: string[] = [
   );
   INSERT INTO reminders (time) VALUES ('22:00');
   `,
+  // 4 — the habit palette, tuned so every pair stays distinguishable (see domain/palette.ts)
+  `
+  UPDATE habits SET color = CASE color
+    WHEN '#F08CA8' THEN '#E985A2'
+    WHEN '#B79CF5' THEN '#D3B8FF'
+    WHEN '#C9D86A' THEN '#96A331'
+    WHEN '#7FD9B4' THEN '#80DAB5'
+    ELSE color
+  END;
+  `,
 ];
 
 /** Runs at app start, before any screen renders. */

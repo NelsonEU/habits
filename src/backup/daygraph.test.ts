@@ -40,7 +40,7 @@ describe('parseDaygraph', () => {
     expect(parseDaygraph(backup()).habits).toEqual([
       { sourceId: 1, name: 'Marcher 30 minutes', color: '#F0B35A', sortOrder: 0 },
       { sourceId: 2, name: 'Lire 10 pages', color: '#6E9BF2', sortOrder: 1 },
-      { sourceId: 3, name: 'Méditer', color: '#7FD9B4', sortOrder: 2 },
+      { sourceId: 3, name: 'Méditer', color: '#80DAB5', sortOrder: 2 },
     ]);
   });
 
