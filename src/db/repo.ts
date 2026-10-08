@@ -135,8 +135,20 @@ function insertHabit(db: SQLiteDatabase, habit: BackupHabit) {
     habit.startDay,
     habit.archivedAt,
   );
-  for (const day of habit.checks) {
-    db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', lastInsertRowId, day);
+  insertChecks(db, lastInsertRowId, habit.checks);
+}
+
+/**
+ * Inserts many ticks with one prepared statement: preparing each INSERT separately made a
+ * 1,400-tick import take seconds on a slow phone (and froze the screen meanwhile).
+ */
+function insertChecks(db: SQLiteDatabase, habitId: number, days: Day[]) {
+  if (days.length === 0) return;
+  const statement = db.prepareSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)');
+  try {
+    for (const day of days) statement.executeSync(habitId, day);
+  } finally {
+    statement.finalizeSync();
   }
 }
 
@@ -144,7 +156,7 @@ function insertHabit(db: SQLiteDatabase, habit: BackupHabit) {
 export function applyMerge(db: SQLiteDatabase, plan: MergePlan) {
   db.withTransactionSync(() => {
     for (const { habitId, addChecks, startDay } of plan.updates) {
-      for (const day of addChecks) db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', habitId, day);
+      insertChecks(db, habitId, addChecks);
       if (startDay) db.runSync('UPDATE habits SET start_day = ? WHERE id = ?', startDay, habitId);
     }
     plan.inserts.forEach((habit) => insertHabit(db, habit));

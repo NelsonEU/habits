@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, View } from 'react-native';
 
@@ -28,6 +28,9 @@ export default function ImportScreen() {
   const snapshot = useSnapshot();
   // Read once: the pending import is cleared when it's applied, but this screen stays briefly visible.
   const [pending] = useState(getPendingImport);
+  // Taps made while the (synchronous) import runs are queued, then delivered: without this guard,
+  // a few impatient taps ran the import several times in a row.
+  const busy = useRef(false);
 
   // Nothing to import (e.g. the app restarted on this screen): just leave.
   if (!pending) {
@@ -46,6 +49,12 @@ export default function ImportScreen() {
     checks: [...snapshot.checks.values()].reduce((n, days) => n + days.size, 0),
   };
 
+  const once = (action: () => void) => () => {
+    if (busy.current) return;
+    busy.current = true;
+    action();
+  };
+
   const finish = (title: string, body?: string) => {
     setPendingImport(null);
     notifyChange();
@@ -53,12 +62,12 @@ export default function ImportScreen() {
     Alert.alert(title, body);
   };
 
-  const importIntoEmptyApp = () => {
+  const importIntoEmptyApp = once(() => {
     replaceAll(db, backup);
     finish(t('import.doneTitle'), t('import.doneBody', { count: summary.habits, checks: summary.checks }));
-  };
+  });
 
-  const merge = () => {
+  const merge = once(() => {
     const plan = planMerge(snapshot, backup);
     applyMerge(db, plan);
     finish(
@@ -68,7 +77,7 @@ export default function ImportScreen() {
         checks: plan.updates.reduce((n, u) => n + u.addChecks.length, 0) + plan.inserts.reduce((n, h) => n + h.checks.length, 0),
       }),
     );
-  };
+  });
 
   const confirmReplace = () =>
     Alert.alert(t('import.replaceConfirmTitle'), t('import.replaceConfirmBody', current), [
@@ -76,12 +85,12 @@ export default function ImportScreen() {
       {
         text: t('import.replaceConfirm'),
         style: 'destructive',
-        onPress: () => {
+        onPress: once(() => {
           // The safety copy first: if it can't be written, nothing is replaced.
           saveSafetyCopy(snapshot);
           replaceAll(db, backup);
           finish(t('import.replacedTitle'));
-        },
+        }),
       },
     ]);
 

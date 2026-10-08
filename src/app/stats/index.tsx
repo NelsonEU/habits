@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
-import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
 import { BackLink } from '@/components/buttons';
+import { Icon } from '@/components/icon';
 import { Screen } from '@/components/screen';
 import { MiniTrend, StatTile, TrendLine } from '@/components/stats';
 import { Text, Title } from '@/components/text';
@@ -45,7 +45,7 @@ export default function StatsScreen() {
                 <Text numberOfLines={1} className="flex-1 text-[17px] font-semibold">
                   {habit.name}
                 </Text>
-                <SymbolView name="chevron.right" size={15} weight="semibold" tintColor={colors.muted} />
+                <Icon name="forward" size={15} color={colors.muted} />
               </View>
               <View className="flex-row gap-2">
                 <StatTile className="flex-1" size="md" value={daysValue(t, s.streak)} label={t('stats.streak')} />

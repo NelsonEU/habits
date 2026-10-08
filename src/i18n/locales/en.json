@@ -185,6 +185,7 @@
   },
   "reminders": {
     "notificationTitle": "Habits",
-    "notificationBody": "Time to tick off your day."
+    "notificationBody": "Time to tick off your day.",
+    "channelName": "Reminders"
   }
 }

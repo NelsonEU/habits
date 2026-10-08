@@ -1,9 +1,9 @@
-import { type SFSymbol, SymbolView } from 'expo-symbols';
 import { Children, type ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
+import { Icon, type IconName } from './icon';
 import { Text } from './text';
 
 /** A titled group of rows, as in the mockup's Réglages screen. */
@@ -37,7 +37,7 @@ export function SettingsRow({
   tone = 'default',
   onPress,
 }: {
-  icon: SFSymbol;
+  icon: IconName;
   label: string;
   detail?: string;
   value?: string;
@@ -48,7 +48,7 @@ export function SettingsRow({
   const { colors } = useTheme();
   const content = (
     <>
-      <SymbolView name={icon} size={19} weight="medium" tintColor={tone === 'warning' ? colors.danger : colors.ink} />
+      <Icon name={icon} size={19} weight="medium" color={tone === 'warning' ? colors.danger : colors.ink} />
       <View className="flex-1 gap-0.5">
         <Text className={cn('text-[17px] font-semibold', tone === 'warning' && 'text-danger')}>{label}</Text>
         {detail && <Text className="text-[13px] text-muted">{detail}</Text>}

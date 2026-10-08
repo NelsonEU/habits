@@ -185,6 +185,7 @@
   },
   "reminders": {
     "notificationTitle": "Habits",
-    "notificationBody": "C’est l’heure de cocher ta journée."
+    "notificationBody": "C’est l’heure de cocher ta journée.",
+    "channelName": "Rappels"
   }
 }

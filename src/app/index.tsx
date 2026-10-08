@@ -54,7 +54,7 @@ export default function DayScreen() {
   };
 
   return (
-    <Screen scroll overlay={<Fab icon="pencil" label={t('day.editHabits')} onPress={() => router.push('/habits')} />}>
+    <Screen scroll overlay={<Fab icon="edit" label={t('day.editHabits')} onPress={() => router.push('/habits')} />}>
       <View className="gap-3.5">
         <View className="flex-row items-center gap-2">
           <WeekNav
@@ -62,8 +62,8 @@ export default function DayScreen() {
             onPrev={weekStart > bounds.first ? () => setPickedWeek(addDays(weekStart, -7)) : null}
             onNext={weekStart < bounds.last ? () => setPickedWeek(addDays(weekStart, 7)) : null}
           />
-          <IconButton icon="chart.bar" label={t('day.statistics')} onPress={() => router.push('/stats')} />
-          <IconButton icon="slider.horizontal.3" label={t('day.settings')} onPress={() => router.push('/settings')} />
+          <IconButton icon="stats" label={t('day.statistics')} onPress={() => router.push('/stats')} />
+          <IconButton icon="settings" label={t('day.settings')} onPress={() => router.push('/settings')} />
         </View>
         <WeekPager
           first={bounds.first}

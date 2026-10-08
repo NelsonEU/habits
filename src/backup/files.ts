@@ -1,13 +1,13 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
-import { Share } from 'react-native';
+import * as Sharing from 'expo-sharing';
 
 import type { Day } from '@/domain/day';
 import type { Snapshot } from '@/domain/model';
 import { type Backup, daygraphToBackup, isBackupFile, parseBackupFile, toBackupFile } from './backup';
 import { isDaygraphBackup, parseDaygraph } from './daygraph';
 import { ImportError } from './errors';
-import { fileNameOf } from './incoming';
+import { fileNameOf, isInboxCopy } from './incoming';
 
 /** Reads a backup in any supported format: this app's export, or Daygraph's. */
 function readBackup(text: string, today: Day): Backup {
@@ -43,27 +43,33 @@ async function readText(uri: string): Promise<string> {
 }
 
 /**
- * Reads a file shared to the app (see incoming.ts), then deletes iOS's copy of it in the app's
- * Inbox: the data now waits on the import screen. Throws ImportError.
+ * Reads a file shared to the app (see incoming.ts). Afterwards, iOS's copy of it in the app's
+ * Inbox is deleted (the data now waits on the import screen); Android's file is the user's own
+ * and stays untouched. Throws ImportError.
  */
 export async function readSharedBackup(uri: string, today: Day): Promise<{ backup: Backup; fileName: string }> {
   try {
     return { backup: readBackup(await readText(uri), today), fileName: fileNameOf(uri) };
   } finally {
-    try {
-      new File(uri).delete();
-    } catch {
-      // Already gone, or outside the app's folders: nothing to clean up.
+    if (isInboxCopy(uri)) {
+      try {
+        new File(uri).delete();
+      } catch {
+        // Already gone: nothing to clean up.
+      }
     }
   }
 }
 
-/** Writes an export file and opens the share sheet (Files, iCloud Drive, AirDrop…). */
+/**
+ * Writes an export file and opens the system's share sheet (Files, iCloud Drive, AirDrop, Drive…).
+ * expo-sharing rather than React Native's Share, which can't share a file on Android.
+ */
 export async function exportAndShare(snapshot: Snapshot, today: Day) {
   const file = new File(Paths.cache, `habits-${today}.json`);
   file.create({ overwrite: true });
   file.write(toBackupFile(snapshot, new Date()));
-  await Share.share({ url: file.uri });
+  await Sharing.shareAsync(file.uri, { mimeType: 'application/json', UTI: 'public.json' });
 }
 
 /*

@@ -1,11 +1,11 @@
 import { Link, router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-import { SymbolView } from 'expo-symbols';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 import Sortable from 'react-native-sortables';
 
 import { BackLink } from '@/components/buttons';
+import { Icon } from '@/components/icon';
 import { Screen } from '@/components/screen';
 import { Text, Title } from '@/components/text';
 import { setOrder } from '@/db/repo';
@@ -64,7 +64,7 @@ export default function HabitsScreen() {
           onPress={() => router.push('/habits/new')}
           className="min-h-14 flex-row items-center justify-center gap-2 rounded-[20px] border-[1.5px] border-dashed border-line-strong active:opacity-60"
         >
-          <SymbolView name="plus" size={16} weight="semibold" tintColor={colors.muted} />
+          <Icon name="add" size={16} color={colors.muted} />
           <Text className="text-base text-muted">{t('habits.new')}</Text>
         </Pressable>
       </View>
@@ -109,7 +109,7 @@ function HabitRow({ habit, onMove }: { habit: Habit; onMove: (step: -1 | 1) => v
       </Pressable>
       <Sortable.Handle>
         <View className="size-11 items-center justify-center">
-          <SymbolView name="line.3.horizontal" size={18} weight="semibold" tintColor={colors.faint} />
+          <Icon name="dragHandle" size={18} color={colors.faint} />
         </View>
       </Sortable.Handle>
     </View>

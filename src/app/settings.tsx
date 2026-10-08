@@ -1,7 +1,5 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { router, useFocusEffect } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
-import { SymbolView } from 'expo-symbols';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AppState, Linking, Pressable, View } from 'react-native';
@@ -10,13 +8,15 @@ import { ImportError } from '@/backup/errors';
 import { exportAndShare, pickBackup, readSafetyCopy, safetyCopyDate, saveSafetyCopy } from '@/backup/files';
 import { setPendingImport } from '@/backup/pending';
 import { BackLink } from '@/components/buttons';
+import { Icon } from '@/components/icon';
+import { TimeField } from '@/components/time-field';
 import { Screen } from '@/components/screen';
 import { SettingsRow, SettingsSection } from '@/components/settings-list';
 import { Text, Title } from '@/components/text';
 import { addReminder, deleteReminder, replaceAll, setReminderTime, setTheme, setWeekStart } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, toDay } from '@/domain/day';
-import { fromTime, reminderMoments, toTime } from '@/domain/reminders';
+import { reminderMoments } from '@/domain/reminders';
 import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
 import { longDay } from '@/i18n/format';
@@ -219,7 +219,7 @@ export default function SettingsScreen() {
       >
         {permission === 'denied' && snapshot.reminders.length > 0 && (
           <SettingsRow
-            icon="bell.slash"
+            icon="remindersOff"
             tone="warning"
             label={t('settings.notificationsDenied')}
             detail={t('settings.notificationsDeniedHint')}
@@ -228,7 +228,7 @@ export default function SettingsScreen() {
         )}
         {permission === 'undetermined' && snapshot.reminders.length > 0 && (
           <SettingsRow
-            icon="bell.badge"
+            icon="allowReminders"
             label={t('settings.enableNotifications')}
             detail={t('settings.enableNotificationsHint')}
             onPress={askPermission}
@@ -237,18 +237,13 @@ export default function SettingsScreen() {
         {snapshot.reminders.map((reminder) => (
           <SettingsRow
             key={reminder.id}
-            icon="bell"
+            icon="reminder"
             label={t('settings.reminder')}
             trailing={
               <View className="flex-row items-center gap-1">
-                <DateTimePicker
-                  value={fromTime(reminder.time)}
-                  mode="time"
-                  display="compact"
-                  themeVariant={scheme}
-                  locale={locale}
-                  accentColor={colors.ink}
-                  onValueChange={(_, date) => change(() => setReminderTime(db, reminder.id, toTime(date)))}
+                <TimeField
+                  value={reminder.time}
+                  onChange={(time) => change(() => setReminderTime(db, reminder.id, time))}
                 />
                 <Pressable
                   accessibilityRole="button"
@@ -257,21 +252,21 @@ export default function SettingsScreen() {
                   onPress={() => change(() => deleteReminder(db, reminder.id))}
                   className="size-11 items-center justify-center active:opacity-60"
                 >
-                  <SymbolView name="minus.circle" size={20} tintColor={colors.muted} />
+                  <Icon name="remove" size={20} weight="medium" color={colors.muted} />
                 </Pressable>
               </View>
             }
           />
         ))}
-        <SettingsRow icon="plus" label={t('settings.addReminder')} onPress={addNewReminder} />
+        <SettingsRow icon="add" label={t('settings.addReminder')} onPress={addNewReminder} />
       </SettingsSection>
 
       <SettingsSection title={t('settings.backupSection')} footer={t('settings.backupHint')}>
-        <SettingsRow icon="square.and.arrow.up" label={t('settings.export')} onPress={exportData} />
-        <SettingsRow icon="square.and.arrow.down" label={t('settings.import')} onPress={importFile} />
+        <SettingsRow icon="export" label={t('settings.export')} onPress={exportData} />
+        <SettingsRow icon="import" label={t('settings.import')} onPress={importFile} />
         {copyDate && (
           <SettingsRow
-            icon="arrow.uturn.backward"
+            icon="undo"
             label={t('settings.restoreCopy')}
             detail={t('settings.restoreCopyHint', {
               date: copyDate.toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }),
@@ -282,7 +277,7 @@ export default function SettingsScreen() {
       </SettingsSection>
 
       <SettingsSection>
-        <SettingsRow icon="envelope" label={t('settings.feedback')} detail={t('settings.feedbackHint')} onPress={sendFeedback} />
+        <SettingsRow icon="mail" label={t('settings.feedback')} detail={t('settings.feedbackHint')} onPress={sendFeedback} />
       </SettingsSection>
 
       {__DEV__ && (

@@ -1,6 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
-import { AppState } from 'react-native';
+import { AppState, Platform } from 'react-native';
 
 import { useSnapshot } from '@/db/store';
 import type { Snapshot } from '@/domain/model';
@@ -21,6 +21,16 @@ Notifications.setNotificationHandler({
     shouldShowList: true,
   }),
 });
+
+/** Android groups notifications into channels the user can tune in the system settings. */
+const CHANNEL_ID = 'reminders';
+async function ensureChannel() {
+  if (Platform.OS !== 'android') return;
+  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: i18n.t('reminders.channelName'),
+    importance: Notifications.AndroidImportance.DEFAULT,
+  });
+}
 
 export type Permission = 'granted' | 'undetermined' | 'denied';
 
@@ -43,13 +53,14 @@ export async function requestNotificationPermission(): Promise<Permission> {
 /** Replaces every scheduled reminder with the ones the current data calls for. */
 async function syncReminders(snapshot: Snapshot) {
   if ((await notificationPermission()) !== 'granted') return;
+  await ensureChannel();
   await Notifications.cancelAllScheduledNotificationsAsync();
   // Text in the current language, frozen at scheduling time: rescheduled on each app start anyway.
   const content = { title: i18n.t('reminders.notificationTitle'), body: i18n.t('reminders.notificationBody') };
   for (const date of reminderMoments(snapshot.reminders, snapshot.tickedDays, new Date())) {
     await Notifications.scheduleNotificationAsync({
       content,
-      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
+      trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date, channelId: CHANNEL_ID },
     });
   }
 }

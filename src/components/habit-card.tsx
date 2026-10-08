@@ -1,8 +1,8 @@
-import { SymbolView } from 'expo-symbols';
 import { Pressable, View } from 'react-native';
 
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
+import { Icon } from './icon';
 import { Text } from './text';
 
 type Props = {
@@ -39,7 +39,7 @@ export function HabitCard({ name, color, checked, subtitle, onToggle }: Props) {
         )}
         style={checked ? undefined : { borderColor: mark(color) }}
       >
-        {checked && <SymbolView name="checkmark" size={20} weight="bold" tintColor={color} />}
+        {checked && <Icon name="check" size={20} weight="bold" color={color} />}
       </View>
       <View className="min-w-0 flex-1 gap-1.5">
         <Text className={cn('text-xl font-semibold leading-6', checked && 'text-on-accent')}>{name}</Text>

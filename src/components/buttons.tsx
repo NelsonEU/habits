@@ -1,14 +1,14 @@
 import { type Href, router } from 'expo-router';
-import { type SFSymbol, SymbolView } from 'expo-symbols';
 import { Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
+import { Icon, type IconName } from './icon';
 import { Text } from './text';
 
 /** Round 44pt button with an SF Symbol, like the stats/settings buttons of the day screen. */
-export function IconButton({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
+export function IconButton({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
   const { colors } = useTheme();
   return (
     <Pressable
@@ -17,7 +17,7 @@ export function IconButton({ icon, label, onPress }: { icon: SFSymbol; label: st
       onPress={onPress}
       className="size-11 items-center justify-center rounded-full border border-line bg-surface active:opacity-60"
     >
-      <SymbolView name={icon} size={19} weight="semibold" tintColor={colors.ink} />
+      <Icon name={icon} size={19} color={colors.ink} />
     </Pressable>
   );
 }
@@ -48,14 +48,14 @@ export function BackLink({
       hitSlop={8}
       className={cn('min-h-11 flex-row items-center gap-1.5 active:opacity-60', align === 'left' ? 'self-start' : 'self-end')}
     >
-      {chevron && <SymbolView name="chevron.left" size={17} weight="semibold" tintColor={strong ? colors.ink : colors.muted} />}
+      {chevron && <Icon name="back" size={17} color={strong ? colors.ink : colors.muted} />}
       <Text className={cn('text-base', strong ? 'font-semibold' : 'text-muted')}>{label}</Text>
     </Pressable>
   );
 }
 
 /** The round floating button at the bottom right of the day screen. */
-export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; onPress: () => void }) {
+export function Fab({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   return (
@@ -66,7 +66,7 @@ export function Fab({ icon, label, onPress }: { icon: SFSymbol; label: string; o
       className="absolute right-5 size-[60px] items-center justify-center rounded-full bg-ink shadow-lg shadow-black/50 active:scale-95"
       style={{ bottom: insets.bottom + 16 }}
     >
-      <SymbolView name={icon} size={24} weight="semibold" tintColor={colors.onInk} />
+      <Icon name={icon} size={24} color={colors.onInk} />
     </Pressable>
   );
 }

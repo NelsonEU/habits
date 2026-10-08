@@ -13,9 +13,23 @@ const version = pkg.version;
 const [major, minor, patch] = version.split('-')[0].split('.').map(Number);
 const buildNumber = major * 10_000_000 + minor * 1_000 + patch;
 
+const GOOGLE_FONTS = './node_modules/@expo-google-fonts';
+const FONT_FILES: Record<string, Record<number, string>> = {
+  Figtree: {
+    400: `${GOOGLE_FONTS}/figtree/400Regular/Figtree_400Regular.ttf`,
+    500: `${GOOGLE_FONTS}/figtree/500Medium/Figtree_500Medium.ttf`,
+    600: `${GOOGLE_FONTS}/figtree/600SemiBold/Figtree_600SemiBold.ttf`,
+  },
+  'Bricolage Grotesque': {
+    700: `${GOOGLE_FONTS}/bricolage-grotesque/700Bold/BricolageGrotesque_700Bold.ttf`,
+  },
+};
+
 const config: ExpoConfig = {
   name: 'Habits',
   slug: 'habits',
+  // The Expo account the EAS project belongs to (@arn0-be/habits).
+  owner: 'arn0-be',
   version,
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -39,7 +53,18 @@ const config: ExpoConfig = {
     },
   },
   android: {
+    // Same identifier as iOS. Permanent once published on the Play Store.
+    package: 'com.arnaudetienne.habitudes',
     versionCode: buildNumber,
+    // "Open with Habits" for JSON files (Daygraph's export, a shared backup): Android passes a
+    // content:// URL, handled like iOS's shared files (+native-intent.tsx).
+    intentFilters: [
+      {
+        action: 'VIEW',
+        category: ['DEFAULT', 'BROWSABLE'],
+        data: [{ scheme: 'content', mimeType: 'application/json' }, { scheme: 'file', mimeType: 'application/json' }],
+      },
+    ],
     adaptiveIcon: {
       backgroundColor: '#12141C',
       foregroundImage: './assets/images/android-icon-foreground.png',
@@ -58,12 +83,16 @@ const config: ExpoConfig = {
     [
       'expo-font',
       {
-        fonts: [
-          './node_modules/@expo-google-fonts/figtree/400Regular/Figtree_400Regular.ttf',
-          './node_modules/@expo-google-fonts/figtree/500Medium/Figtree_500Medium.ttf',
-          './node_modules/@expo-google-fonts/figtree/600SemiBold/Figtree_600SemiBold.ttf',
-          './node_modules/@expo-google-fonts/bricolage-grotesque/700Bold/BricolageGrotesque_700Bold.ttf',
-        ],
+        // Same family names on both platforms ("Figtree", "Bricolage Grotesque", see theme/tokens.ts),
+        // so font-medium / font-semibold pick the right file through fontWeight. iOS reads the
+        // family from the files; Android needs it declared, weight by weight.
+        ios: { fonts: Object.values(FONT_FILES).flatMap((weights) => Object.values(weights)) },
+        android: {
+          fonts: Object.entries(FONT_FILES).map(([fontFamily, weights]) => ({
+            fontFamily,
+            fontDefinitions: Object.entries(weights).map(([weight, path]) => ({ path, weight: Number(weight) })),
+          })),
+        },
       },
     ],
     ['expo-localization', { supportedLocales: { ios: ['en', 'fr'], android: ['en', 'fr'] } }],
@@ -75,6 +104,10 @@ const config: ExpoConfig = {
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
+  },
+  extra: {
+    // Links the project to its EAS project on expo.dev (cloud builds, submissions).
+    eas: { projectId: '34331754-8bf5-4738-bade-258fcff81823' },
   },
 };
 

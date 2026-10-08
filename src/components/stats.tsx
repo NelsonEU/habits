@@ -1,6 +1,5 @@
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SymbolView } from 'expo-symbols';
 import { Pressable, View } from 'react-native';
 
 import type { CalendarCell } from '@/domain/calendar';
@@ -11,6 +10,7 @@ import { locale } from '@/i18n';
 import { longDay, monthLetter, monthShort, monthYear, percent } from '@/i18n/format';
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
+import { Icon } from './icon';
 import { Text } from './text';
 
 /*
@@ -69,10 +69,10 @@ export function StatTile({
 export function TrendLine({ trend }: { trend: { direction: 'up' | 'down' | 'same'; pct: string; text: string } }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const icon = trend.direction === 'up' ? 'arrow.up' : trend.direction === 'down' ? 'arrow.down' : 'equal';
+  const icon = trend.direction === 'up' ? 'trendUp' : trend.direction === 'down' ? 'trendDown' : 'trendSame';
   return (
     <View accessible accessibilityLabel={t('stats.trendA11y', { pct: trend.pct })} className="flex-row items-center gap-1">
-      <SymbolView name={icon} size={10} weight="bold" tintColor={colors.muted} />
+      <Icon name={icon} size={10} weight="bold" color={colors.muted} />
       <Text className="text-xs leading-4 text-muted">{trend.text}</Text>
     </View>
   );

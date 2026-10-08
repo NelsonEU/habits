@@ -1,4 +1,3 @@
-import { SymbolView } from 'expo-symbols';
 import { useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { locale } from '@/i18n';
 import { longDay, weekdayLetter, weekLabel } from '@/i18n/format';
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
+import { Icon } from './icon';
 import { Text } from './text';
 
 /** Month label with week arrows. Kept separate so the header row can put buttons beside it. */
@@ -24,16 +24,16 @@ export function WeekNav({
   const { t } = useTranslation();
   return (
     <View className="min-w-0 flex-1 flex-row items-center">
-      <Arrow icon="chevron.left" label={t('day.previousWeek')} onPress={onPrev} />
+      <Arrow icon="back" label={t('day.previousWeek')} onPress={onPrev} />
       <Text numberOfLines={1} className="shrink text-center font-semibold">
         {weekLabel(weekStart, addDays(weekStart, 6), locale)}
       </Text>
-      <Arrow icon="chevron.right" label={t('day.nextWeek')} onPress={onNext} />
+      <Arrow icon="forward" label={t('day.nextWeek')} onPress={onNext} />
     </View>
   );
 }
 
-function Arrow({ icon, label, onPress }: { icon: 'chevron.left' | 'chevron.right'; label: string; onPress: (() => void) | null }) {
+function Arrow({ icon, label, onPress }: { icon: 'back' | 'forward'; label: string; onPress: (() => void) | null }) {
   const { colors } = useTheme();
   return (
     <Pressable
@@ -44,7 +44,7 @@ function Arrow({ icon, label, onPress }: { icon: 'chevron.left' | 'chevron.right
       onPress={onPress ?? undefined}
       className={cn('size-11 items-center justify-center active:opacity-60', !onPress && 'opacity-30')}
     >
-      <SymbolView name={icon} size={18} weight="semibold" tintColor={colors.ink} />
+      <Icon name={icon} size={18} color={colors.ink} />
     </Pressable>
   );
 }
