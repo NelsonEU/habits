@@ -7,16 +7,16 @@ const MAX_SCHEDULED = 60;
 /**
  * The moments to schedule notifications for: every reminder time on each of
  * the next `days` days (today included), except times already past and every
- * reminder of a day already filled in. Earliest first, capped for iOS.
+ * reminder of a day already done (something ticked). Earliest first, capped for iOS.
  *
  * iOS can't skip a repeating notification on one day, so reminders are
- * scheduled one by one, and rescheduled whenever the app opens or a day is filled in.
+ * scheduled one by one, and rescheduled whenever the app opens or something is ticked.
  */
-export function reminderMoments(reminders: Reminder[], filled: ReadonlySet<Day>, now: Date, days = 14): Date[] {
+export function reminderMoments(reminders: Reminder[], doneDays: ReadonlySet<Day>, now: Date, days = 14): Date[] {
   const moments: Date[] = [];
   for (let offset = 0; offset < days; offset++) {
     const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset);
-    if (filled.has(toDay(date))) continue;
+    if (doneDays.has(toDay(date))) continue;
     for (const { time } of reminders) {
       const [hours, minutes] = time.split(':').map(Number);
       const moment = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);

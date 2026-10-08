@@ -8,8 +8,6 @@ export type MergePlan = {
   updates: { habitId: number; addChecks: Day[]; startDay: Day | null }[];
   /** Habits only in the backup, added at the end of the list. */
   inserts: BackupHabit[];
-  /** Filled-in days the app doesn't have yet. */
-  addFilled: Day[];
 };
 
 /** "  Ne  pas BOIRE " and "ne pas boire" are the same habit. */
@@ -22,7 +20,7 @@ const normalize = (name: string) => name.trim().replace(/\s+/g, ' ').toLocaleLow
  */
 export function planMerge(snapshot: Snapshot, backup: Backup): MergePlan {
   const matched = new Set<number>();
-  const plan: MergePlan = { updates: [], inserts: [], addFilled: [] };
+  const plan: MergePlan = { updates: [], inserts: [] };
 
   for (const incoming of backup.habits) {
     const local =
@@ -42,6 +40,5 @@ export function planMerge(snapshot: Snapshot, backup: Backup): MergePlan {
     if (addChecks.length > 0 || startDay) plan.updates.push({ habitId: local.id, addChecks, startDay });
   }
 
-  plan.addFilled = backup.filledDays.filter((d) => !snapshot.filled.has(d));
   return plan;
 }

@@ -46,7 +46,7 @@ async function syncReminders(snapshot: Snapshot) {
   await Notifications.cancelAllScheduledNotificationsAsync();
   // Text in the current language, frozen at scheduling time: rescheduled on each app start anyway.
   const content = { title: i18n.t('reminders.notificationTitle'), body: i18n.t('reminders.notificationBody') };
-  for (const date of reminderMoments(snapshot.reminders, snapshot.filled, new Date())) {
+  for (const date of reminderMoments(snapshot.reminders, snapshot.tickedDays, new Date())) {
     await Notifications.scheduleNotificationAsync({
       content,
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date },
@@ -74,7 +74,7 @@ export async function scheduledCount(): Promise<number> {
 
 /**
  * Keeps the scheduled reminders in step with the data: after every change
- * (a tick, a filled-in day, a reminder edited) and each time the app comes back.
+ * (a tick, a reminder edited) and each time the app comes back.
  */
 export function useReminderSync() {
   const snapshot = useSnapshot();

@@ -27,12 +27,12 @@ const snapshot: Snapshot = {
     [1, new Set(['2026-10-01', '2026-10-02'])],
     [2, new Set<string>()],
   ]),
-  filled: new Set(['2026-10-01', '2026-10-02']),
+  tickedDays: new Set(['2026-10-01', '2026-10-02']),
   settings: DEFAULT_SETTINGS,
   reminders: [],
 };
 
-const backup = (habits: BackupHabit[], filledDays: string[] = []): Backup => ({ habits, filledDays });
+const backup = (habits: BackupHabit[]): Backup => ({ habits });
 
 describe('planMerge', () => {
   test('matches by permanent id even after a rename, and only adds missing ticks', () => {
@@ -61,9 +61,5 @@ describe('planMerge', () => {
   test('matches each app habit at most once', () => {
     const plan = planMerge(snapshot, backup([incoming(null, 'Lire', []), incoming(null, 'lire', ['2026-10-05'])]));
     expect(plan.inserts.map((h) => h.name)).toEqual(['lire']);
-  });
-
-  test('adds only the filled-in days the app lacks', () => {
-    expect(planMerge(snapshot, backup([], ['2026-10-02', '2026-10-04'])).addFilled).toEqual(['2026-10-04']);
   });
 });

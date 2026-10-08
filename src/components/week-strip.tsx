@@ -49,7 +49,7 @@ function Arrow({ icon, label, onPress }: { icon: 'chevron.left' | 'chevron.right
   );
 }
 
-/** Seven days with one dot per habit, to spot a forgotten day at a glance. */
+/** Seven days with one dot per habit, ticked or not. */
 export function WeekDays({
   weekStart,
   today,
@@ -96,7 +96,6 @@ export function WeekDays({
                   className={cn(
                     'size-1.5 rounded-full',
                     dot.state === 'missed' && 'bg-empty',
-                    dot.state === 'forgotten' && 'border border-faint',
                   )}
                   // The habit's own color can't be a class: it's data.
                   style={dot.state === 'done' ? { backgroundColor: mark(dot.color) } : undefined}

@@ -2,12 +2,10 @@ import { addDays, type Day, startOfWeek } from './day';
 import type { HabitHistory } from './stats';
 
 /**
- * One cell of the "day by day" calendar:
- * - done / missed: ticked or not, on a day that counts
- * - forgotten: a past day nobody filled in (counted as missed by the stats, shown apart)
- * - outside: before the habit started, or after today
+ * One cell of the "day by day" calendar: done or missed on a day that counts; outside before the
+ * habit started or after today.
  */
-export type CalendarCell = { day: Day; state: 'done' | 'missed' | 'forgotten' | 'outside'; isToday: boolean };
+export type CalendarCell = { day: Day; state: 'done' | 'missed' | 'outside'; isToday: boolean };
 
 /**
  * The last `weeks` weeks as columns of 7 cells (first column = oldest week),
@@ -15,7 +13,6 @@ export type CalendarCell = { day: Day; state: 'done' | 'missed' | 'forgotten' | 
  */
 export function calendarWeeks(
   h: HabitHistory,
-  filled: ReadonlySet<Day>,
   today: Day,
   weekStartsOn: 'monday' | 'sunday',
   weeks = 26,
@@ -24,14 +21,7 @@ export function calendarWeeks(
   return Array.from({ length: weeks }, (_, w) =>
     Array.from({ length: 7 }, (_, d) => {
       const day = addDays(firstWeek, 7 * w + d);
-      const state: CalendarCell['state'] =
-        day > today || day < h.start
-          ? 'outside'
-          : h.checked.has(day)
-            ? 'done'
-            : filled.has(day) || day === today
-              ? 'missed'
-              : 'forgotten';
+      const state: CalendarCell['state'] = day > today || day < h.start ? 'outside' : h.checked.has(day) ? 'done' : 'missed';
       return { day, state, isToday: day === today };
     }),
   );

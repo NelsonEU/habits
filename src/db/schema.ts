@@ -52,6 +52,10 @@ const MIGRATIONS: string[] = [
     ELSE color
   END;
   `,
+  // 5 — no more "filled-in" days: a day is done when something is ticked, as in Daygraph
+  `
+  DROP TABLE filled_days;
+  `,
 ];
 
 /** Runs at app start, before any screen renders. */

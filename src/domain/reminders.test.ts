@@ -14,7 +14,7 @@ describe('reminderMoments', () => {
     expect(reminderMoments([{ id: 1, time: '18:00' }], new Set(), NOW, 2)).toEqual([at(9, 18)]);
   });
 
-  test('skips every reminder of a day already filled in', () => {
+  test('skips every reminder of a day where something is already ticked', () => {
     const twice = [...evening, { id: 2, time: '21:00' }];
     expect(reminderMoments(twice, new Set(['2026-10-08']), NOW, 2)).toEqual([at(9, 21), at(9, 22)]);
   });

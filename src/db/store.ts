@@ -10,7 +10,7 @@ import { loadSnapshot } from './repo';
  * change. (Deriving it with useMemo and a version dependency doesn't work:
  * the React Compiler drops a dependency the memo body doesn't really use.)
  * SQLite's own change listener can't be used: it doesn't fire for
- * WITHOUT ROWID tables (checks, filled_days).
+ * WITHOUT ROWID tables (checks).
  */
 let version = 0;
 let cached: { version: number; snapshot: Snapshot } | null = null;

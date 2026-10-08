@@ -10,7 +10,7 @@ const snapshot: Snapshot = {
     [1, new Set(['2026-10-02', '2026-10-01'])],
     [2, new Set(['2026-08-15'])],
   ]),
-  filled: new Set(['2026-10-02', '2026-10-01', '2026-10-03']),
+  tickedDays: new Set(['2026-10-01', '2026-10-02', '2026-08-15']),
   settings: DEFAULT_SETTINGS,
   reminders: [],
 };
@@ -23,7 +23,6 @@ describe('backup file', () => {
         { uid: 'u1', name: 'Marcher', color: '#F0B35A', startDay: '2026-01-01', archivedAt: null, checks: ['2026-10-01', '2026-10-02'] },
         { uid: 'u2', name: 'Lire', color: '#6E9BF2', startDay: '2026-02-01', archivedAt: '2026-09-01T10:00:00.000Z', checks: ['2026-08-15'] },
       ],
-      filledDays: ['2026-10-01', '2026-10-02', '2026-10-03'],
     });
   });
 
@@ -40,12 +39,6 @@ describe('backup file', () => {
     expect(() => parseBackupFile({ ...valid(), habits: 'nope' })).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
   });
 
-  test('converts the original palette from older exports, rather than guessing the nearest', () => {
-    const file = valid();
-    file.habits[0].color = '#C9D86A'; // the mockup's "Anis", now Olive (nearest would be another color)
-    expect(parseBackupFile(file).habits[0].color).toBe('#96A331');
-  });
-
   test('brings hand-edited colors back into the palette', () => {
     const file = valid();
     file.habits[0].color = '#ff9a59';
@@ -53,7 +46,7 @@ describe('backup file', () => {
   });
 });
 
-test('daygraphToBackup starts every habit on the first day and fills ticked days', () => {
+test('daygraphToBackup starts every habit on the first day', () => {
   const backup = daygraphToBackup(
     {
       habits: [{ sourceId: 7, name: 'Marcher', color: '#F0B35A', sortOrder: 0 }],
@@ -68,7 +61,6 @@ test('daygraphToBackup starts every habit on the first day and fills ticked days
   );
   expect(backup).toEqual({
     habits: [{ uid: null, name: 'Marcher', color: '#F0B35A', startDay: '2026-03-01', archivedAt: null, checks: ['2026-03-01', '2026-03-02'] }],
-    filledDays: ['2026-03-01', '2026-03-02'],
   });
 });
 

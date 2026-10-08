@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, Image, Pressable, View } from 'react-native';
+import { Alert, Image, View } from 'react-native';
 
 import { ImportError } from '@/backup/errors';
 import { pickBackup } from '@/backup/files';
@@ -13,7 +13,7 @@ import { HabitCard } from '@/components/habit-card';
 import { Screen } from '@/components/screen';
 import { Text, Title } from '@/components/text';
 import { WeekNav, WeekPager } from '@/components/week-strip';
-import { markFilled, setChecked } from '@/db/repo';
+import { setChecked } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, type Day, startOfWeek } from '@/domain/day';
 import { dayDots, weekBounds } from '@/domain/day-view';
@@ -40,7 +40,6 @@ export default function DayScreen() {
 
   const habits = habitsOn(snapshot, selected);
   const anyDone = habits.some((h) => snapshot.checks.get(h.id)?.has(selected));
-  const filled = snapshot.filled.has(selected);
 
   const toggle = (habitId: number, checked: boolean) => {
     setChecked(db, habitId, selected, !checked);
@@ -86,11 +85,7 @@ export default function DayScreen() {
                 ? t('day.yesterday')
                 : longDay(selected, locale)}</Title>
           <Text className="text-sm text-muted">
-            {selected >= addDays(today, -1)
-              ? longDay(selected, locale)
-              : filled
-                ? t('day.pastDay')
-                : t('day.unfilledDay')}
+            {selected >= addDays(today, -1) ? longDay(selected, locale) : t('day.pastDay')}
           </Text>
         </View>
         {selected !== today && <PillButton label={t('common.today')} onPress={goToday} />}
@@ -120,26 +115,10 @@ export default function DayScreen() {
       </View>
 
       {habits.length > 0 && (
-        <View className="mt-auto min-h-[60px] justify-center gap-1.5 pr-[84px]">
-          {anyDone || filled ? (
-            <Text className="text-sm text-muted">
-              {selected === today ? t('day.savedToday') : t('day.saved')}
-            </Text>
-          ) : (
-            <>
-              <Text className="text-sm text-muted">{t('day.tapPrompt')}</Text>
-              <Pressable
-                accessibilityRole="button"
-                hitSlop={8}
-                onPress={() => {
-                  markFilled(db, selected);
-                  notifyChange();
-                }}
-              >
-                <Text className="text-sm font-semibold underline">{t('day.nothingKept')}</Text>
-              </Pressable>
-            </>
-          )}
+        <View className="mt-auto min-h-[60px] justify-center pr-[84px]">
+          <Text className="text-sm text-muted">
+            {!anyDone ? t('day.tapPrompt') : selected === today ? t('day.savedToday') : t('day.saved')}
+          </Text>
         </View>
       )}
     </Screen>

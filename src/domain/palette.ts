@@ -26,14 +26,6 @@ export function markColor(hex: string, scheme: 'light' | 'dark'): string {
   return HABIT_COLORS.find((c) => c.hex === hex)?.lightMark ?? hex;
 }
 
-/** The mockup's original colors, and what they became: for migration 4 and older export files. */
-export const LEGACY_COLORS: Record<string, string> = {
-  '#F08CA8': '#E985A2',
-  '#B79CF5': '#D3B8FF',
-  '#C9D86A': '#96A331',
-  '#7FD9B4': '#80DAB5',
-};
-
 const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 
 /** The palette color closest to any "#RRGGBB" color. */

@@ -32,23 +32,18 @@ export type Snapshot = {
   habits: Habit[];
   /** Ticked days per habit id. */
   checks: Map<number, Set<Day>>;
-  /** Days the user went through: something ticked, or "nothing kept" said explicitly (see filledDays). */
-  filled: Set<Day>;
+  /** Days with at least one tick: a day is "done" (no more reminders) once it's in here. */
+  tickedDays: Set<Day>;
   settings: Settings;
   /** Sorted by time. */
   reminders: Reminder[];
 };
 
-/**
- * A day is filled in when at least one habit is ticked on it, or when the user said nothing was
- * kept ("Rien de tenu ce jour-là"). Computed rather than stored, so unticking a mistaken tick
- * leaves the day as it was. Only the explicit "nothing kept" days are stored (filled_days), and a
- * tick cancels that day's mark (see setChecked).
- */
-export function filledDays(explicit: Iterable<Day>, checks: Map<number, Set<Day>>): Set<Day> {
-  const filled = new Set(explicit);
-  for (const days of checks.values()) for (const day of days) filled.add(day);
-  return filled;
+/** Days with at least one tick, any habit. */
+export function tickedDays(checks: Map<number, Set<Day>>): Set<Day> {
+  const days = new Set<Day>();
+  for (const habitDays of checks.values()) for (const day of habitDays) days.add(day);
+  return days;
 }
 
 export function historyOf(snapshot: Snapshot, habit: Habit): HabitHistory {

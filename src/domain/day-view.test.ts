@@ -18,25 +18,24 @@ const snapshot: Snapshot = {
     [2, new Set()],
     [3, new Set()],
   ]),
-  filled: new Set(['2026-10-05', '2026-10-06', '2026-10-07']),
+  tickedDays: new Set(['2026-10-05', '2026-10-07']),
   settings: DEFAULT_SETTINGS,
   reminders: [],
 };
 const TODAY = '2026-10-07';
 
 describe('dayDots', () => {
-  test('ticked, filled-in and forgotten days', () => {
+  test('ticked or not', () => {
     expect(dayDots(snapshot, '2026-10-05', TODAY)).toEqual([{ color: '#000001', state: 'done' }]);
-    expect(dayDots(snapshot, '2026-10-04', TODAY)).toEqual([{ color: '#000001', state: 'forgotten' }]);
+    expect(dayDots(snapshot, '2026-10-04', TODAY)).toEqual([{ color: '#000001', state: 'missed' }]);
   });
 
   test('only habits started by then, archived ones hidden', () => {
     expect(dayDots(snapshot, '2026-10-06', TODAY).map((d) => d.color)).toEqual(['#000001', '#000002']);
   });
 
-  test('today is still open, the future has no dots', () => {
-    const empty: Snapshot = { ...snapshot, filled: new Set() };
-    expect(dayDots(empty, TODAY, TODAY).map((d) => d.state)).toEqual(['done', 'missed']);
+  test('today shows like any day, the future has no dots', () => {
+    expect(dayDots(snapshot, TODAY, TODAY).map((d) => d.state)).toEqual(['done', 'missed']);
     expect(dayDots(snapshot, '2026-10-08', TODAY)).toEqual([]);
   });
 });

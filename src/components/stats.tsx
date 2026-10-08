@@ -251,7 +251,6 @@ export function CalendarGrid({
                       className={cn(
                         'rounded-[3px]',
                         c.state === 'missed' && 'bg-empty',
-                        c.state === 'forgotten' && 'border border-faint',
                         c.isToday && c.state !== 'done' && 'border-[1.5px] border-ink',
                       )}
                       style={{
@@ -274,9 +273,6 @@ export function CalendarGrid({
         </LegendItem>
         <LegendItem label={t('stats.legendMissed')}>
           <View className="size-2.5 rounded-[3px] bg-empty" />
-        </LegendItem>
-        <LegendItem label={t('stats.legendForgotten')}>
-          <View className="size-2.5 rounded-[3px] border border-faint" />
         </LegendItem>
         <Text className="ml-auto text-xs text-muted">{weekStartsOn === 'monday' ? t('stats.mondayOnTop') : t('stats.sundayOnTop')}</Text>
       </View>

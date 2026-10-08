@@ -58,7 +58,7 @@ export default function SettingsScreen() {
   const [next, setNext] = useState<{ moment: Date | null; scheduled: number } | null>(null);
   useEffect(() => {
     let cancelled = false;
-    const moment = reminderMoments(snapshot.reminders, snapshot.filled, new Date())[0] ?? null;
+    const moment = reminderMoments(snapshot.reminders, snapshot.tickedDays, new Date())[0] ?? null;
     scheduledCount()
       .catch(() => 0)
       .then((scheduled) => !cancelled && setNext({ moment, scheduled }));
@@ -144,7 +144,7 @@ export default function SettingsScreen() {
         style: 'destructive',
         onPress: () => {
           saveSafetyCopy(snapshot);
-          change(() => replaceAll(db, { habits: [], filledDays: [] }));
+          change(() => replaceAll(db, { habits: [] }));
           setCopyDate(safetyCopyDate());
         },
       },

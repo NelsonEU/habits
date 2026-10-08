@@ -36,6 +36,6 @@ export function habitStats(snapshot: Snapshot, habit: Habit, today: Day, weekSta
     weekdays,
     weekdayExtremes,
     // 4 · Day by day
-    calendar: calendarWeeks(history, snapshot.filled, today, weekStartsOn),
+    calendar: calendarWeeks(history, today, weekStartsOn),
   };
 }

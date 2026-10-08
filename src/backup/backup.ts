@@ -1,14 +1,12 @@
 import { type Day, isDay } from '@/domain/day';
 import type { Snapshot } from '@/domain/model';
-import { HABIT_COLORS, LEGACY_COLORS, nearestHabitColor } from '@/domain/palette';
+import { HABIT_COLORS, nearestHabitColor } from '@/domain/palette';
 import type { DaygraphImport } from './daygraph';
 import { ImportError } from './errors';
 
 /** Everything an import can bring, whatever the file it came from. */
 export type Backup = {
   habits: BackupHabit[];
-  /** Days the user went through (see Snapshot.filled). */
-  filledDays: Day[];
 };
 
 export type BackupHabit = {
@@ -23,8 +21,8 @@ export type BackupHabit = {
 };
 
 /*
- * This app's export file. Bump VERSION when the shape changes, and keep reading
- * older versions in parseBackupFile.
+ * This app's export file. Bump VERSION when the shape changes. While the app is in development,
+ * older files aren't kept readable; that starts once it's actually in use.
  */
 const APP = 'habits';
 const VERSION = 1;
@@ -34,7 +32,6 @@ type BackupFile = {
   version: number;
   exportedAt: string;
   habits: (BackupHabit & { uid: string })[];
-  filledDays: Day[];
 };
 
 /** The whole app as an export file (JSON text). Habits in display order. */
@@ -51,7 +48,6 @@ export function toBackupFile(snapshot: Snapshot, exportedAt: Date): string {
       archivedAt: h.archivedAt,
       checks: [...(snapshot.checks.get(h.id) ?? [])].sort(),
     })),
-    filledDays: [...snapshot.filled].sort(),
   };
   return JSON.stringify(file, null, 2);
 }
@@ -60,14 +56,10 @@ const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'obj
 const isDayList = (v: unknown): v is Day[] => Array.isArray(v) && v.every((d) => typeof d === 'string' && isDay(d));
 const PALETTE = new Set<string>(HABIT_COLORS.map((c) => c.hex));
 
-/**
- * A color from a file, as one of the app's: files from before the palette change carry the old
- * colors, and a hand-edited file could hold any color.
- */
+/** A color from a file, as one of the app's: a hand-edited file could hold any color. */
 function paletteColor(color: string): string {
   const upper = color.toUpperCase();
-  if (PALETTE.has(upper)) return upper;
-  return LEGACY_COLORS[upper] ?? nearestHabitColor(upper);
+  return PALETTE.has(upper) ? upper : nearestHabitColor(upper);
 }
 
 export function isBackupFile(json: unknown): boolean {
@@ -77,7 +69,7 @@ export function isBackupFile(json: unknown): boolean {
 export function parseBackupFile(json: unknown): Backup {
   if (!isObject(json) || json.app !== APP) throw new ImportError('unknown-format');
   if (typeof json.version !== 'number' || json.version > VERSION) throw new ImportError('newer-version');
-  if (!Array.isArray(json.habits) || !isDayList(json.filledDays)) throw new ImportError('invalid-backup');
+  if (!Array.isArray(json.habits)) throw new ImportError('invalid-backup');
 
   const habits = json.habits.map((raw): BackupHabit => {
     if (
@@ -104,13 +96,11 @@ export function parseBackupFile(json: unknown): Backup {
     };
   });
   if (new Set(habits.map((h) => h.uid)).size !== habits.length) throw new ImportError('invalid-backup');
-  return { habits, filledDays: [...new Set(json.filledDays)].sort() };
+  return { habits };
 }
 
 /**
- * A Daygraph backup as a Backup. Daygraph doesn't record filled-in days, so
- * only days with at least one tick count as filled; every habit starts on the
- * backup's first day.
+ * A Daygraph backup as a Backup. Every habit starts on the backup's first day.
  */
 export function daygraphToBackup(data: DaygraphImport, today: Day): Backup {
   const startDay = data.firstDay ?? today;
@@ -125,7 +115,7 @@ export function daygraphToBackup(data: DaygraphImport, today: Day): Backup {
       .map((c) => c.day)
       .sort(),
   }));
-  return { habits, filledDays: [...new Set(data.checks.map((c) => c.day))].sort() };
+  return { habits };
 }
 
 /** What the import screen shows before anything is changed. */
