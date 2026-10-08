@@ -14,6 +14,14 @@ npx expo start              # day-to-day: serves the code to the installed app
 
 On a free Apple account the installed app expires after 7 days: run `npx expo run:ios --device` again (data is kept).
 
+## Versioning
+
+```sh
+npm run version:bump            # 1.0.0 → 1.0.1 (or: minor, major)
+```
+
+`package.json` holds the version; `app.config.ts` derives the iOS build number and Android version code from it (1.2.3 → 10002003).
+
 ## Checks
 
 ```sh
