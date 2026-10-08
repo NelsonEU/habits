@@ -24,6 +24,12 @@ const MIGRATIONS: string[] = [
     day TEXT PRIMARY KEY NOT NULL
   ) WITHOUT ROWID;
   `,
+  // 2 — a permanent id per habit, so an export can be merged back even after a rename
+  `
+  ALTER TABLE habits ADD COLUMN uid TEXT;
+  UPDATE habits SET uid = lower(hex(randomblob(16)));
+  CREATE UNIQUE INDEX habits_uid ON habits (uid);
+  `,
 ];
 
 /** Runs at app start, before any screen renders. */

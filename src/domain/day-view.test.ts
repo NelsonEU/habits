@@ -3,6 +3,7 @@ import type { Habit, Snapshot } from './model';
 
 const habit = (id: number, startDay: string, archivedAt: string | null = null): Habit => ({
   id,
+  uid: `uid-${id}`,
   name: `Habitude ${id}`,
   color: `#00000${id}`,
   sortOrder: id,

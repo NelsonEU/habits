@@ -29,3 +29,6 @@ export function weekLabel(first: Day, last: Day, locale: string): string {
   const end = format(last, locale, { month: 'short', year: 'numeric' });
   return `${capitalize(start)} – ${end}`;
 }
+
+/** "5 janv. 2024", "Jan 5, 2024". */
+export const shortDate = (day: Day, locale: string) => format(day, locale, { day: 'numeric', month: 'short', year: 'numeric' });

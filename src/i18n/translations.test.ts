@@ -33,8 +33,13 @@ describe.each([['fr', fr]])('%s', (_, translations) => {
   });
 
   test('uses the same placeholders', () => {
+    // A plural form may leave the number out ("Ton habitude…" for one habit), so {{count}} is optional there.
+    const compared = (key: string, value: string) =>
+      placeholders(value)
+        .filter((p) => !(p === 'count' && /_(zero|one|two|few|many|other)$/.test(key)))
+        .join();
     const mismatches = [...reference].filter(
-      ([key, value]) => strings.has(key) && placeholders(value).join() !== placeholders(strings.get(key)!).join(),
+      ([key, value]) => strings.has(key) && compared(key, value) !== compared(key, strings.get(key)!),
     );
     expect(mismatches.map(([key]) => key)).toEqual([]);
   });

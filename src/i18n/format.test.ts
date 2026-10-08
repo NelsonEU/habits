@@ -1,9 +1,13 @@
-import { longDay, weekdayLetter, weekLabel } from './format';
+import { longDay, shortDate, weekdayLetter, weekLabel } from './format';
 
 describe.each([
-  ['fr-FR', 'Lundi 5 octobre', ['L', 'D'], ['Octobre 2026', 'Sept. – oct. 2026', 'Déc. 2025 – janv. 2026']],
-  ['en-US', 'Monday, October 5', ['M', 'S'], ['October 2026', 'Sep – Oct 2026', 'Dec 2025 – Jan 2026']],
-])('%s', (locale, monday, [mondayLetter, sundayLetter], [sameMonth, twoMonths, twoYears]) => {
+  ['fr-FR', 'Lundi 5 octobre', ['L', 'D'], ['Octobre 2026', 'Sept. – oct. 2026', 'Déc. 2025 – janv. 2026'], '5 janv. 2024'],
+  ['en-US', 'Monday, October 5', ['M', 'S'], ['October 2026', 'Sep – Oct 2026', 'Dec 2025 – Jan 2026'], 'Jan 5, 2024'],
+])('%s', (locale, monday, [mondayLetter, sundayLetter], [sameMonth, twoMonths, twoYears], short) => {
+  test('shortDate', () => {
+    expect(shortDate('2024-01-05', locale)).toBe(short);
+  });
+
   test('longDay', () => {
     expect(longDay('2026-10-05', locale)).toBe(monday);
   });

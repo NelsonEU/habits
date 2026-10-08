@@ -2,11 +2,12 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 import type { Day } from '@/domain/day';
 import type { Habit, Snapshot } from '@/domain/model';
-import type { DaygraphImport } from '@/import/daygraph';
-import { ImportError } from '@/import/errors';
+import type { Backup, BackupHabit } from '@/backup/backup';
+import type { MergePlan } from '@/backup/merge';
 
 type HabitRow = {
   id: number;
+  uid: string;
   name: string;
   color: string;
   sort_order: number;
@@ -23,6 +24,7 @@ export function loadSnapshot(db: SQLiteDatabase): Snapshot {
     .getAllSync<HabitRow>('SELECT * FROM habits ORDER BY sort_order, id')
     .map((r) => ({
       id: r.id,
+      uid: r.uid,
       name: r.name,
       color: r.color,
       sortOrder: r.sort_order,
@@ -54,11 +56,13 @@ export function markFilled(db: SQLiteDatabase, day: Day) {
 }
 
 const NEXT_SORT_ORDER = 'SELECT COALESCE(MAX(sort_order), -1) + 1 FROM habits';
+/** 32 random hex characters: unique enough for a permanent habit id. */
+const NEW_UID = 'lower(hex(randomblob(16)))';
 
 /** A new habit goes last, and counts from today. */
 export function createHabit(db: SQLiteDatabase, habit: { name: string; color: string }, today: Day) {
   db.runSync(
-    `INSERT INTO habits (name, color, sort_order, start_day) VALUES (?, ?, (${NEXT_SORT_ORDER}), ?)`,
+    `INSERT INTO habits (uid, name, color, sort_order, start_day) VALUES (${NEW_UID}, ?, ?, (${NEXT_SORT_ORDER}), ?)`,
     habit.name,
     habit.color,
     today,
@@ -94,29 +98,45 @@ export function deleteHabit(db: SQLiteDatabase, id: number) {
   });
 }
 
-/**
- * Imports a Daygraph backup into an empty database. Daygraph doesn't record
- * filled-in days, so only days with at least one tick count as filled.
- */
-export function importDaygraph(db: SQLiteDatabase, data: DaygraphImport, today: Day) {
-  db.withTransactionSync(() => {
-    const existing = db.getFirstSync<{ n: number }>('SELECT COUNT(*) AS n FROM habits');
-    if (existing && existing.n > 0) throw new ImportError('not-empty');
+/** Inserts a backup habit with its ticks, after the existing ones. Sources without ids get a new one. */
+function insertHabit(db: SQLiteDatabase, habit: BackupHabit) {
+  const { lastInsertRowId } = db.runSync(
+    `INSERT INTO habits (uid, name, color, sort_order, start_day, archived_at)
+     VALUES (COALESCE(?, ${NEW_UID}), ?, ?, (${NEXT_SORT_ORDER}), ?, ?)`,
+    habit.uid,
+    habit.name,
+    habit.color,
+    habit.startDay,
+    habit.archivedAt,
+  );
+  for (const day of habit.checks) {
+    db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', lastInsertRowId, day);
+  }
+}
 
-    const ids = new Map<number, number>();
-    for (const h of data.habits) {
-      const { lastInsertRowId } = db.runSync(
-        'INSERT INTO habits (name, color, sort_order, start_day) VALUES (?, ?, ?, ?)',
-        h.name,
-        h.color,
-        h.sortOrder,
-        data.firstDay ?? today,
-      );
-      ids.set(h.sourceId, lastInsertRowId);
+function addFilledDays(db: SQLiteDatabase, days: Day[]) {
+  for (const day of days) db.runSync('INSERT OR IGNORE INTO filled_days (day) VALUES (?)', day);
+}
+
+/** Applies a merge (see planMerge): only adds, in one transaction. */
+export function applyMerge(db: SQLiteDatabase, plan: MergePlan) {
+  db.withTransactionSync(() => {
+    for (const { habitId, addChecks, startDay } of plan.updates) {
+      for (const day of addChecks) db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', habitId, day);
+      if (startDay) db.runSync('UPDATE habits SET start_day = ? WHERE id = ?', startDay, habitId);
     }
-    for (const c of data.checks) {
-      db.runSync('INSERT OR IGNORE INTO checks (habit_id, day) VALUES (?, ?)', ids.get(c.sourceId)!, c.day);
-      db.runSync('INSERT OR IGNORE INTO filled_days (day) VALUES (?)', c.day);
-    }
+    plan.inserts.forEach((habit) => insertHabit(db, habit));
+    addFilledDays(db, plan.addFilled);
+  });
+}
+
+/** Replaces all the app's data with a backup, in one transaction: either everything changes or nothing. */
+export function replaceAll(db: SQLiteDatabase, backup: Backup) {
+  db.withTransactionSync(() => {
+    db.runSync('DELETE FROM checks');
+    db.runSync('DELETE FROM habits');
+    db.runSync('DELETE FROM filled_days');
+    backup.habits.forEach((habit) => insertHabit(db, habit));
+    addFilledDays(db, backup.filledDays);
   });
 }

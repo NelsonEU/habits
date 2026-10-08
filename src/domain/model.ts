@@ -3,6 +3,8 @@ import type { HabitHistory } from './stats';
 
 export type Habit = {
   id: number;
+  /** Permanent id, kept across export and import (unlike `id`, which is local to this phone). */
+  uid: string;
   name: string;
   /** "#RRGGBB", one of HABIT_COLORS. */
   color: string;

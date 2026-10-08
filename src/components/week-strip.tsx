@@ -1,5 +1,6 @@
 import { SymbolView } from 'expo-symbols';
-import { Pressable, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { FlatList, Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { addDays, type Day } from '@/domain/day';
@@ -103,6 +104,78 @@ export function WeekDays({
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+/**
+ * The week strip as a carousel: it follows the finger and snaps to the
+ * previous or next week, from the earliest habit's week to the current one.
+ * `weekStart` stays the source of truth: the arrows and "Today" move it, and
+ * the carousel scrolls to match; a swipe reports the new week via onWeekChange.
+ */
+export function WeekPager({
+  first,
+  last,
+  weekStart,
+  onWeekChange,
+  ...days
+}: {
+  first: Day;
+  last: Day;
+  weekStart: Day;
+  onWeekChange: (weekStart: Day) => void;
+  today: Day;
+  selected: Day;
+  dotsFor: (day: Day) => Dot[];
+  onSelect: (day: Day) => void;
+}) {
+  const [width, setWidth] = useState(0);
+  const list = useRef<FlatList<Day>>(null);
+  // iOS also reports the end of scrolls made by code: only a finger's swipe may change the week.
+  const dragging = useRef(false);
+  const weeks: Day[] = [];
+  for (let w = first; w <= last; w = addDays(w, 7)) weeks.push(w);
+  const index = Math.max(0, weeks.indexOf(weekStart));
+
+  // Follow weekStart when it changes from outside (arrows, "Today", midnight).
+  useEffect(() => {
+    if (width > 0) list.current?.scrollToOffset({ offset: index * width, animated: true });
+  }, [index, width]);
+
+  return (
+    <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
+      {width > 0 && (
+        <FlatList
+          ref={list}
+          data={weeks}
+          keyExtractor={(w) => w}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          // initialScrollIndex, not contentOffset: the list only draws items near the position it
+          // knows about, so with contentOffset it drew the first week, off-screen.
+          initialScrollIndex={index}
+          getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
+          // Only the visible week and its neighbors are drawn.
+          initialNumToRender={1}
+          windowSize={3}
+          onScrollBeginDrag={() => {
+            dragging.current = true;
+          }}
+          onMomentumScrollEnd={(e) => {
+            if (!dragging.current) return;
+            dragging.current = false;
+            const week = weeks[Math.round(e.nativeEvent.contentOffset.x / width)];
+            if (week && week !== weekStart) onWeekChange(week);
+          }}
+          renderItem={({ item }) => (
+            <View style={{ width }}>
+              <WeekDays weekStart={item} {...days} />
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 }

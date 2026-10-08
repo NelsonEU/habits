@@ -19,6 +19,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
           <Stack.Screen name="habits/new" options={{ presentation: 'modal' }} />
           <Stack.Screen name="habits/[id]" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="import" options={{ presentation: 'modal' }} />
         </Stack>
       </SQLiteProvider>
     </GestureHandlerRootView>

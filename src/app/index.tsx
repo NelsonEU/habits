@@ -2,14 +2,17 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useSQLiteContext } from 'expo-sqlite';
 import { useState } from 'react';
-import { Alert, Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Alert, Image, Pressable, View } from 'react-native';
 
-import { Fab, IconButton, PillButton, PrimaryButton } from '@/components/buttons';
+import { ImportError } from '@/backup/errors';
+import { pickBackup } from '@/backup/files';
+import { setPendingImport } from '@/backup/pending';
+import { Fab, IconButton, PillButton, PrimaryButton, SecondaryButton } from '@/components/buttons';
 import { HabitCard } from '@/components/habit-card';
 import { Screen } from '@/components/screen';
 import { Text, Title } from '@/components/text';
-import { WeekDays, WeekNav } from '@/components/week-strip';
+import { WeekNav, WeekPager } from '@/components/week-strip';
 import { markFilled, setChecked } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, type Day, startOfWeek } from '@/domain/day';
@@ -19,8 +22,6 @@ import { currentStreak } from '@/domain/stats';
 import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
 import { longDay } from '@/i18n/format';
-import { ImportError } from '@/import/errors';
-import { pickAndImport } from '@/import/pick';
 
 // Becomes a setting in step 6.
 const WEEK_STARTS_ON = 'monday';
@@ -67,8 +68,11 @@ export default function DayScreen() {
           <IconButton icon="chart.bar" label={t('day.statistics')} onPress={() => router.push('/stats')} />
           <IconButton icon="slider.horizontal.3" label={t('day.settings')} onPress={() => router.push('/settings')} />
         </View>
-        <WeekDays
+        <WeekPager
+          first={bounds.first}
+          last={bounds.last}
           weekStart={weekStart}
+          onWeekChange={setPickedWeek}
           today={today}
           selected={selected}
           dotsFor={(day) => dayDots(snapshot, day, today)}
@@ -148,18 +152,16 @@ export default function DayScreen() {
 /** A brand-new app: in place of the habit cards, create a first habit or import existing data. */
 function EmptyState({ today }: { today: Day }) {
   const { t } = useTranslation();
-  const db = useSQLiteContext();
   const [importing, setImporting] = useState(false);
 
+  // Reads the file, then shows what it contains on the import screen before anything changes.
   const importData = async () => {
     setImporting(true);
     try {
-      const result = await pickAndImport(db, today);
-      if (result) {
-        Alert.alert(
-          t('import.doneTitle'),
-          t('import.doneBody', { count: result.habits, checks: result.checks.toLocaleString(locale) }),
-        );
+      const picked = await pickBackup(today);
+      if (picked) {
+        setPendingImport({ backup: picked.backup, source: { kind: 'file', name: picked.fileName } });
+        router.push('/import');
       }
     } catch (e) {
       if (!(e instanceof ImportError)) throw e;
@@ -170,14 +172,16 @@ function EmptyState({ today }: { today: Day }) {
   };
 
   return (
-    <View className="gap-5 rounded-3xl border border-line bg-surface p-5">
-      <View className="gap-1.5">
-        <Text className="text-xl font-semibold leading-6">{t('empty.title')}</Text>
-        <Text className="text-muted">{t('empty.body')}</Text>
+    <View className="items-center gap-6 rounded-3xl border border-line bg-surface px-6 pb-6 pt-8">
+      {/* The logo's mark (ring and moon): the same evening ritual the app is about. */}
+      <Image source={require('@/assets/images/splash-icon.png')} accessibilityIgnoresInvertColors className="size-24" />
+      <View className="items-center gap-2">
+        <Title className="text-center text-[26px] leading-8 tracking-[-0.4px]">{t('empty.title')}</Title>
+        <Text className="text-center text-muted">{t('empty.body')}</Text>
       </View>
-      <View className="gap-3">
+      <View className="w-full gap-3">
         <PrimaryButton label={t('empty.create')} onPress={() => router.push('/habits/new')} />
-        <PillButton
+        <SecondaryButton
           label={importing ? t('empty.importing') : t('empty.import')}
           onPress={importing ? undefined : importData}
         />

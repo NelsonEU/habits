@@ -40,8 +40,28 @@
       "unknown-format": "This file isn’t a backup the app recognizes.",
       "invalid-daygraph": "This Daygraph backup is damaged.",
       "negative-habit": "“{{name}}” is a negative habit in Daygraph (ticked means failed), which isn’t supported.",
-      "not-empty": "For now, data can only be imported into an empty app."
-    }
+      "invalid-backup": "This backup is damaged.",
+      "newer-version": "This file comes from a newer version of the app. Update the app first."
+    },
+    "title": "Import data",
+    "fromFile": "From “{{name}}”",
+    "fromCopy": "Copy saved on {{date}}",
+    "summary_one": "{{count}} habit · {{checks}} ticked days",
+    "summary_other": "{{count}} habits · {{checks}} ticked days",
+    "range": "From {{first}} to {{last}}",
+    "noTicks": "No ticked days",
+    "merge": "Merge with my data",
+    "mergeHint": "Adds what’s missing. Nothing is removed.",
+    "replace": "Replace my data",
+    "replaceHint": "Your current data is saved first, and can be restored from Settings.",
+    "replaceConfirmTitle": "Replace your data?",
+    "replaceConfirmBody_one": "Your {{count}} habit and {{checks}} ticked days will be replaced by this file’s content.",
+    "replaceConfirmBody_other": "Your {{count}} habits and {{checks}} ticked days will be replaced by this file’s content.",
+    "replaceConfirm": "Replace",
+    "importButton": "Import",
+    "mergedTitle": "Data merged",
+    "mergedBody": "New habits: {{habits}} · Ticked days added: {{checks}}",
+    "replacedTitle": "Data replaced"
   },
   "stats": {
     "title": "Statistics",
@@ -49,7 +69,19 @@
     "detailTitle": "Habit {{id}}"
   },
   "settings": {
-    "title": "Settings"
+    "title": "Settings",
+    "backupSection": "Backup",
+    "export": "Export data",
+    "import": "Import data",
+    "backupHint": "Export creates a file you can save to Files or iCloud Drive. Import reads that file, or a Daygraph backup.",
+    "restoreCopy": "Restore data from before the last replace",
+    "restoreCopyHint": "Saved on {{date}}",
+    "exportFailed": "Export failed",
+    "clearAll": "Delete all data",
+    "clearAllHint": "Development only. A copy is saved first, and can be restored above.",
+    "clearAllConfirmTitle": "Delete all data?",
+    "clearAllConfirmBody": "All habits, ticks and filled-in days will be deleted. A copy is saved first.",
+    "clearAllConfirm": "Delete"
   },
   "habits": {
     "title": "My habits",
@@ -92,7 +124,7 @@
   "placeholder": {
     "stats": "One card per habit (step 5)",
     "detail": "Where I stand · Am I improving? · Which days are hard? · Day by day (step 5)",
-    "settings": "Display · Reminders · Backup · Feedback (steps 4 and 6)"
+    "settings": "Display · Reminders · Feedback (step 6)"
   },
   "colors": {
     "rose": "Pink",

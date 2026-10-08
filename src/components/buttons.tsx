@@ -86,6 +86,36 @@ export function PillButton({ label, onPress }: { label: string; onPress?: () => 
   );
 }
 
+/**
+ * Outlined action with the same size as PrimaryButton, for the second choice of a pair.
+ * `danger` for destructive actions. Disabled when `onPress` is missing.
+ */
+export function SecondaryButton({
+  label,
+  onPress,
+  tone = 'default',
+}: {
+  label: string;
+  onPress?: () => void;
+  tone?: 'default' | 'danger';
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !onPress }}
+      disabled={!onPress}
+      onPress={onPress}
+      className={cn(
+        'min-h-14 items-center justify-center rounded-full border px-5 active:opacity-60',
+        tone === 'danger' ? 'border-danger' : 'border-line-strong',
+        !onPress && 'opacity-60',
+      )}
+    >
+      <Text className={cn('text-[17px] font-semibold', tone === 'danger' && 'text-danger')}>{label}</Text>
+    </Pressable>
+  );
+}
+
 /** Full-width main action, light on dark. Disabled when `onPress` is missing. */
 export function PrimaryButton({ label, onPress }: { label: string; onPress?: () => void }) {
   return (
