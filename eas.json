@@ -1,7 +1,8 @@
 {
   "cli": {
     "version": ">= 24.0.0",
-    "appVersionSource": "local"
+    "appVersionSource": "local",
+    "promptToConfigurePushNotifications": false
   },
   "build": {
     "development": {
@@ -17,12 +18,12 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_FEEDBACK_EMAIL": "feedback@example.com"
+        "EXPO_PUBLIC_FEEDBACK_EMAIL": "hello@arn0.be"
       }
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_FEEDBACK_EMAIL": "feedback@example.com"
+        "EXPO_PUBLIC_FEEDBACK_EMAIL": "hello@arn0.be"
       }
     }
   },
