@@ -6,12 +6,12 @@ Copy into App Store Connect. Lengths are checked against Apple's limits (counted
 
 | Field | Value |
 |---|---|
-| Name | Habits |
+| Name | Habits: Daily Check-in *("Habits" alone is taken)* |
 | Primary category | Health & Fitness |
 | Secondary category | Productivity |
 | Age rating | 4+ (answer "None" to every question) |
-| Privacy policy URL | `https://arn0.be/habits/privacy.html` *(to adjust to where site/ is hosted)* |
-| Support URL | `https://arn0.be/habits/` *(same)* |
+| Privacy policy URL | `https://arn0.be/habits/privacy/` |
+| Support URL | `https://arn0.be/habits/` |
 | Copyright | `2026 <your name, as on your Apple developer account>` |
 
 ## App Privacy
@@ -128,5 +128,6 @@ Reminders are local notifications (Settings › Reminders).
 
 ## Still to provide
 
+The support and privacy pages live in the arn0.be site repo (`Resume/public/habits/`).
+
 - **Screenshots:** iPhone 6.9" (1320 × 2868), at least 3, in each language. Can be taken from the simulator.
-- **Hosting** of `site/` (support and privacy pages), then the two URLs above.
