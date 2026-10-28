@@ -38,4 +38,8 @@ To also check the importer against a real Daygraph backup, put it at `private/da
 - `src/components/` — shared UI
 - `src/theme/` — design tokens
 - `src/domain/` — dates and statistics, plain TypeScript, unit-tested
-- `src/import/` — Daygraph backup import
+- `src/backup/` — export, import (this app's files and Daygraph backups), merge
+
+## License
+
+Source available for reference; all rights reserved.
