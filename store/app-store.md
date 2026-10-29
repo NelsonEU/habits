@@ -26,10 +26,10 @@ Copy into App Store Connect. Lengths are checked against Apple's limits (counted
 Your habits, every evening
 ```
 
-**Promotional text** (126/170)
+**Promotional text** (140/170)
 
 ```
-Open it in the evening, tick what you kept, close it. Clear stats show where you stand, and your data never leaves your phone.
+Open it in the evening, tick what you kept, close it. A reminder at the time you choose, clear stats, and your data never leaves your phone.
 ```
 
 **Keywords** (96/100)
@@ -41,13 +41,13 @@ habit tracker,streak,routine,daily,goals,checklist,reminder,self care,progress,r
 **Description**
 
 ```
-Habits is a calm habit tracker built around one gesture: every evening, tick the habits you kept. It takes ten seconds, then you're done.
+Habits is a calm habit tracker built around one gesture: every evening, tick the habits you kept. It takes ten seconds, then you're done. A reminder at the time you choose makes sure you don't forget.
 
 EVERY EVENING
 • Tick what you kept today, or catch up on a day you missed
 • See the week at a glance, with one dot per habit
 • Watch your current streak grow under each habit
-• Get a reminder at the times you choose; it stays quiet once you've ticked something
+• Schedule reminders at the times you choose, as many as you like; they stay quiet once you've ticked something
 
 CLEAR STATISTICS
 Each chart answers one question, in plain words:
@@ -65,7 +65,6 @@ DESIGNED WITH CARE
 • Light and dark themes, or follow your phone
 • Six colors chosen to stay distinguishable, including for color-blind users
 • Available in English and French
-• Works with VoiceOver
 ```
 
 ## French — localization
@@ -76,10 +75,10 @@ DESIGNED WITH CARE
 Tes habitudes, chaque soir
 ```
 
-**Texte promotionnel** (150/170)
+**Texte promotionnel** (149/170)
 
 ```
-Ouvre-la le soir, coche ce que tu as tenu, referme-la. Des statistiques claires te montrent où tu en es, et tes données restent sur ton téléphone.
+Ouvre-la le soir, coche ce que tu as tenu, referme-la. Un rappel à l’heure de ton choix, des stats claires, et tes données restent sur ton téléphone.
 ```
 
 **Mots-clés** (97/100)
@@ -91,13 +90,13 @@ suivi d'habitudes,série,routine,quotidien,objectifs,rappel,progrès,rituel,disc
 **Description**
 
 ```
-Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque soir, coche les habitudes que tu as tenues. Dix secondes, et c’est fini.
+Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque soir, coche les habitudes que tu as tenues. Dix secondes, et c’est fini. Un rappel à l’heure de ton choix t’évite d’oublier.
 
 CHAQUE SOIR
 • Coche ce que tu as tenu aujourd’hui, ou rattrape un jour oublié
 • Vois ta semaine d’un coup d’œil, avec un point par habitude
 • Regarde ta série grandir sous chaque habitude
-• Reçois un rappel aux heures de ton choix ; il se tait dès que tu as coché quelque chose
+• Programme des rappels aux heures de ton choix, autant que tu veux ; ils se taisent dès que tu as coché quelque chose
 
 DES STATISTIQUES CLAIRES
 Chaque graphique répond à une question, en toutes lettres :
@@ -115,7 +114,6 @@ FAIT AVEC SOIN
 • Thème clair, sombre, ou celui de ton téléphone
 • Six couleurs choisies pour rester distinctes, y compris pour les daltoniens
 • En français et en anglais
-• Compatible VoiceOver
 ```
 
 ## App Review notes
