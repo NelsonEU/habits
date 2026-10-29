@@ -62,7 +62,7 @@ After the version bump is committed and pushed:
 git tag v1.0.2 && git push origin v1.0.2      # the tag must match package.json
 ```
 
-GitHub Actions (`.github/workflows/release.yml`) checks, builds and signs the APK, then publishes it as a release named `habits.apk`. The landing page's link (`releases/latest/download/habits.apk`) picks it up by itself; copy the size and SHA-256 from the release notes into the site's `release.ts`.
+GitHub Actions (`.github/workflows/release.yml`) checks, builds and signs the APK, then publishes it as a release named `habits.apk` (about 20 minutes). Then copy the version, size and SHA-256 from the release notes into `src/data/release.ts` in habits-landing.
 
 The signing key must never change: phones refuse an update signed with another key. It's EAS's key, stored in the repo's secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Keep an offline copy.
 
