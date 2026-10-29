@@ -78,6 +78,9 @@ const config: ExpoConfig = {
   },
   plugins: [
     'expo-router',
+    // iOS 27 stops apps that don't use the UIKit scene lifecycle at launch. SDK 57 makes it opt-in
+    // (SDK 58 has it by default: remove this when upgrading).
+    ['expo-build-properties', { ios: { enableSceneSupport: true } }],
     ['expo-splash-screen', { backgroundColor: '#12141C', image: './assets/images/splash-icon.png', imageWidth: 120 }],
     'expo-sqlite',
     [
