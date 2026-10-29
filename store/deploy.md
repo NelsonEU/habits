@@ -54,10 +54,16 @@ SIM=62E100FB-3EAE-46C8-804D-8709B376E2CE ./scripts/screenshots/take.sh
 
 The first command needs Xcode closed. The second asks you to tap **Open** in the simulator, then press Enter, for each link.
 
-## Android test build
+## Android (APK on GitHub Releases)
+
+After the version bump is committed and pushed:
 
 ```sh
-npx eas-cli@latest build -p android --profile preview
+git tag v1.0.2 && git push origin v1.0.2      # the tag must match package.json
 ```
 
-Gives an APK link to install directly on a phone. No Play Store yet.
+GitHub Actions (`.github/workflows/release.yml`) checks, builds and signs the APK, then publishes it as a release named `habits.apk`. The landing page's link (`releases/latest/download/habits.apk`) picks it up by itself; copy the size and SHA-256 from the release notes into the site's `release.ts`.
+
+The signing key must never change: phones refuse an update signed with another key. It's EAS's key, stored in the repo's secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`). Keep an offline copy.
+
+Quick test build without a release: `npx eas-cli@latest build -p android --profile preview`.
