@@ -51,13 +51,14 @@ jobs:
             -Pandroid.injected.signing.key.alias="$KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$KEY_PASSWORD"
           cp app/build/outputs/apk/release/app-release.apk ../habits.apk
-      # Expo's template signs release builds with the debug key: if the injection didn't apply,
-      # stop here. Installed apps refuse an update signed with another key.
+      # Installed apps refuse an update signed with another key, so the APK must carry exactly
+      # EAS's certificate (its fingerprint is public: it ships in every APK).
       - name: Check the signature
         run: |
+          set -o pipefail
           apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
           "$apksigner" verify --print-certs habits.apk | tee certs.txt
-          ! grep -q "CN=Android Debug" certs.txt
+          grep -q "SHA-256 digest: cc02c2dc1b3a79912473607bf5a352702806806b9686a28f9fe4d8a95018653f" certs.txt
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}

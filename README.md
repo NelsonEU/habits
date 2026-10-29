@@ -1,8 +1,12 @@
 # Habits
 
-A personal iOS app to track a few daily habits: open it in the evening, tick what you kept, close it. It replaces Daygraph and can import its backups.
+An iOS and Android app to track a few daily habits: open it in the evening, tick what you kept, close it. It replaces Daygraph and can import its backups.
 
 Built with [Expo](https://expo.dev) (React Native, TypeScript, Expo Router).
+
+**[habits.arn0.be](https://habits.arn0.be)**: App Store link and Android APK.
+
+![The Habits landing page](store/landing.png)
 
 ## Run it
 
