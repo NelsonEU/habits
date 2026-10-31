@@ -4,7 +4,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
  * Each entry upgrades the database by one version. Never edit a migration
  * once it has run on the phone: add a new one at the end instead.
  */
-const MIGRATIONS: string[] = [
+export const MIGRATIONS: string[] = [
   // 1 — habits, ticks, and days the user went through (filled in)
   `
   CREATE TABLE habits (
