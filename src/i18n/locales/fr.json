@@ -23,7 +23,7 @@
   },
   "empty": {
     "title": "Aucune habitude pour l’instant",
-    "body": "Crée ta première habitude, puis coche-la chaque soir quand tu l’as tenue.",
+    "body": "Crée ta première habitude, puis coche-la chaque jour quand tu l’as tenue.",
     "create": "Créer une habitude",
     "import": "Importer des données",
     "importing": "Import en cours…"

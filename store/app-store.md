@@ -20,16 +20,16 @@ Copy into App Store Connect. Lengths are checked against Apple's limits (counted
 
 ## English (U.S.) — primary language
 
-**Subtitle** (26/30)
+**Subtitle** (22/30)
 
 ```
-Your habits, every evening
+Your habits, every day
 ```
 
-**Promotional text** (140/170)
+**Promotional text** (125/170)
 
 ```
-Open it in the evening, tick what you kept, close it. A reminder at the time you choose, clear stats, and your data never leaves your phone.
+Open it, tick what you kept, close it. A reminder at the time you choose, clear stats, and your data never leaves your phone.
 ```
 
 **Keywords** (96/100)
@@ -41,9 +41,9 @@ habit tracker,streak,routine,daily,goals,checklist,reminder,self care,progress,r
 **Description**
 
 ```
-Habits is a calm habit tracker built around one gesture: every evening, tick the habits you kept. It takes ten seconds, then you're done. A reminder at the time you choose makes sure you don't forget.
+Habits is a calm habit tracker built around one gesture: every day, tick the habits you kept. It takes ten seconds, then you're done. A reminder at the time you choose makes sure you don't forget.
 
-EVERY EVENING
+EVERY DAY
 • Tick what you kept today, or catch up on a day you missed
 • See the week at a glance, with one dot per habit
 • Watch your current streak grow under each habit
@@ -72,13 +72,13 @@ DESIGNED WITH CARE
 **Sous-titre** (26/30)
 
 ```
-Tes habitudes, chaque soir
+Tes habitudes, chaque jour
 ```
 
-**Texte promotionnel** (149/170)
+**Texte promotionnel** (147/170)
 
 ```
-Ouvre-la le soir, coche ce que tu as tenu, referme-la. Un rappel à l’heure de ton choix, des stats claires, et tes données restent sur ton téléphone.
+Ouvre-la, coche ce que tu as tenu, referme-la. Un rappel à l’heure de ton choix, des stats claires, et tes données restent sur ton téléphone.
 ```
 
 **Mots-clés** (97/100)
@@ -90,9 +90,9 @@ suivi d'habitudes,série,routine,quotidien,objectifs,rappel,progrès,rituel,disc
 **Description**
 
 ```
-Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque soir, coche les habitudes que tu as tenues. Dix secondes, et c’est fini. Un rappel à l’heure de ton choix t’évite d’oublier.
+Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque jour, coche les habitudes que tu as tenues. Dix secondes, et c’est fini. Un rappel à l’heure de ton choix t’évite d’oublier.
 
-CHAQUE SOIR
+CHAQUE JOUR
 • Coche ce que tu as tenu aujourd’hui, ou rattrape un jour oublié
 • Vois ta semaine d’un coup d’œil, avec un point par habitude
 • Regarde ta série grandir sous chaque habitude
@@ -119,13 +119,27 @@ FAIT AVEC SOIN
 ## App Review notes
 
 ```
-No account or login is needed. All data is stored locally on the device; there is no server.
-To try the app with data: create a habit with the pencil button (bottom right), then tick it on the day screen. Statistics are under the chart icon (top right).
-Reminders are local notifications (Settings › Reminders).
+1. SCREEN RECORDING
+Attached. Recorded on a physical iPhone, starting from launching the app and showing the typical flow. The app has no accounts, no user-generated content shared with others, and no paid content, so none of those flows exist.
+
+2. PURPOSE AND AUDIENCE
+Habits is a personal daily habit tracker for anyone who wants to keep a few regular habits. The user ticks the habits they kept each day and sees their streaks and statistics. It solves the problem of staying consistent, with a quick daily check-in and clear progress, and without an account or any data leaving the phone.
+
+3. SETUP AND MAIN FEATURES
+No login, credentials or sample files are needed.
+- Create a habit: on the first screen, tap "Create a habit". Later, use the pencil button at the bottom right.
+- Tick a habit: tap its card on the day screen. Past days can be reached from the week strip and edited; a new habit appears from the day it was created.
+- Statistics: chart icon at the top right.
+- Reminders: Settings > Reminders. These are local notifications at times the user chooses, and none is sent once something has been ticked that day.
+- Backup: Settings > Backup exports the data to a file through the system share sheet, and imports such a file.
+- Optional: the import also reads a backup file from the Daygraph app, which the user exported themselves. No Daygraph content is included in the app, and it is not affiliated with Daygraph.
+
+4. EXTERNAL SERVICES
+None. The app has no server, analytics, advertising, authentication, payment or AI services, and makes no network requests of its own. All data is stored locally on the device. "Send feedback" in Settings opens the user's own email app.
+
+5. REGIONAL DIFFERENCES
+None. The app works the same in all regions. The interface is in English or French, following the phone's language.
+
+6. REGULATED INDUSTRY OR THIRD-PARTY MATERIAL
+Not applicable. The app is not a medical device, gives no medical advice, and includes no protected third-party material.
 ```
-
-## Still to provide
-
-The support and privacy pages live in the arn0.be site repo (`Resume/public/habits/`).
-
-- **Screenshots:** iPhone 6.9" (1320 × 2868), at least 3, in each language. Can be taken from the simulator.

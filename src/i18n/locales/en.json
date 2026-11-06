@@ -23,7 +23,7 @@
   },
   "empty": {
     "title": "No habits yet",
-    "body": "Create your first habit, then tick it every evening once you’ve kept it.",
+    "body": "Create your first habit, then tick it every day once you’ve kept it.",
     "create": "Create a habit",
     "import": "Import data",
     "importing": "Importing…"
