@@ -5,11 +5,23 @@ import { Pressable, TextInput, View } from 'react-native';
 import { HABIT_COLORS } from '@/domain/palette';
 import { cn } from '@/lib/cn';
 import { useTheme } from '@/theme';
-import { PrimaryButton } from './buttons';
+import { PillButton, PrimaryButton } from './buttons';
 import { HabitCard } from './habit-card';
 import { Text } from './text';
 
 export const MAX_NAME_LENGTH = 60;
+
+/** Ideas offered while a new habit's name is empty: a tap fills in the name and a color. */
+const SUGGESTIONS = [
+  { key: 'read', color: 'amber' },
+  { key: 'walk', color: 'mint' },
+  { key: 'water', color: 'blue' },
+  { key: 'screens', color: 'lilac' },
+  { key: 'stretch', color: 'rose' },
+  { key: 'floss', color: 'olive' },
+] as const;
+
+const hexOf = (id: (typeof HABIT_COLORS)[number]['id']) => HABIT_COLORS.find((c) => c.id === id)!.hex;
 
 type Props = {
   initial: { name: string; color: string };
@@ -50,6 +62,24 @@ export function HabitForm({ initial, submitLabel, onSubmit, isNew = false, child
         />
         {isNew && <Text className="text-[13px] leading-[19px] text-muted">{t('habits.form.nameHint')}</Text>}
       </View>
+
+      {isNew && !name && (
+        <View className="gap-3">
+          <Text className="font-semibold">{t('habits.form.suggestionsTitle')}</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {SUGGESTIONS.map((s) => (
+              <PillButton
+                key={s.key}
+                label={t(`habits.suggestions.${s.key}`)}
+                onPress={() => {
+                  setName(t(`habits.suggestions.${s.key}`));
+                  setColor(hexOf(s.color));
+                }}
+              />
+            ))}
+          </View>
+        </View>
+      )}
 
       <View className="gap-3">
         <Text className="font-semibold">{t('habits.form.color')}</Text>

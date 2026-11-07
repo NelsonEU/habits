@@ -73,7 +73,8 @@ const config: ExpoConfig = {
     predictiveBackGestureEnabled: false,
   },
   web: {
-    output: 'static',
+    // A single-page app: static rendering runs pages in Node, where expo-sqlite's web worker can't load.
+    output: 'single',
     favicon: './assets/images/favicon.png',
   },
   plugins: [

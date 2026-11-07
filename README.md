@@ -18,6 +18,15 @@ npx expo start              # day-to-day: serves the code to the installed app
 
 On a free Apple account the installed app expires after 7 days: run `npx expo run:ios --device` again (data is kept).
 
+### In a browser
+
+```sh
+npm run web                 # then open http://localhost:8080
+npm run web -- --clear      # after changing tailwind.config.ts
+```
+
+For quick UI checks: screens, both languages, both themes, the database, with live reload. Use your browser's device toolbar for a phone-sized window. The browser has no notifications, haptics, file import or export, or native time picker, so check those, and anything before a release, on the phone. Keep the app open in one tab only, because the browser's database allows a single tab at a time.
+
 ## Versioning
 
 ```sh

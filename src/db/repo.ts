@@ -51,6 +51,7 @@ export function loadSnapshot(db: SQLiteDatabase): Snapshot {
   const settings: Snapshot['settings'] = {
     weekStartsOn: stored.get('weekStartsOn') === 'sunday' ? 'sunday' : DEFAULT_SETTINGS.weekStartsOn,
     theme: theme === 'light' || theme === 'dark' || theme === 'system' ? theme : DEFAULT_SETTINGS.theme,
+    welcomeDone: stored.get('welcomeDone') === 'true',
   };
   const reminders = db.getAllSync<Reminder>('SELECT id, time FROM reminders ORDER BY time, id');
   return { habits, checks, tickedDays: tickedDays(checks), settings, reminders };
@@ -62,6 +63,10 @@ export function setWeekStart(db: SQLiteDatabase, weekStartsOn: WeekStart) {
 
 export function setTheme(db: SQLiteDatabase, theme: ThemePreference) {
   db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'theme', theme);
+}
+
+export function setWelcomeDone(db: SQLiteDatabase) {
+  db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'welcomeDone', 'true');
 }
 
 export function addReminder(db: SQLiteDatabase, time: string) {
