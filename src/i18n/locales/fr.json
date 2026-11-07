@@ -156,7 +156,8 @@
       "previewName": "Ta nouvelle habitude",
       "previewHint": "Touche pour la voir cochée",
       "add": "Ajouter",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "suggestionsTitle": "Idées"
     },
     "archive": {
       "button": "Archiver cette habitude",
@@ -173,7 +174,15 @@
       "deleteTitle": "Supprimer « {{name}} » définitivement ?",
       "deleteBody": "Tout son historique sera effacé. C’est irréversible."
     },
-    "editHint": "Ouvre l’habitude pour la modifier"
+    "editHint": "Ouvre l’habitude pour la modifier",
+    "suggestions": {
+      "read": "Lire 10 pages",
+      "walk": "Marcher 30 minutes",
+      "water": "Boire 2 L d’eau",
+      "screens": "Pas d’écran au lit",
+      "stretch": "S’étirer",
+      "floss": "Fil dentaire"
+    }
   },
   "colors": {
     "rose": "Rose",
@@ -187,5 +196,19 @@
     "notificationTitle": "Habits",
     "notificationBody": "C’est l’heure de cocher ta journée.",
     "channelName": "Rappels"
+  },
+  "welcome": {
+    "title": "Bienvenue dans Habits",
+    "steps": {
+      "add": "Ajoute les quelques habitudes que tu veux tenir.",
+      "tick": "Chaque jour, touche celles que tu as tenues.",
+      "stats": "Regarde tes séries et tes statistiques grandir."
+    },
+    "demoName": "Lire 10 pages",
+    "demoHint": "Essaie : touche la carte",
+    "reminder": "Me le rappeler chaque jour",
+    "create": "Créer ma première habitude",
+    "import": "J’ai déjà des données",
+    "skip": "Passer"
   }
 }

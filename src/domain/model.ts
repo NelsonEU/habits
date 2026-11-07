@@ -19,9 +19,14 @@ export type WeekStart = 'monday' | 'sunday';
 
 export type ThemePreference = 'system' | 'light' | 'dark';
 
-export type Settings = { weekStartsOn: WeekStart; theme: ThemePreference };
+export type Settings = {
+  weekStartsOn: WeekStart;
+  theme: ThemePreference;
+  /** The first-launch welcome page was completed or skipped. */
+  welcomeDone: boolean;
+};
 
-export const DEFAULT_SETTINGS: Settings = { weekStartsOn: 'monday', theme: 'system' };
+export const DEFAULT_SETTINGS: Settings = { weekStartsOn: 'monday', theme: 'system', welcomeDone: false };
 
 /** A daily reminder at a local time, "HH:MM". */
 export type Reminder = { id: number; time: string };

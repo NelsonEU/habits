@@ -156,7 +156,8 @@
       "previewName": "Your new habit",
       "previewHint": "Tap to see it ticked",
       "add": "Add",
-      "save": "Save"
+      "save": "Save",
+      "suggestionsTitle": "Ideas"
     },
     "archive": {
       "button": "Archive this habit",
@@ -173,7 +174,15 @@
       "deleteTitle": "Delete “{{name}}” for good?",
       "deleteBody": "All its history will be erased. This can’t be undone."
     },
-    "editHint": "Opens the habit to edit it"
+    "editHint": "Opens the habit to edit it",
+    "suggestions": {
+      "read": "Read 10 pages",
+      "walk": "Walk 30 minutes",
+      "water": "Drink 2 L of water",
+      "screens": "No screens in bed",
+      "stretch": "Stretch",
+      "floss": "Floss"
+    }
   },
   "colors": {
     "rose": "Pink",
@@ -187,5 +196,19 @@
     "notificationTitle": "Habits",
     "notificationBody": "Time to tick off your day.",
     "channelName": "Reminders"
+  },
+  "welcome": {
+    "title": "Welcome to Habits",
+    "steps": {
+      "add": "Add the few habits you want to keep.",
+      "tick": "Each day, tap the ones you kept.",
+      "stats": "Watch your streaks and statistics grow."
+    },
+    "demoName": "Read 10 pages",
+    "demoHint": "Try it: tap the card",
+    "reminder": "Remind me every day",
+    "create": "Create my first habit",
+    "import": "I already have data",
+    "skip": "Skip"
   }
 }
