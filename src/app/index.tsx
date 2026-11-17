@@ -52,8 +52,8 @@ export default function DayScreen() {
     setPickedWeek(null);
   };
 
-  // if (snapshot.habits.length === 0 && !snapshot.settings.welcomeDone) return <Welcome today={today} />;
-  if (true) return <Welcome today={today} />;
+  // First launch only: an install that already has habits (an update) never sees it.
+  if (snapshot.habits.length === 0 && !snapshot.settings.welcomeDone) return <Welcome />;
 
   return (
     <Screen scroll overlay={<Fab icon="edit" label={t('day.editHabits')} onPress={() => router.push('/habits')} />}>

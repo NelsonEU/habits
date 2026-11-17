@@ -198,17 +198,31 @@
     "channelName": "Reminders"
   },
   "welcome": {
-    "title": "Welcome to Habits",
-    "steps": {
-      "add": "Add the few habits you want to keep.",
-      "tick": "Each day, tap the ones you kept.",
-      "stats": "Watch your streaks and statistics grow."
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get started",
+    "start": "Start",
+    "step": "Step {{n}} of {{total}}",
+    "intro": {
+      "title": "One tap a day for your habits",
+      "body": "A simple daily check-in."
     },
-    "demoName": "Read 10 pages",
-    "demoHint": "Try it: tap the card",
-    "reminder": "Remind me every day",
-    "create": "Create my first habit",
-    "import": "I already have data",
-    "skip": "Skip"
+    "tick": {
+      "title": "Tick what you kept",
+      "body": "Tap a habit once it’s done. Past days stay editable.",
+      "hint": "Try it: tap the card"
+    },
+    "progress": {
+      "title": "Watch it add up",
+      "body": "Streaks and statistics for every habit.",
+      "streak": "days in a row",
+      "rate": "kept this month",
+      "thisWeek": "This week"
+    },
+    "reminder": {
+      "title": "A nudge, if needed",
+      "body": "Reminders go quiet once you’ve ticked everything.",
+      "label": "Remind me daily"
+    }
   }
 }
