@@ -42,6 +42,9 @@ export function reminderMoments(
   return moments.sort((a, b) => a.date.getTime() - b.date.getTime()).slice(0, MAX_SCHEDULED);
 }
 
+/** A valid reminder time, "HH:MM" on a 24-hour clock. */
+export const isTime = (v: unknown): v is string => typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
+
 /** A whole hour for a new reminder: `fromHour`, or the next one not already taken. */
 export function freeHour(taken: Iterable<string>, fromHour: number): string {
   const used = new Set(taken);

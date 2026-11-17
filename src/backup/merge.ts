@@ -6,8 +6,10 @@ import type { Backup, BackupHabit } from './backup';
 export type MergePlan = {
   /** Habits already in the app: ticks to add, and an earlier start day if the backup has one. */
   updates: { habitId: number; addChecks: Day[]; startDay: Day | null }[];
-  /** Habits only in the backup, added at the end of the list. */
+  /** Habits only in the backup, added at the end of the list (with their reminders). */
   inserts: BackupHabit[];
+  /** Reminder times missing from the app: general (habitId null) or for a habit already there. */
+  reminders: { habitId: number | null; time: string }[];
 };
 
 /** "  Ne  pas BOIRE " and "ne pas boire" are the same habit. */
@@ -20,7 +22,12 @@ const normalize = (name: string) => name.trim().replace(/\s+/g, ' ').toLocaleLow
  */
 export function planMerge(snapshot: Snapshot, backup: Backup): MergePlan {
   const matched = new Set<number>();
-  const plan: MergePlan = { updates: [], inserts: [] };
+  const plan: MergePlan = { updates: [], inserts: [], reminders: [] };
+  const addMissingTimes = (habitId: number | null, times: string[]) => {
+    const existing = new Set(snapshot.reminders.filter((r) => r.habitId === habitId).map((r) => r.time));
+    for (const time of times) if (!existing.has(time)) plan.reminders.push({ habitId, time });
+  };
+  addMissingTimes(null, backup.reminders ?? []);
 
   for (const incoming of backup.habits) {
     const local =
@@ -38,6 +45,7 @@ export function planMerge(snapshot: Snapshot, backup: Backup): MergePlan {
     const addChecks = incoming.checks.filter((d) => !existing.has(d));
     const startDay = incoming.startDay < local.startDay ? incoming.startDay : null;
     if (addChecks.length > 0 || startDay) plan.updates.push({ habitId: local.id, addChecks, startDay });
+    addMissingTimes(local.id, incoming.reminders);
   }
 
   return plan;

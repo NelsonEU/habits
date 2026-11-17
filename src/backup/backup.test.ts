@@ -11,7 +11,11 @@ const snapshot: Snapshot = {
     [2, new Set(['2026-08-15'])],
   ]),
   settings: DEFAULT_SETTINGS,
-  reminders: [],
+  reminders: [
+    { id: 1, time: '22:00', habitId: null },
+    { id: 2, time: '08:00', habitId: 1 },
+    { id: 3, time: '07:30', habitId: 1 },
+  ],
 };
 
 describe('backup file', () => {
@@ -19,9 +23,39 @@ describe('backup file', () => {
     const json = JSON.parse(toBackupFile(snapshot, new Date('2026-10-08T20:00:00Z')));
     expect(parseBackupFile(json)).toEqual({
       habits: [
-        { uid: 'u1', name: 'Marcher', color: '#F0B35A', startDay: '2026-01-01', archivedAt: null, checks: ['2026-10-01', '2026-10-02'] },
-        { uid: 'u2', name: 'Lire', color: '#6E9BF2', startDay: '2026-02-01', archivedAt: '2026-09-01T10:00:00.000Z', checks: ['2026-08-15'] },
+        {
+          uid: 'u1',
+          name: 'Marcher',
+          color: '#F0B35A',
+          startDay: '2026-01-01',
+          archivedAt: null,
+          checks: ['2026-10-01', '2026-10-02'],
+          reminders: ['07:30', '08:00'],
+        },
+        {
+          uid: 'u2',
+          name: 'Lire',
+          color: '#6E9BF2',
+          startDay: '2026-02-01',
+          archivedAt: '2026-09-01T10:00:00.000Z',
+          checks: ['2026-08-15'],
+          reminders: [],
+        },
       ],
+      reminders: ['22:00'],
+    });
+  });
+
+  test('still reads version 1 files, which have no reminders', () => {
+    const file = {
+      app: 'habits',
+      version: 1,
+      exportedAt: '2026-11-17T09:00:00.000Z',
+      habits: [{ uid: 'u1', name: 'Lire', color: '#E985A2', startDay: '2026-11-07', archivedAt: null, checks: ['2026-11-13'] }],
+    };
+    expect(parseBackupFile(file)).toEqual({
+      habits: [{ uid: 'u1', name: 'Lire', color: '#E985A2', startDay: '2026-11-07', archivedAt: null, checks: ['2026-11-13'], reminders: [] }],
+      reminders: null,
     });
   });
 
@@ -36,6 +70,10 @@ describe('backup file', () => {
     file.habits[0].checks = ['2026-02-30'];
     expect(() => parseBackupFile(file)).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
     expect(() => parseBackupFile({ ...valid(), habits: 'nope' })).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
+    expect(() => parseBackupFile({ ...valid(), reminders: ['25:00'] })).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
+    const noHabitReminders = valid();
+    delete noHabitReminders.habits[0].reminders;
+    expect(() => parseBackupFile(noHabitReminders)).toThrow(expect.objectContaining({ code: 'invalid-backup' }));
   });
 
   test('brings hand-edited colors back into the palette', () => {
@@ -59,7 +97,8 @@ test('daygraphToBackup starts every habit on the first day', () => {
     '2026-10-08',
   );
   expect(backup).toEqual({
-    habits: [{ uid: null, name: 'Marcher', color: '#F0B35A', startDay: '2026-03-01', archivedAt: null, checks: ['2026-03-01', '2026-03-02'] }],
+    habits: [{ uid: null, name: 'Marcher', color: '#F0B35A', startDay: '2026-03-01', archivedAt: null, checks: ['2026-03-01', '2026-03-02'], reminders: [] }],
+    reminders: null,
   });
 });
 

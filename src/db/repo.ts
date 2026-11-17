@@ -150,6 +150,7 @@ function insertHabit(db: SQLiteDatabase, habit: BackupHabit) {
     habit.archivedAt,
   );
   insertChecks(db, lastInsertRowId, habit.checks);
+  for (const time of habit.reminders) db.runSync('INSERT INTO reminders (time, habit_id) VALUES (?, ?)', time, lastInsertRowId);
 }
 
 /**
@@ -174,6 +175,7 @@ export function applyMerge(db: SQLiteDatabase, plan: MergePlan) {
       if (startDay) db.runSync('UPDATE habits SET start_day = ? WHERE id = ?', startDay, habitId);
     }
     plan.inserts.forEach((habit) => insertHabit(db, habit));
+    for (const { habitId, time } of plan.reminders) db.runSync('INSERT INTO reminders (time, habit_id) VALUES (?, ?)', time, habitId);
   });
 }
 
@@ -181,9 +183,11 @@ export function applyMerge(db: SQLiteDatabase, plan: MergePlan) {
 export function replaceAll(db: SQLiteDatabase, backup: Backup) {
   db.withTransactionSync(() => {
     db.runSync('DELETE FROM checks');
-    // Backups don't carry reminders: the general ones stay, the per-habit ones go with their habits.
-    db.runSync('DELETE FROM reminders WHERE habit_id IS NOT NULL');
+    // Per-habit reminders go with their habits. The general ones are replaced too, unless the
+    // source has none to give (Daygraph, older files): the phone's own then stay.
+    db.runSync(backup.reminders === null ? 'DELETE FROM reminders WHERE habit_id IS NOT NULL' : 'DELETE FROM reminders');
     db.runSync('DELETE FROM habits');
     backup.habits.forEach((habit) => insertHabit(db, habit));
+    for (const time of backup.reminders ?? []) db.runSync('INSERT INTO reminders (time) VALUES (?)', time);
   });
 }

@@ -39,6 +39,7 @@ const backupHabit = (habit: Partial<BackupHabit> & { name: string }): BackupHabi
   startDay: '2024-01-01',
   archivedAt: null,
   checks: [],
+  reminders: [],
   ...habit,
 });
 
@@ -142,7 +143,11 @@ describe('import', () => {
       updates: [{ habitId: lire, addChecks: ['2026-09-30', '2026-10-01'], startDay: '2026-09-01' }],
       inserts: [
         backupHabit({ uid: 'kept-id', name: 'Marcher', checks: ['2026-09-01'] }),
-        backupHabit({ name: 'Fil dentaire', archivedAt: '2026-01-01T00:00:00.000Z' }),
+        backupHabit({ name: 'Fil dentaire', archivedAt: '2026-01-01T00:00:00.000Z', reminders: ['07:00'] }),
+      ],
+      reminders: [
+        { habitId: null, time: '09:00' },
+        { habitId: lire, time: '20:00' },
       ],
     });
 
@@ -155,15 +160,33 @@ describe('import', () => {
     // A source without ids (Daygraph) gets a new one.
     expect(snapshot.habits[2].uid).toMatch(/^[0-9a-f]{32}$/);
     expect(snapshot.habits[2].archivedAt).toBe('2026-01-01T00:00:00.000Z');
+    expect(snapshot.reminders.map(({ time, habitId }) => ({ time, habitId }))).toEqual([
+      { time: '07:00', habitId: snapshot.habits[2].id },
+      { time: '09:00', habitId: null },
+      { time: '20:00', habitId: lire },
+      { time: '22:00', habitId: null },
+    ]);
   });
 
-  test('replace swaps the habits and keeps settings and general reminders', () => {
+  test('replace takes the file’s reminders, general and per habit', () => {
+    const old = createHabit(db, { name: 'Ancienne', color: '#6E9BF2' }, '2026-10-01');
+    setHabitReminders(db, old, ['08:00']);
+
+    replaceAll(db, { habits: [backupHabit({ uid: 'u1', name: 'Nouvelle', reminders: ['07:15'] })], reminders: ['21:30'] });
+
+    expect(loadSnapshot(db).reminders.map(({ time, habitId }) => ({ time, habitId }))).toEqual([
+      { time: '07:15', habitId: idOf('Nouvelle') },
+      { time: '21:30', habitId: null },
+    ]);
+  });
+
+  test('replace from a source without reminders keeps settings and general reminders', () => {
     const old = createHabit(db, { name: 'Ancienne', color: '#6E9BF2' }, '2026-10-01');
     setChecked(db, old, '2026-10-01', true);
     setHabitReminders(db, old, ['08:00']);
     setTheme(db, 'dark');
 
-    replaceAll(db, { habits: [backupHabit({ uid: 'u1', name: 'Nouvelle', checks: ['2025-05-05'] })] });
+    replaceAll(db, { habits: [backupHabit({ uid: 'u1', name: 'Nouvelle', checks: ['2025-05-05'] })], reminders: null });
 
     expect(names()).toEqual(['Nouvelle']);
     expect(days(idOf('Nouvelle'))).toEqual(['2025-05-05']);
@@ -177,7 +200,7 @@ describe('import', () => {
     setChecked(db, idOf('Ancienne'), '2026-10-01', true);
 
     // Two habits with the same permanent id break the unique index on the second insert.
-    const broken = { habits: [backupHabit({ uid: 'same', name: 'A' }), backupHabit({ uid: 'same', name: 'B' })] };
+    const broken = { habits: [backupHabit({ uid: 'same', name: 'A' }), backupHabit({ uid: 'same', name: 'B' })], reminders: null };
     expect(() => replaceAll(db, broken)).toThrow();
 
     expect(names()).toEqual(['Ancienne']);
