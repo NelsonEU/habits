@@ -19,42 +19,42 @@
   },
   "empty": {
     "title": "Pas encore d’habitude",
-    "body": "Crée ta première habitude, puis coche-la chaque jour où tu l’as faite.",
+    "body": "Crée ta première habitude, puis valide-la chaque jour où tu l’as faite.",
     "create": "Créer une habitude",
     "import": "Importer des données",
     "importing": "Import en cours…"
   },
   "import": {
     "doneTitle": "Import terminé",
-    "doneBody_one": "{{count}} habitude et {{checks}} jours cochés importés.",
-    "doneBody_other": "{{count}} habitudes et {{checks}} jours cochés importés.",
+    "doneBody_one": "{{count}} habitude et {{checks}} jours réussis importés.",
+    "doneBody_other": "{{count}} habitudes et {{checks}} jours réussis importés.",
     "failedTitle": "Import impossible",
     "errors": {
       "unreadable": "Impossible de lire ce fichier.",
       "unknown-format": "Ce fichier n’est pas une sauvegarde Habits ou Daygraph.",
       "invalid-daygraph": "Cette sauvegarde Daygraph est endommagée.",
-      "negative-habit": "« {{name}} » est une habitude négative dans Daygraph (la cocher signifie un écart). Habits ne les gère pas.",
+      "negative-habit": "« {{name}} » est une habitude négative dans Daygraph (la valider signifie un écart). Habits ne les gère pas.",
       "invalid-backup": "Cette sauvegarde est endommagée.",
       "newer-version": "Ce fichier vient d’une version plus récente de l’app. Mets l’app à jour d’abord."
     },
     "title": "Importer des données",
     "fromFile": "Depuis « {{name}} »",
     "fromCopy": "Copie du {{date}}",
-    "summary_one": "{{count}} habitude · {{checks}} jours cochés",
-    "summary_other": "{{count}} habitudes · {{checks}} jours cochés",
+    "summary_one": "{{count}} habitude · {{checks}} jours réussis",
+    "summary_other": "{{count}} habitudes · {{checks}} jours réussis",
     "range": "Du {{first}} au {{last}}",
-    "noTicks": "Aucun jour coché",
+    "noTicks": "Aucun jour réussi",
     "merge": "Fusionner avec mes données",
     "mergeHint": "Ajoute ce qui manque, sans rien supprimer.",
     "replace": "Remplacer mes données",
     "replaceHint": "Tes données actuelles sont sauvegardées avant, pour que tu puisses les restaurer depuis les Réglages.",
     "replaceConfirmTitle": "Remplacer tes données ?",
-    "replaceConfirmBody_one": "Ton habitude et tes {{checks}} jours cochés seront remplacés par le contenu du fichier.",
-    "replaceConfirmBody_other": "Tes {{count}} habitudes et tes {{checks}} jours cochés seront remplacés par le contenu du fichier.",
+    "replaceConfirmBody_one": "Ton habitude et tes {{checks}} jours réussis seront remplacés par le contenu du fichier.",
+    "replaceConfirmBody_other": "Tes {{count}} habitudes et tes {{checks}} jours réussis seront remplacés par le contenu du fichier.",
     "replaceConfirm": "Remplacer",
     "importButton": "Importer",
     "mergedTitle": "Données fusionnées",
-    "mergedBody": "Nouvelles habitudes : {{habits}} · Jours cochés ajoutés : {{checks}}",
+    "mergedBody": "Nouvelles habitudes : {{habits}} · Jours réussis ajoutés : {{checks}}",
     "replacedTitle": "Données remplacées"
   },
   "stats": {
@@ -103,7 +103,7 @@
     "clearAll": "Effacer toutes les données",
     "clearAllHint": "Développement uniquement. Une copie est d’abord sauvegardée, et peut être restaurée ci-dessus.",
     "clearAllConfirmTitle": "Effacer toutes les données ?",
-    "clearAllConfirmBody": "Toutes les habitudes et les coches seront effacées. Une copie est d’abord sauvegardée.",
+    "clearAllConfirmBody": "Toutes les habitudes et leur historique seront effacés. Une copie est d’abord sauvegardée.",
     "clearAllConfirm": "Effacer",
     "displaySection": "Affichage",
     "weekStartsOn": "La semaine commence le",
@@ -113,7 +113,7 @@
     "reminder": "Rappel",
     "addReminder": "Ajouter un rappel",
     "removeReminder": "Supprimer le rappel de {{time}}",
-    "remindersHint": "Plus de rappel pour la journée une fois toutes tes habitudes cochées. Chaque habitude peut aussi avoir ses propres rappels.",
+    "remindersHint": "Plus de rappel pour la journée une fois toutes tes habitudes faites. Chaque habitude peut aussi avoir ses propres rappels.",
     "enableNotifications": "Autoriser les notifications",
     "enableNotificationsHint": "Nécessaire pour les rappels",
     "notificationsDenied": "Notifications désactivées",
@@ -145,16 +145,16 @@
     "form": {
       "name": "Nom",
       "namePlaceholder": "Ex. Marcher 30 minutes",
-      "nameHint": "Formule-la pour que la cocher soit une réussite : « Ne pas fumer » plutôt que « Fumer ».",
+      "nameHint": "Formule-la comme une réussite : « Ne pas fumer » plutôt que « Fumer ».",
       "color": "Couleur",
       "preview": "Aperçu",
       "previewName": "Ta nouvelle habitude",
-      "previewHint": "Appuie pour la voir cochée",
+      "previewHint": "Appuie pour la voir faite",
       "add": "Ajouter",
       "save": "Enregistrer",
       "suggestionsTitle": "Idées",
       "reminders": "Rappels",
-      "remindersHint": "Plus de rappel pour la journée une fois cette habitude cochée."
+      "remindersHint": "Plus de rappel pour la journée une fois cette habitude faite."
     },
     "archive": {
       "button": "Archiver cette habitude",
@@ -191,9 +191,9 @@
   },
   "reminders": {
     "notificationTitle": "Habits",
-    "notificationBody": "Il te reste des habitudes à cocher aujourd’hui.",
+    "notificationBody": "Il te reste des habitudes à faire aujourd’hui.",
     "channelName": "Rappels",
-    "habitBody": "Pas encore cochée aujourd’hui."
+    "habitBody": "Pas encore faite aujourd’hui."
   },
   "welcome": {
     "skip": "Passer",
@@ -206,7 +206,7 @@
       "body": "Un point quotidien, tout simple."
     },
     "tick": {
-      "title": "Coche ce que tu as fait",
+      "title": "Qu’as-tu fait aujourd’hui ?",
       "body": "Appuie sur une habitude une fois faite. Les jours passés restent modifiables.",
       "hint": "Essaie : appuie sur la carte"
     },
@@ -219,7 +219,7 @@
     },
     "reminder": {
       "title": "Un rappel, si besoin",
-      "body": "Plus de rappel une fois tout coché.",
+      "body": "Plus de rappel une fois tout fait.",
       "label": "Me le rappeler chaque jour"
     }
   }

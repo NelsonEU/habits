@@ -75,10 +75,10 @@ MADE WITH CARE
 Tes habitudes au quotidien
 ```
 
-**Texte promotionnel** (144/170)
+**Texte promotionnel** (143/170)
 
 ```
-Coche tes habitudes chaque jour, reçois des rappels quand tu veux et suis tes progrès. Sans compte : tes données restent sur ton téléphone.
+Suis tes habitudes chaque jour, reçois des rappels quand tu veux et vois tes progrès. Sans compte : tes données restent sur ton téléphone.
 ```
 
 **Mots-clés** (97/100)
@@ -90,13 +90,13 @@ suivi d'habitudes,série,routine,quotidien,objectifs,rappel,progrès,rituel,disc
 **Description**
 
 ```
-Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque jour, coche les habitudes que tu as faites. Quelques secondes suffisent. Des rappels aux heures de ton choix t’aident à ne pas oublier.
+Habits est un suivi d’habitudes tout simple, pensé autour d’un seul geste : chaque jour, valide les habitudes que tu as faites. Quelques secondes suffisent. Des rappels aux heures de ton choix t’aident à ne pas oublier.
 
 CHAQUE JOUR
-• Coche tes habitudes du jour, ou rattrape un jour oublié
+• Valide tes habitudes du jour, ou rattrape un jour oublié
 • Vois ta semaine d’un coup d’œil, avec un point par habitude
 • Regarde ta série grandir sous chaque habitude
-• Programme des rappels pour ta journée ou pour une habitude précise ; ils s’arrêtent dès que c’est coché
+• Programme des rappels pour ta journée ou pour une habitude précise ; ils s’arrêtent dès que c’est fait
 
 DES STATISTIQUES CLAIRES
 Chaque graphique répond à une question, en toutes lettres :
