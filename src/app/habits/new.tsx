@@ -7,7 +7,7 @@ import { BackLink } from '@/components/buttons';
 import { HabitForm } from '@/components/habit-form';
 import { Screen } from '@/components/screen';
 import { Title } from '@/components/text';
-import { createHabit } from '@/db/repo';
+import { createHabit, setHabitReminders } from '@/db/repo';
 import { notifyChange } from '@/db/store';
 import { HABIT_COLORS } from '@/domain/palette';
 import { useToday } from '@/hooks/use-today';
@@ -26,10 +26,11 @@ export default function NewHabitScreen() {
       </View>
       <HabitForm
         isNew
-        initial={{ name: '', color: HABIT_COLORS[0].hex }}
+        initial={{ name: '', color: HABIT_COLORS[0].hex, reminders: [] }}
         submitLabel={t('habits.form.add')}
-        onSubmit={(habit) => {
-          createHabit(db, habit, today);
+        onSubmit={({ reminders, ...habit }) => {
+          const id = createHabit(db, habit, today);
+          if (reminders.length > 0) setHabitReminders(db, id, reminders);
           notifyChange();
           router.back();
         }}

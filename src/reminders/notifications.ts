@@ -56,8 +56,11 @@ async function syncReminders(snapshot: Snapshot) {
   await ensureChannel();
   await Notifications.cancelAllScheduledNotificationsAsync();
   // Text in the current language, frozen at scheduling time: rescheduled on each app start anyway.
-  const content = { title: i18n.t('reminders.notificationTitle'), body: i18n.t('reminders.notificationBody') };
-  for (const date of reminderMoments(snapshot.reminders, snapshot.tickedDays, new Date())) {
+  const general = { title: i18n.t('reminders.notificationTitle'), body: i18n.t('reminders.notificationBody') };
+  const names = new Map(snapshot.habits.map((h) => [h.id, h.name]));
+  for (const { date, habitId } of reminderMoments(snapshot, new Date())) {
+    const content =
+      habitId === null ? general : { title: names.get(habitId) ?? general.title, body: i18n.t('reminders.habitBody') };
     await Notifications.scheduleNotificationAsync({
       content,
       trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date, channelId: CHANNEL_ID },

@@ -13,6 +13,7 @@ import {
   restoreHabit,
   setChecked,
   setOrder,
+  setHabitReminders,
   setReminderTime,
   setTheme,
   setWeekStart,
@@ -61,7 +62,6 @@ describe('habits', () => {
     expect(days(id)).toEqual(['2026-10-01', '2026-10-02']);
     setChecked(db, id, '2026-10-01', false);
     expect(days(id)).toEqual(['2026-10-02']);
-    expect([...loadSnapshot(db).tickedDays]).toEqual(['2026-10-02']);
   });
 
   test('saves a new order', () => {
@@ -113,6 +113,23 @@ describe('settings and reminders', () => {
     deleteReminder(db, morning);
     expect(times()).toEqual(['22:00']);
   });
+
+  test('a habit’s reminders are replaced as a whole, next to the general ones', () => {
+    const lire = createHabit(db, { name: 'Lire', color: '#6E9BF2' }, '2026-10-01');
+    setHabitReminders(db, lire, ['08:00', '21:00']);
+    setHabitReminders(db, lire, ['07:30']);
+    expect(loadSnapshot(db).reminders.map(({ time, habitId }) => ({ time, habitId }))).toEqual([
+      { time: '07:30', habitId: lire },
+      { time: '22:00', habitId: null },
+    ]);
+  });
+
+  test('deleting a habit deletes its reminders', () => {
+    const lire = createHabit(db, { name: 'Lire', color: '#6E9BF2' }, '2026-10-01');
+    setHabitReminders(db, lire, ['08:00']);
+    deleteHabit(db, lire);
+    expect(loadSnapshot(db).reminders.map((r) => r.habitId)).toEqual([null]);
+  });
 });
 
 describe('import', () => {
@@ -140,9 +157,10 @@ describe('import', () => {
     expect(snapshot.habits[2].archivedAt).toBe('2026-01-01T00:00:00.000Z');
   });
 
-  test('replace swaps the habits and keeps settings and reminders', () => {
-    createHabit(db, { name: 'Ancienne', color: '#6E9BF2' }, '2026-10-01');
-    setChecked(db, idOf('Ancienne'), '2026-10-01', true);
+  test('replace swaps the habits and keeps settings and general reminders', () => {
+    const old = createHabit(db, { name: 'Ancienne', color: '#6E9BF2' }, '2026-10-01');
+    setChecked(db, old, '2026-10-01', true);
+    setHabitReminders(db, old, ['08:00']);
     setTheme(db, 'dark');
 
     replaceAll(db, { habits: [backupHabit({ uid: 'u1', name: 'Nouvelle', checks: ['2025-05-05'] })] });

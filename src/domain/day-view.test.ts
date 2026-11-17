@@ -18,7 +18,6 @@ const snapshot: Snapshot = {
     [2, new Set()],
     [3, new Set()],
   ]),
-  tickedDays: new Set(['2026-10-05', '2026-10-07']),
   settings: DEFAULT_SETTINGS,
   reminders: [],
 };

@@ -7,7 +7,7 @@ import { BackLink } from '@/components/buttons';
 import { HabitForm } from '@/components/habit-form';
 import { Screen } from '@/components/screen';
 import { Text, Title } from '@/components/text';
-import { archiveHabit, updateHabit } from '@/db/repo';
+import { archiveHabit, setHabitReminders, updateHabit } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 
 /** 1d · Modifier une habitude (modal). */
@@ -15,7 +15,9 @@ export default function EditHabitScreen() {
   const { t } = useTranslation();
   const db = useSQLiteContext();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const habit = useSnapshot().habits.find((h) => h.id === Number(id));
+  const snapshot = useSnapshot();
+  const habit = snapshot.habits.find((h) => h.id === Number(id));
+  const reminders = snapshot.reminders.filter((r) => r.habitId === habit?.id).map((r) => r.time);
 
   // Deleted or unknown (e.g. an old link): nothing to edit.
   if (!habit) return null;
@@ -41,10 +43,11 @@ export default function EditHabitScreen() {
         <Title>{t('habits.editTitle')}</Title>
       </View>
       <HabitForm
-        initial={{ name: habit.name, color: habit.color }}
+        initial={{ name: habit.name, color: habit.color, reminders }}
         submitLabel={t('habits.form.save')}
-        onSubmit={(changes) => {
+        onSubmit={({ reminders: times, ...changes }) => {
           updateHabit(db, habit.id, changes);
+          setHabitReminders(db, habit.id, times);
           notifyChange();
           router.back();
         }}
