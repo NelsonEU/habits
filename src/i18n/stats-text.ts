@@ -33,7 +33,7 @@ export function trend(t: TFunction, current: Rate, previous: Rate) {
   return { direction, pct, text: t('stats.before', { pct }) };
 }
 
-/** "73 % des jours tenus en 2026, contre 57 % en 2025 et 51 % en 2024." */
+/** "73 % de jours réussis en 2026, contre 57 % en 2025 et 51 % en 2024." */
 export function progressSentence(t: TFunction, years: { year: number; ratio: number | null }[]): string | null {
   const known = years.filter((y): y is { year: number; ratio: number } => y.ratio !== null);
   const current = known.at(-1);
