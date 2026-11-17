@@ -55,8 +55,10 @@ export function Welcome() {
     setPage(Math.round(e.nativeEvent.contentOffset.x / width));
 
   // A new install comes with a daily reminder (migration 3): the last page edits it.
+  // Only the general ones: a habit's own reminders belong to its edit screen.
+  const general = snapshot.reminders.filter((r) => r.habitId === null);
   const [remind, setRemind] = useState(true);
-  const [time, setTime] = useState(snapshot.reminders[0]?.time ?? '22:00');
+  const [time, setTime] = useState(general[0]?.time ?? '22:00');
   const [busy, setBusy] = useState(false);
 
   const finish = async () => {
@@ -64,8 +66,8 @@ export function Welcome() {
     // Asked here, with the reminder row on screen: the moment the permission makes sense.
     if (remind && (await notificationPermission()) === 'undetermined') await requestNotificationPermission();
     db.withTransactionSync(() => {
-      const [first] = snapshot.reminders;
-      if (!remind) snapshot.reminders.forEach((r) => deleteReminder(db, r.id));
+      const [first] = general;
+      if (!remind) general.forEach((r) => deleteReminder(db, r.id));
       else if (first) setReminderTime(db, first.id, time);
       else addReminder(db, time);
       setWelcomeDone(db);

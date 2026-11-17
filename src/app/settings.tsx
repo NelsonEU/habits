@@ -16,7 +16,7 @@ import { Text, Title } from '@/components/text';
 import { addReminder, deleteReminder, replaceAll, setReminderTime, setTheme, setWeekStart } from '@/db/repo';
 import { notifyChange, useSnapshot } from '@/db/store';
 import { addDays, toDay } from '@/domain/day';
-import { reminderMoments } from '@/domain/reminders';
+import { freeHour, reminderMoments } from '@/domain/reminders';
 import { useToday } from '@/hooks/use-today';
 import { locale } from '@/i18n';
 import { longDay } from '@/i18n/format';
@@ -37,6 +37,8 @@ export default function SettingsScreen() {
   const snapshot = useSnapshot();
   const today = useToday();
   const { weekStartsOn, theme } = snapshot.settings;
+  // Per-habit reminders live in each habit's edit screen.
+  const reminders = snapshot.reminders.filter((r) => r.habitId === null);
 
   // Re-read whenever the screen shows again: coming back from a "replace" creates a new copy.
   const [copyDate, setCopyDate] = useState<Date | null>(null);
@@ -58,7 +60,7 @@ export default function SettingsScreen() {
   const [next, setNext] = useState<{ moment: Date | null; scheduled: number } | null>(null);
   useEffect(() => {
     let cancelled = false;
-    const moment = reminderMoments(snapshot.reminders, snapshot.tickedDays, new Date())[0] ?? null;
+    const moment = reminderMoments(snapshot, new Date()).find((m) => m.habitId === null)?.date ?? null;
     scheduledCount()
       .catch(() => 0)
       .then((scheduled) => !cancelled && setNext({ moment, scheduled }));
@@ -92,11 +94,7 @@ export default function SettingsScreen() {
   };
 
   const addNewReminder = () => {
-    const taken = new Set(snapshot.reminders.map((r) => r.time));
-    // 21:00, or the next free hour after the latest reminder.
-    let hour = 21;
-    while (taken.has(`${String(hour % 24).padStart(2, '0')}:00`) && hour < 45) hour++;
-    change(() => addReminder(db, `${String(hour % 24).padStart(2, '0')}:00`));
+    change(() => addReminder(db, freeHour(reminders.map((r) => r.time), 21)));
     // In context: the first reminder is when the permission makes sense.
     if (permission === 'undetermined') askPermission();
   };
@@ -217,7 +215,7 @@ export default function SettingsScreen() {
           .filter(Boolean)
           .join('\n')}
       >
-        {permission === 'denied' && snapshot.reminders.length > 0 && (
+        {permission === 'denied' && reminders.length > 0 && (
           <SettingsRow
             icon="remindersOff"
             tone="warning"
@@ -226,7 +224,7 @@ export default function SettingsScreen() {
             onPress={() => Linking.openSettings()}
           />
         )}
-        {permission === 'undetermined' && snapshot.reminders.length > 0 && (
+        {permission === 'undetermined' && reminders.length > 0 && (
           <SettingsRow
             icon="allowReminders"
             label={t('settings.enableNotifications')}
@@ -234,7 +232,7 @@ export default function SettingsScreen() {
             onPress={askPermission}
           />
         )}
-        {snapshot.reminders.map((reminder) => (
+        {reminders.map((reminder) => (
           <SettingsRow
             key={reminder.id}
             icon="reminder"

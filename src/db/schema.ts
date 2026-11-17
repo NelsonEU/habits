@@ -57,6 +57,11 @@ export const MIGRATIONS: string[] = [
   `
   DROP TABLE filled_days;
   `,
+  // 6 — reminders for one habit (habit_id set) next to the general ones (habit_id NULL)
+  `
+  ALTER TABLE reminders ADD COLUMN habit_id INTEGER REFERENCES habits(id) ON DELETE CASCADE;
+  CREATE INDEX reminders_habit ON reminders (habit_id);
+  `,
 ];
 
 /** Runs at app start, before any screen renders. */

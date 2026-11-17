@@ -76,6 +76,16 @@ describe('initDatabase', () => {
     ]);
   });
 
+  test('upgrading to version 6 keeps the reminders, as general ones', async () => {
+    const db = databaseAt(5);
+    db.execSync(`INSERT INTO reminders (time) VALUES ('08:00')`);
+    await initDatabase(db);
+    expect(db.getAllSync('SELECT time, habit_id FROM reminders ORDER BY time')).toEqual([
+      { time: '08:00', habit_id: null },
+      { time: '22:00', habit_id: null },
+    ]);
+  });
+
   test('turns foreign keys on: deleting a habit deletes its ticks', async () => {
     const db = openTestDatabase();
     await initDatabase(db);

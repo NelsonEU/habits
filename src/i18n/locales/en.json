@@ -117,7 +117,7 @@
     "reminder": "Reminder",
     "addReminder": "Add a reminder",
     "removeReminder": "Remove the {{time}} reminder",
-    "remindersHint": "No reminder once the day is filled in.",
+    "remindersHint": "No more reminders for the day once every habit is ticked. Each habit can also have its own reminders.",
     "noReminders": "No reminders.",
     "enableNotifications": "Allow notifications",
     "enableNotificationsHint": "Needed for reminders",
@@ -157,7 +157,9 @@
       "previewHint": "Tap to see it ticked",
       "add": "Add",
       "save": "Save",
-      "suggestionsTitle": "Ideas"
+      "suggestionsTitle": "Ideas",
+      "reminders": "Reminders",
+      "remindersHint": "No more reminders for the day once this habit is ticked."
     },
     "archive": {
       "button": "Archive this habit",
@@ -194,8 +196,9 @@
   },
   "reminders": {
     "notificationTitle": "Habits",
-    "notificationBody": "Time to tick off your day.",
-    "channelName": "Reminders"
+    "notificationBody": "Some habits aren’t ticked yet today.",
+    "channelName": "Reminders",
+    "habitBody": "Not ticked yet today."
   },
   "welcome": {
     "skip": "Skip",

@@ -28,8 +28,11 @@ export type Settings = {
 
 export const DEFAULT_SETTINGS: Settings = { weekStartsOn: 'monday', theme: 'system', welcomeDone: false };
 
-/** A daily reminder at a local time, "HH:MM". */
-export type Reminder = { id: number; time: string };
+/**
+ * A daily reminder at a local time, "HH:MM". General (habitId null) until every habit
+ * of the day is ticked, or for one habit until that habit is ticked.
+ */
+export type Reminder = { id: number; time: string; habitId: number | null };
 
 /** All the app's data, loaded in memory. */
 export type Snapshot = {
@@ -37,25 +40,16 @@ export type Snapshot = {
   habits: Habit[];
   /** Ticked days per habit id. */
   checks: Map<number, Set<Day>>;
-  /** Days with at least one tick: a day is "done" (no more reminders) once it's in here. */
-  tickedDays: Set<Day>;
   settings: Settings;
-  /** Sorted by time. */
+  /** General and per-habit ones, sorted by time. */
   reminders: Reminder[];
 };
-
-/** Days with at least one tick, any habit. */
-export function tickedDays(checks: Map<number, Set<Day>>): Set<Day> {
-  const days = new Set<Day>();
-  for (const habitDays of checks.values()) for (const day of habitDays) days.add(day);
-  return days;
-}
 
 export function historyOf(snapshot: Snapshot, habit: Habit): HabitHistory {
   return { start: habit.startDay, checked: snapshot.checks.get(habit.id) ?? new Set() };
 }
 
 /** Habits shown for a given day: active, and already started by then. */
-export function habitsOn(snapshot: Snapshot, day: Day): Habit[] {
+export function habitsOn(snapshot: Pick<Snapshot, 'habits'>, day: Day): Habit[] {
   return snapshot.habits.filter((h) => h.archivedAt === null && h.startDay <= day);
 }

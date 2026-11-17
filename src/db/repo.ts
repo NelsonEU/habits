@@ -3,7 +3,6 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { Day } from '@/domain/day';
 import {
   DEFAULT_SETTINGS,
-  tickedDays,
   type Habit,
   type Reminder,
   type Snapshot,
@@ -53,8 +52,8 @@ export function loadSnapshot(db: SQLiteDatabase): Snapshot {
     theme: theme === 'light' || theme === 'dark' || theme === 'system' ? theme : DEFAULT_SETTINGS.theme,
     welcomeDone: stored.get('welcomeDone') === 'true',
   };
-  const reminders = db.getAllSync<Reminder>('SELECT id, time FROM reminders ORDER BY time, id');
-  return { habits, checks, tickedDays: tickedDays(checks), settings, reminders };
+  const reminders = db.getAllSync<Reminder>('SELECT id, time, habit_id AS habitId FROM reminders ORDER BY time, id');
+  return { habits, checks, settings, reminders };
 }
 
 export function setWeekStart(db: SQLiteDatabase, weekStartsOn: WeekStart) {
@@ -69,8 +68,17 @@ export function setWelcomeDone(db: SQLiteDatabase) {
   db.runSync('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)', 'welcomeDone', 'true');
 }
 
+/** A general reminder (Settings). Per-habit ones are saved with their habit, see setHabitReminders. */
 export function addReminder(db: SQLiteDatabase, time: string) {
   db.runSync('INSERT INTO reminders (time) VALUES (?)', time);
+}
+
+/** Replaces a habit's own reminders with these times ("HH:MM"). */
+export function setHabitReminders(db: SQLiteDatabase, habitId: number, times: string[]) {
+  db.withTransactionSync(() => {
+    db.runSync('DELETE FROM reminders WHERE habit_id = ?', habitId);
+    for (const time of times) db.runSync('INSERT INTO reminders (time, habit_id) VALUES (?, ?)', time, habitId);
+  });
 }
 
 export function setReminderTime(db: SQLiteDatabase, id: number, time: string) {
@@ -90,14 +98,14 @@ const NEXT_SORT_ORDER = 'SELECT COALESCE(MAX(sort_order), -1) + 1 FROM habits';
 /** 32 random hex characters: unique enough for a permanent habit id. */
 const NEW_UID = 'lower(hex(randomblob(16)))';
 
-/** A new habit goes last, and counts from today. */
-export function createHabit(db: SQLiteDatabase, habit: { name: string; color: string }, today: Day) {
-  db.runSync(
+/** A new habit goes last, and counts from today. Returns its id. */
+export function createHabit(db: SQLiteDatabase, habit: { name: string; color: string }, today: Day): number {
+  return db.runSync(
     `INSERT INTO habits (uid, name, color, sort_order, start_day) VALUES (${NEW_UID}, ?, ?, (${NEXT_SORT_ORDER}), ?)`,
     habit.name,
     habit.color,
     today,
-  );
+  ).lastInsertRowId;
 }
 
 export function updateHabit(db: SQLiteDatabase, id: number, habit: { name: string; color: string }) {
@@ -120,11 +128,12 @@ export function restoreHabit(db: SQLiteDatabase, id: number) {
   db.runSync(`UPDATE habits SET archived_at = NULL, sort_order = (${NEXT_SORT_ORDER}) WHERE id = ?`, id);
 }
 
-/** Deletes a habit and all its ticks, for good. Filled-in days stay: they're about the day, not the habit. */
+/** Deletes a habit with all its ticks and reminders, for good. */
 export function deleteHabit(db: SQLiteDatabase, id: number) {
   db.withTransactionSync(() => {
     // ON DELETE CASCADE would do it too; explicit, in case foreign keys were ever off on a connection.
     db.runSync('DELETE FROM checks WHERE habit_id = ?', id);
+    db.runSync('DELETE FROM reminders WHERE habit_id = ?', id);
     db.runSync('DELETE FROM habits WHERE id = ?', id);
   });
 }
@@ -172,6 +181,8 @@ export function applyMerge(db: SQLiteDatabase, plan: MergePlan) {
 export function replaceAll(db: SQLiteDatabase, backup: Backup) {
   db.withTransactionSync(() => {
     db.runSync('DELETE FROM checks');
+    // Backups don't carry reminders: the general ones stay, the per-habit ones go with their habits.
+    db.runSync('DELETE FROM reminders WHERE habit_id IS NOT NULL');
     db.runSync('DELETE FROM habits');
     backup.habits.forEach((habit) => insertHabit(db, habit));
   });

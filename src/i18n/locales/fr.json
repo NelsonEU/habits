@@ -117,7 +117,7 @@
     "reminder": "Rappel",
     "addReminder": "Ajouter un rappel",
     "removeReminder": "Supprimer le rappel de {{time}}",
-    "remindersHint": "Pas de rappel une fois la journée remplie.",
+    "remindersHint": "Plus de rappel pour la journée une fois toutes tes habitudes cochées. Chaque habitude peut aussi avoir ses propres rappels.",
     "noReminders": "Aucun rappel.",
     "enableNotifications": "Autoriser les notifications",
     "enableNotificationsHint": "Nécessaire pour les rappels",
@@ -157,7 +157,9 @@
       "previewHint": "Touche pour la voir cochée",
       "add": "Ajouter",
       "save": "Enregistrer",
-      "suggestionsTitle": "Idées"
+      "suggestionsTitle": "Idées",
+      "reminders": "Rappels",
+      "remindersHint": "Plus de rappel pour la journée une fois cette habitude cochée."
     },
     "archive": {
       "button": "Archiver cette habitude",
@@ -194,8 +196,9 @@
   },
   "reminders": {
     "notificationTitle": "Habits",
-    "notificationBody": "C’est l’heure de cocher ta journée.",
-    "channelName": "Rappels"
+    "notificationBody": "Il te reste des habitudes à cocher aujourd’hui.",
+    "channelName": "Rappels",
+    "habitBody": "Pas encore cochée aujourd’hui."
   },
   "welcome": {
     "skip": "Passer",
