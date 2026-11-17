@@ -12,11 +12,7 @@
     "statistics": "Statistiques",
     "settings": "Réglages",
     "editHabits": "Modifier mes habitudes",
-    "pastDay": "Jour passé · tu peux encore le modifier",
     "noActiveHabits": "Aucune habitude active ce jour-là. Le crayon en bas permet d’en ajouter.",
-    "saved": "C’est enregistré.",
-    "savedToday": "C’est enregistré. Tu peux fermer l’app.",
-    "tapPrompt": "Touche ce que tu as tenu.",
     "streak_zero": "Pas de série en cours",
     "streak_one": "{{count}} jour d’affilée",
     "streak_other": "{{count}} jours d’affilée"

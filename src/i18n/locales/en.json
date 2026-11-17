@@ -12,11 +12,7 @@
     "statistics": "Statistics",
     "settings": "Settings",
     "editHabits": "Edit my habits",
-    "pastDay": "Past day · you can still change it",
     "noActiveHabits": "No active habits on this day. Use the pencil below to add one.",
-    "saved": "Saved.",
-    "savedToday": "Saved. You can close the app.",
-    "tapPrompt": "Tap the habits you kept.",
     "streak_zero": "No streak yet",
     "streak_one": "{{count}} day in a row",
     "streak_other": "{{count}} days in a row"

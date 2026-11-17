@@ -38,7 +38,6 @@ export default function DayScreen() {
   const bounds = weekBounds(snapshot, today, snapshot.settings.weekStartsOn);
 
   const habits = habitsOn(snapshot, selected);
-  const anyDone = habits.some((h) => snapshot.checks.get(h.id)?.has(selected));
 
   const toggle = (habitId: number, checked: boolean) => {
     setChecked(db, habitId, selected, !checked);
@@ -86,9 +85,8 @@ export default function DayScreen() {
               : selected === addDays(today, -1)
                 ? t('day.yesterday')
                 : longDay(selected, locale)}</Title>
-          <Text className="text-sm text-muted">
-            {selected >= addDays(today, -1) ? longDay(selected, locale) : t('day.pastDay')}
-          </Text>
+          {/* Older days already show their date as the title. */}
+          {selected >= addDays(today, -1) && <Text className="text-sm text-muted">{longDay(selected, locale)}</Text>}
         </View>
         {selected !== today && <PillButton label={t('common.today')} onPress={goToday} />}
       </View>
@@ -116,13 +114,8 @@ export default function DayScreen() {
         )}
       </View>
 
-      {habits.length > 0 && (
-        <View className="mt-auto min-h-[60px] justify-center pr-[84px]">
-          <Text className="text-sm text-muted">
-            {!anyDone ? t('day.tapPrompt') : selected === today ? t('day.savedToday') : t('day.saved')}
-          </Text>
-        </View>
-      )}
+      {/* Room for the floating button, so it never covers the last habit. */}
+      {habits.length > 0 && <View className="h-[60px]" />}
     </Screen>
   );
 }
