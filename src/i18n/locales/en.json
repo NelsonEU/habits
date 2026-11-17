@@ -156,7 +156,8 @@
       "previewName": "Your new habit",
       "previewHint": "Tap to see it ticked",
       "add": "Add",
-      "save": "Save"
+      "save": "Save",
+      "suggestionsTitle": "Ideas"
     },
     "archive": {
       "button": "Archive this habit",
@@ -173,7 +174,15 @@
       "deleteTitle": "Delete “{{name}}” for good?",
       "deleteBody": "All its history will be erased. This can’t be undone."
     },
-    "editHint": "Opens the habit to edit it"
+    "editHint": "Opens the habit to edit it",
+    "suggestions": {
+      "read": "Read 10 pages",
+      "walk": "Walk 30 minutes",
+      "water": "Drink 2 L of water",
+      "screens": "No screens in bed",
+      "stretch": "Stretch",
+      "floss": "Floss"
+    }
   },
   "colors": {
     "rose": "Pink",
@@ -187,5 +196,33 @@
     "notificationTitle": "Habits",
     "notificationBody": "Time to tick off your day.",
     "channelName": "Reminders"
+  },
+  "welcome": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get started",
+    "start": "Start",
+    "step": "Step {{n}} of {{total}}",
+    "intro": {
+      "title": "One tap a day for your habits",
+      "body": "A simple daily check-in."
+    },
+    "tick": {
+      "title": "Tick what you kept",
+      "body": "Tap a habit once it’s done. Past days stay editable.",
+      "hint": "Try it: tap the card"
+    },
+    "progress": {
+      "title": "Watch it add up",
+      "body": "Streaks and statistics for every habit.",
+      "streak": "days in a row",
+      "rate": "kept this month",
+      "thisWeek": "This week"
+    },
+    "reminder": {
+      "title": "A nudge, if needed",
+      "body": "Reminders go quiet once you’ve ticked everything.",
+      "label": "Remind me daily"
+    }
   }
 }

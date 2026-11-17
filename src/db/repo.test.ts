@@ -16,6 +16,7 @@ import {
   setReminderTime,
   setTheme,
   setWeekStart,
+  setWelcomeDone,
 } from './repo';
 import { initDatabase } from './schema';
 import { openTestDatabase } from './test-database';
@@ -93,10 +94,11 @@ describe('habits', () => {
 
 describe('settings and reminders', () => {
   test('defaults, saved values, and unknown values falling back to the default', () => {
-    expect(loadSnapshot(db).settings).toEqual({ weekStartsOn: 'monday', theme: 'system' });
+    expect(loadSnapshot(db).settings).toEqual({ weekStartsOn: 'monday', theme: 'system', welcomeDone: false });
     setWeekStart(db, 'sunday');
     setTheme(db, 'dark');
-    expect(loadSnapshot(db).settings).toEqual({ weekStartsOn: 'sunday', theme: 'dark' });
+    setWelcomeDone(db);
+    expect(loadSnapshot(db).settings).toEqual({ weekStartsOn: 'sunday', theme: 'dark', welcomeDone: true });
     db.runSync("UPDATE settings SET value = 'purple' WHERE key = 'theme'");
     expect(loadSnapshot(db).settings.theme).toBe('system');
   });

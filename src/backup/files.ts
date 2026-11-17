@@ -1,6 +1,7 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
 
 import type { Day } from '@/domain/day';
 import type { Snapshot } from '@/domain/model';
@@ -86,6 +87,8 @@ export function saveSafetyCopy(snapshot: Snapshot) {
 
 /** When the safety copy was made, or null if there is none. */
 export function safetyCopyDate(): Date | null {
+  // The web (`npm run web`, for quick UI checks) has no file system: never a safety copy there.
+  if (Platform.OS === 'web') return null;
   const file = safetyCopy();
   if (!file.exists) return null;
   try {

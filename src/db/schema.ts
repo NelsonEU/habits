@@ -1,4 +1,5 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
+import { Platform } from 'react-native';
 
 /**
  * Each entry upgrades the database by one version. Never edit a migration
@@ -64,9 +65,13 @@ export async function initDatabase(db: SQLiteDatabase) {
   const row = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const current = row?.user_version ?? 0;
   for (let version = current; version < MIGRATIONS.length; version++) {
-    await db.withExclusiveTransactionAsync(async (tx) => {
+    const migrate = async (tx: SQLiteDatabase) => {
       await tx.execAsync(MIGRATIONS[version]);
       await tx.execAsync(`PRAGMA user_version = ${version + 1}`);
-    });
+    };
+    // The web (`npm run web`, for quick UI checks) has no exclusive transactions; a browser tab is
+    // the database's only user anyway.
+    if (Platform.OS === 'web') await db.withTransactionAsync(() => migrate(db));
+    else await db.withExclusiveTransactionAsync(migrate);
   }
 }

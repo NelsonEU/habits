@@ -156,7 +156,8 @@
       "previewName": "Ta nouvelle habitude",
       "previewHint": "Touche pour la voir cochée",
       "add": "Ajouter",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "suggestionsTitle": "Idées"
     },
     "archive": {
       "button": "Archiver cette habitude",
@@ -173,7 +174,15 @@
       "deleteTitle": "Supprimer « {{name}} » définitivement ?",
       "deleteBody": "Tout son historique sera effacé. C’est irréversible."
     },
-    "editHint": "Ouvre l’habitude pour la modifier"
+    "editHint": "Ouvre l’habitude pour la modifier",
+    "suggestions": {
+      "read": "Lire 10 pages",
+      "walk": "Marcher 30 minutes",
+      "water": "Boire 2 L d’eau",
+      "screens": "Pas d’écran au lit",
+      "stretch": "S’étirer",
+      "floss": "Fil dentaire"
+    }
   },
   "colors": {
     "rose": "Rose",
@@ -187,5 +196,33 @@
     "notificationTitle": "Habits",
     "notificationBody": "C’est l’heure de cocher ta journée.",
     "channelName": "Rappels"
+  },
+  "welcome": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "getStarted": "C’est parti",
+    "start": "Commencer",
+    "step": "Étape {{n}} sur {{total}}",
+    "intro": {
+      "title": "Une touche par jour pour tes habitudes",
+      "body": "Un point quotidien, tout simple."
+    },
+    "tick": {
+      "title": "Coche ce que tu as tenu",
+      "body": "Touche une habitude une fois faite. Les jours passés restent modifiables.",
+      "hint": "Essaie : touche la carte"
+    },
+    "progress": {
+      "title": "Vois tes progrès",
+      "body": "Séries et statistiques pour chaque habitude.",
+      "streak": "jours d’affilée",
+      "rate": "tenu ce mois-ci",
+      "thisWeek": "Cette semaine"
+    },
+    "reminder": {
+      "title": "Un rappel, si besoin",
+      "body": "Les rappels se taisent une fois tout coché.",
+      "label": "Me le rappeler chaque jour"
+    }
   }
 }
