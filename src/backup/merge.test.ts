@@ -19,6 +19,7 @@ const incoming = (uid: string | null, name: string, checks: string[], startDay =
   startDay,
   archivedAt: null,
   checks,
+  reminders: [],
 });
 
 const snapshot: Snapshot = {
@@ -31,9 +32,27 @@ const snapshot: Snapshot = {
   reminders: [],
 };
 
-const backup = (habits: BackupHabit[]): Backup => ({ habits });
+const backup = (habits: BackupHabit[], reminders: string[] | null = null): Backup => ({ habits, reminders });
 
 describe('planMerge', () => {
+  test('adds only the reminder times the app doesn’t have', () => {
+    const withReminders: Snapshot = {
+      ...snapshot,
+      reminders: [
+        { id: 1, time: '22:00', habitId: null },
+        { id: 2, time: '08:00', habitId: 1 },
+      ],
+    };
+    const plan = planMerge(
+      withReminders,
+      backup([{ ...incoming('a', 'Ne pas boire', []), reminders: ['08:00', '12:00'] }], ['09:00', '22:00']),
+    );
+    expect(plan.reminders).toEqual([
+      { habitId: null, time: '09:00' },
+      { habitId: 1, time: '12:00' },
+    ]);
+  });
+
   test('matches by permanent id even after a rename, and only adds missing ticks', () => {
     const plan = planMerge(snapshot, backup([incoming('a', 'Pas d’alcool', ['2026-10-02', '2026-10-03'])]));
     expect(plan.updates).toEqual([{ habitId: 1, addChecks: ['2026-10-03'], startDay: null }]);

@@ -1,12 +1,15 @@
 import { type Day, isDay } from '@/domain/day';
 import type { Snapshot } from '@/domain/model';
 import { HABIT_COLORS, nearestHabitColor } from '@/domain/palette';
+import { isTime } from '@/domain/reminders';
 import type { DaygraphImport } from './daygraph';
 import { ImportError } from './errors';
 
 /** Everything an import can bring, whatever the file it came from. */
 export type Backup = {
   habits: BackupHabit[];
+  /** General reminder times, or null when the source has none to give (Daygraph, version 1 files). */
+  reminders: string[] | null;
 };
 
 export type BackupHabit = {
@@ -18,21 +21,29 @@ export type BackupHabit = {
   archivedAt: string | null;
   /** Ticked days, sorted. */
   checks: Day[];
+  /** The habit's own reminder times ("HH:MM"), sorted. */
+  reminders: string[];
 };
 
 /*
- * This app's export file. Bump VERSION when the shape changes. While the app is in development,
- * older files aren't kept readable; that starts once it's actually in use.
+ * This app's export file. Bump VERSION when the shape changes, and keep reading older versions:
+ * people have exports from earlier releases.
+ * - 1: habits and their ticks.
+ * - 2: reminders, general and per habit.
  */
 const APP = 'habits';
-const VERSION = 1;
+const VERSION = 2;
 
 type BackupFile = {
   app: typeof APP;
   version: number;
   exportedAt: string;
   habits: (BackupHabit & { uid: string })[];
+  reminders: string[];
 };
+
+const timesOf = (reminders: Snapshot['reminders'], habitId: number | null) =>
+  [...new Set(reminders.filter((r) => r.habitId === habitId).map((r) => r.time))].sort();
 
 /** The whole app as an export file (JSON text). Habits in display order. */
 export function toBackupFile(snapshot: Snapshot, exportedAt: Date): string {
@@ -47,13 +58,22 @@ export function toBackupFile(snapshot: Snapshot, exportedAt: Date): string {
       startDay: h.startDay,
       archivedAt: h.archivedAt,
       checks: [...(snapshot.checks.get(h.id) ?? [])].sort(),
+      reminders: timesOf(snapshot.reminders, h.id),
     })),
+    reminders: timesOf(snapshot.reminders, null),
   };
   return JSON.stringify(file, null, 2);
 }
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null;
 const isDayList = (v: unknown): v is Day[] => Array.isArray(v) && v.every((d) => typeof d === 'string' && isDay(d));
+const isTimeList = (v: unknown): v is string[] => Array.isArray(v) && v.every(isTime);
+/** Reminder times from a file: missing in version 1 files. */
+function readTimes(v: unknown, version: number): string[] {
+  if (version < 2) return [];
+  if (!isTimeList(v)) throw new ImportError('invalid-backup');
+  return [...new Set(v)].sort();
+}
 const PALETTE = new Set<string>(HABIT_COLORS.map((c) => c.hex));
 
 /** A color from a file, as one of the app's: a hand-edited file could hold any color. */
@@ -70,6 +90,7 @@ export function parseBackupFile(json: unknown): Backup {
   if (!isObject(json) || json.app !== APP) throw new ImportError('unknown-format');
   if (typeof json.version !== 'number' || json.version > VERSION) throw new ImportError('newer-version');
   if (!Array.isArray(json.habits)) throw new ImportError('invalid-backup');
+  const version = json.version;
 
   const habits = json.habits.map((raw): BackupHabit => {
     if (
@@ -93,10 +114,11 @@ export function parseBackupFile(json: unknown): Backup {
       startDay: raw.startDay,
       archivedAt: raw.archivedAt,
       checks: [...new Set(raw.checks)].sort(),
+      reminders: readTimes(raw.reminders, version),
     };
   });
   if (new Set(habits.map((h) => h.uid)).size !== habits.length) throw new ImportError('invalid-backup');
-  return { habits };
+  return { habits, reminders: version < 2 ? null : readTimes(json.reminders, version) };
 }
 
 /**
@@ -114,8 +136,9 @@ export function daygraphToBackup(data: DaygraphImport, today: Day): Backup {
       .filter((c) => c.sourceId === h.sourceId)
       .map((c) => c.day)
       .sort(),
+    reminders: [],
   }));
-  return { habits };
+  return { habits, reminders: null };
 }
 
 /** What the import screen shows before anything is changed. */

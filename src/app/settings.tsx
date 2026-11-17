@@ -142,7 +142,7 @@ export default function SettingsScreen() {
         style: 'destructive',
         onPress: () => {
           saveSafetyCopy(snapshot);
-          change(() => replaceAll(db, { habits: [] }));
+          change(() => replaceAll(db, { habits: [], reminders: null }));
           setCopyDate(safetyCopyDate());
         },
       },
